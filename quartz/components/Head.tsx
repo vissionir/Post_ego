@@ -53,6 +53,13 @@ export default (() => {
         <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossOrigin="anonymous" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
+        {/* Language routing (RU at /, EN at /en/) */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(() => {\n  try {\n    const basePath = ${JSON.stringify(path)}\n    const key = "siteLang"\n    const pathname = window.location.pathname\n\n    // Persist language choice on click (works for all pages)\n    window.addEventListener(\"click\", (e) => {\n      const t = e.target\n      if (!(t instanceof Element)) return\n      const a = t.closest(\"a[data-set-lang]\")\n      if (!a) return\n      const lang = a.getAttribute(\"data-set-lang\")\n      if (lang) localStorage.setItem(key, lang)\n    })\n\n    const stored = localStorage.getItem(key)\n    const isRoot = pathname === basePath || pathname === basePath + \"index.html\"\n\n    // Auto-redirect ONLY on the root entrypoint\n    if (isRoot) {\n      const desired = stored || ((navigator.language || \"\").toLowerCase().startsWith(\"ru\") ? \"ru\" : \"en\")\n      if (!stored) localStorage.setItem(key, desired)\n\n      const enRoot = basePath.endsWith(\"/\") ? basePath + \"en/\" : basePath + \"/en/\"\n      if (desired === \"en\" && pathname !== enRoot) {\n        window.location.replace(enRoot)\n      }\n    }\n  } catch (_) {}\n})()`,
+          }}
+        />
+
         <meta name="og:site_name" content={cfg.pageTitle}></meta>
         <meta property="og:title" content={title} />
         <meta property="og:type" content="website" />
