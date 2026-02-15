@@ -2,8 +2,6 @@
 title: Post-Ego
 ---
 
-Hi. My name is Denis.
-
 **Post-Ego** is a public research space.
 
 It exists to unfold and preserve the result of a completed self-inquiry that lasted more than 12 years — not as a system or a teaching, but as a living network of connections.
