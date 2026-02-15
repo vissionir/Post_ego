@@ -28,6 +28,7 @@ This is not an explanation and not an instruction manual — it is a way to hold
 
 ## Sections
 
+- [[Атомы|Atoms]]
 - [[Как устроено исследование|How the research works]]
 - [[Область исследования|Scope of the research]]
 
