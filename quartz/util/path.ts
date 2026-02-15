@@ -244,15 +244,34 @@ export function transformLink(src: FullSlug, target: string, opts: TransformOpti
         return targetCanonical === fileName
       })
 
+      // i18n: prefer same-language twin when duplicates exist
+      const srcIsEn = src === ("en" as FullSlug) || src.startsWith("en/")
+      const preferred = matchingFileNames.filter((s) => (srcIsEn ? s.startsWith("en/") : !s.startsWith("en/")))
+      const candidates = preferred.length > 0 ? preferred : matchingFileNames
+
       // only match, just use it
-      if (matchingFileNames.length === 1) {
-        const targetSlug = matchingFileNames[0]
+      if (candidates.length === 1) {
+        const targetSlug = candidates[0]
         return (resolveRelative(src, targetSlug) + targetAnchor) as RelativeURL
       }
     }
 
+    // i18n: if target exists in the same language subtree, prefer it
+    const srcIsEn = src === ("en" as FullSlug) || src.startsWith("en/")
+    if (srcIsEn && !targetCanonical.startsWith("en/")) {
+      const enCandidate = (`en/${targetCanonical}` as FullSlug)
+      if (opts.allSlugs.includes(enCandidate)) {
+        targetCanonical = enCandidate
+      }
+    } else if (!srcIsEn && targetCanonical.startsWith("en/")) {
+      const ruCandidate = (targetCanonical.replace(/^en\//, "") as FullSlug)
+      if (opts.allSlugs.includes(ruCandidate)) {
+        targetCanonical = ruCandidate
+      }
+    }
+
     // if it's not unique, then it's the absolute path from the vault root
-    return (joinSegments(pathToRoot(src), canonicalSlug) + folderTail) as RelativeURL
+    return (joinSegments(pathToRoot(src), targetCanonical) + folderTail) as RelativeURL
   }
 }
 
