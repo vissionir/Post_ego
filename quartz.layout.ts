@@ -39,7 +39,22 @@ export const defaultContentPageLayout: PageLayout = {
         { Component: Component.ReaderMode() },
       ],
     }),
-    Component.Explorer(),
+    Component.Explorer({
+      // i18n: show only one language tree in the explorer
+      filterFn: (node) => {
+        const p = window.location.pathname
+        const isEn = p === "/en/" || p.startsWith("/en/")
+
+        if (node.slugSegment === "tags") return false
+
+        const isEnNode = node.slugSegment === "en" || node.slug.startsWith("en/")
+        return isEn ? isEnNode : !isEnNode
+      },
+      mapFn: (node) => {
+        if (node.slugSegment === "en" && node.isFolder) node.displayName = ""
+        return node
+      },
+    }),
   ],
   right: [
     Component.Graph(),
@@ -64,7 +79,22 @@ export const defaultListPageLayout: PageLayout = {
         { Component: Component.Darkmode() },
       ],
     }),
-    Component.Explorer(),
+    Component.Explorer({
+      // i18n: show only one language tree in the explorer
+      filterFn: (node) => {
+        const p = window.location.pathname
+        const isEn = p === "/en/" || p.startsWith("/en/")
+
+        if (node.slugSegment === "tags") return false
+
+        const isEnNode = node.slugSegment === "en" || node.slug.startsWith("en/")
+        return isEn ? isEnNode : !isEnNode
+      },
+      mapFn: (node) => {
+        if (node.slugSegment === "en" && node.isFolder) node.displayName = ""
+        return node
+      },
+    }),
   ],
   right: [],
 }
