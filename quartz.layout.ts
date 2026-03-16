@@ -27,18 +27,18 @@ const baseExplorerSort = (a: any, b: any) => {
 
 const ruExplorerOrder = [
   "Атомы",
-  "Миссия",
+  "Миссия проекта",
   "Как я сюда пришёл",
   "Как устроено исследование",
   "Область исследования",
 ]
 
 const enExplorerOrder = [
-  "Атомы",
-  "Миссия",
-  "Как я сюда пришёл",
-  "Как устроено исследование",
-  "Область исследования",
+  "Atoms",
+  "Mission",
+  "How I got here",
+  "How the research is structured",
+  "Scope of the research",
 ]
 
 const ruExplorerOrderMap = new Map(ruExplorerOrder.map((name, index) => [name, index]))
