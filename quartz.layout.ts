@@ -104,8 +104,6 @@ export const defaultContentPageLayout: PageLayout = {
         { Component: Component.ReaderMode() },
       ],
     }),
-  ],
-  right: [
     Component.Explorer({
       // i18n: show only one language tree in the explorer
       filterFn: (node) => {
@@ -123,6 +121,8 @@ export const defaultContentPageLayout: PageLayout = {
       },
       sortFn: explorerSort,
     }),
+  ],
+  right: [
     Component.Graph(),
     Component.DesktopOnly(Component.TableOfContents()),
     Component.Backlinks(),
@@ -145,8 +145,6 @@ export const defaultListPageLayout: PageLayout = {
         { Component: Component.Darkmode() },
       ],
     }),
-  ],
-  right: [
     Component.Explorer({
       // i18n: show only one language tree in the explorer
       filterFn: (node) => {
@@ -165,4 +163,5 @@ export const defaultListPageLayout: PageLayout = {
       sortFn: explorerSort,
     }),
   ],
+  right: [],
 }
