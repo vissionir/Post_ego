@@ -89,8 +89,8 @@ const explorerSort = (a: any, b: any) => {
   let aOrder = -1
   let bOrder = -1
 
-  const ruOrder = ["Атомы", "Миссия проекта", "Как я сюда пришёл", "Как устроено исследование", "Область исследования"]
-  const enOrder = ["Atoms", "Mission", "How I got here", "How the research is structured", "Scope of the research"]
+  const ruOrder = ["Атомы", "Миссия", "Как я сюда пришёл", "Как устроено исследование", "Область исследования"]
+  const enOrder = ["Атомы", "Миссия", "Как я сюда пришёл", "Как устроено исследование", "Область исследования"]
 
   if (aParts[0] === "en" && aParts.length > 1) {
     aGroup = "en"
