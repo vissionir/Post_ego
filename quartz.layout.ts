@@ -44,9 +44,10 @@ const enExplorerOrder = [
 const ruExplorerOrderMap = new Map(ruExplorerOrder.map((name, index) => [name, index]))
 const enExplorerOrderMap = new Map(enExplorerOrder.map((name, index) => [name, index]))
 
-const normalizeExplorerSlug = (slug: string) => slug.replace(/\/index$/, "")
+const normalizeExplorerSlug = (slug?: string) => (slug ?? "").replace(/\/index$/, "")
 
 const getExplorerOrder = (node: any) => {
+  if (!node?.slug) return null
   const normalized = normalizeExplorerSlug(node.slug)
   const parts = normalized.split("/")
 
@@ -63,6 +64,21 @@ const getExplorerOrder = (node: any) => {
   }
 
   return null
+}
+
+const isEnExplorerNode = (node: any) => {
+  const slug = node?.slug ?? ""
+  return node?.slugSegment === "en" || /(^|\/)en(\/|$)/.test(slug)
+}
+
+const explorerFilter = (node: any) => {
+  const p = window.location.pathname
+  const isEn = /\/en(\/|$)/.test(p)
+
+  if (node.slugSegment === "tags") return false
+
+  const enNode = isEnExplorerNode(node)
+  return isEn ? enNode : !enNode
 }
 
 const explorerSort = (a: any, b: any) => {
@@ -105,16 +121,7 @@ export const defaultContentPageLayout: PageLayout = {
       ],
     }),
     Component.Explorer({
-      // i18n: show only one language tree in the explorer
-      filterFn: (node) => {
-        const p = window.location.pathname
-        const isEn = /\/en(\/|$)/.test(p)
-
-        if (node.slugSegment === "tags") return false
-
-        const isEnNode = node.slugSegment === "en" || node.slug.startsWith("en/")
-        return isEn ? isEnNode : !isEnNode
-      },
+      filterFn: explorerFilter,
       mapFn: (node) => {
         if (node.slugSegment === "en" && node.isFolder) node.displayName = ""
         return node
@@ -146,16 +153,7 @@ export const defaultListPageLayout: PageLayout = {
       ],
     }),
     Component.Explorer({
-      // i18n: show only one language tree in the explorer
-      filterFn: (node) => {
-        const p = window.location.pathname
-        const isEn = /\/en(\/|$)/.test(p)
-
-        if (node.slugSegment === "tags") return false
-
-        const isEnNode = node.slugSegment === "en" || node.slug.startsWith("en/")
-        return isEn ? isEnNode : !isEnNode
-      },
+      filterFn: explorerFilter,
       mapFn: (node) => {
         if (node.slugSegment === "en" && node.isFolder) node.displayName = ""
         return node
