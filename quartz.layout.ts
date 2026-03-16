@@ -66,10 +66,6 @@ const getExplorerOrder = (node: any) => {
   return null
 }
 
-const isEnExplorerNode = (node: any) => {
-  const slug = node?.slug ?? ""
-  return node?.slugSegment === "en" || /(^|\/)en(\/|$)/.test(slug)
-}
 
 const explorerFilter = (node: any) => {
   const p = window.location.pathname
@@ -77,22 +73,56 @@ const explorerFilter = (node: any) => {
 
   if (node.slugSegment === "tags") return false
 
-  const enNode = isEnExplorerNode(node)
-  return isEn ? enNode : !enNode
+  const slug = typeof node.slug === "string" ? node.slug : ""
+  const isEnNode = node.slugSegment === "en" || /(^|\/)en(\/|$)/.test(slug)
+  return isEn ? isEnNode : !isEnNode
 }
 
 const explorerSort = (a: any, b: any) => {
-  const aOrder = getExplorerOrder(a)
-  const bOrder = getExplorerOrder(b)
+  const aSlug = (a?.slug ?? "").replace(/\/index$/, "")
+  const bSlug = (b?.slug ?? "").replace(/\/index$/, "")
+  const aParts = aSlug.split("/")
+  const bParts = bSlug.split("/")
 
-  if (aOrder && bOrder && aOrder.group === bOrder.group && aOrder.order !== bOrder.order) {
-    return aOrder.order - bOrder.order
+  let aGroup: "ru" | "en" | null = null
+  let bGroup: "ru" | "en" | null = null
+  let aOrder = -1
+  let bOrder = -1
+
+  const ruOrder = ["Атомы", "Миссия проекта", "Как я сюда пришёл", "Как устроено исследование", "Область исследования"]
+  const enOrder = ["Atoms", "Mission", "How I got here", "How the research is structured", "Scope of the research"]
+
+  if (aParts[0] === "en" && aParts.length > 1) {
+    aGroup = "en"
+    aOrder = enOrder.indexOf(aParts[1])
+  } else {
+    aGroup = "ru"
+    aOrder = ruOrder.indexOf(aParts[0])
   }
 
-  if (aOrder && !bOrder) return -1
-  if (!aOrder && bOrder) return 1
+  if (bParts[0] === "en" && bParts.length > 1) {
+    bGroup = "en"
+    bOrder = enOrder.indexOf(bParts[1])
+  } else {
+    bGroup = "ru"
+    bOrder = ruOrder.indexOf(bParts[0])
+  }
 
-  return baseExplorerSort(a, b)
+  if (aOrder >= 0 && bOrder >= 0 && aGroup === bGroup && aOrder !== bOrder) {
+    return aOrder - bOrder
+  }
+
+  if (aOrder >= 0 && bOrder < 0) return -1
+  if (aOrder < 0 && bOrder >= 0) return 1
+
+  if ((!a.isFolder && !b.isFolder) || (a.isFolder && b.isFolder)) {
+    return a.displayName.localeCompare(b.displayName, undefined, {
+      numeric: true,
+      sensitivity: "base",
+    })
+  }
+
+  return a.isFolder ? -1 : 1
 }
 
 // components for pages that display a single page (e.g. a single note)
