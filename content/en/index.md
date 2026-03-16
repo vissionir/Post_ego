@@ -9,8 +9,8 @@ This site is the public corpus of the Post-Ego project. It brings together mater
 ## Sections
 
 - [[en/Атомы|Atoms]]
-- [[en/Миссия|Mission]]
 - [[en/Как я сюда пришёл|How I got here]]
+- [[en/Миссия|Mission]]
 - [[en/Как устроено исследование|How the research is structured]]
 - [[en/Область исследования|Scope of the research]]
   - [[en/Область исследования#empirical-basis-of-the-research|Empirical basis of the research]]
