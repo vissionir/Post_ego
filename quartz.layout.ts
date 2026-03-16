@@ -14,6 +14,71 @@ export const sharedPageComponents: SharedLayout = {
   }),
 }
 
+const baseExplorerSort = (a: any, b: any) => {
+  if ((!a.isFolder && !b.isFolder) || (a.isFolder && b.isFolder)) {
+    return a.displayName.localeCompare(b.displayName, undefined, {
+      numeric: true,
+      sensitivity: "base",
+    })
+  }
+
+  return a.isFolder ? -1 : 1
+}
+
+const ruExplorerOrder = [
+  "Атомы",
+  "Миссия",
+  "Как я сюда пришёл",
+  "Как устроено исследование",
+  "Область исследования",
+]
+
+const enExplorerOrder = [
+  "Атомы",
+  "Миссия",
+  "Как я сюда пришёл",
+  "Как устроено исследование",
+  "Область исследования",
+]
+
+const ruExplorerOrderMap = new Map(ruExplorerOrder.map((name, index) => [name, index]))
+const enExplorerOrderMap = new Map(enExplorerOrder.map((name, index) => [name, index]))
+
+const normalizeExplorerSlug = (slug: string) => slug.replace(/\/index$/, "")
+
+const getExplorerOrder = (node: any) => {
+  const normalized = normalizeExplorerSlug(node.slug)
+  const parts = normalized.split("/")
+
+  if (parts[0] === "en" && parts.length > 1) {
+    const order = enExplorerOrderMap.get(parts[1])
+    if (order !== undefined) {
+      return { group: "en", order }
+    }
+  } else {
+    const order = ruExplorerOrderMap.get(parts[0])
+    if (order !== undefined) {
+      return { group: "ru", order }
+    }
+  }
+
+  return null
+}
+
+const explorerSort = (a: any, b: any) => {
+  const aOrder = getExplorerOrder(a)
+  const bOrder = getExplorerOrder(b)
+
+  if (aOrder && bOrder && aOrder.group === bOrder.group && aOrder.order !== bOrder.order) {
+    return aOrder.order - bOrder.order
+  }
+
+  if (aOrder && !bOrder) return -1
+  if (!aOrder && bOrder) return 1
+
+  return baseExplorerSort(a, b)
+}
+
 // components for pages that display a single page (e.g. a single note)
 export const defaultContentPageLayout: PageLayout = {
   beforeBody: [
@@ -54,6 +119,7 @@ export const defaultContentPageLayout: PageLayout = {
         if (node.slugSegment === "en" && node.isFolder) node.displayName = ""
         return node
       },
+      sortFn: explorerSort,
     }),
   ],
   right: [
@@ -94,6 +160,7 @@ export const defaultListPageLayout: PageLayout = {
         if (node.slugSegment === "en" && node.isFolder) node.displayName = ""
         return node
       },
+      sortFn: explorerSort,
     }),
   ],
   right: [],
