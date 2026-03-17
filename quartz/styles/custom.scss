@@ -1,3 +1,20 @@
 @use "./base.scss";
 
-// put your custom CSS here!
+// Typography tweaks
+// On mobile the gap before H2/H3 looked too large (esp. after paragraphs).
+article {
+  h2 {
+    margin-block-start: 1.4rem;
+    margin-block-end: 0.8rem;
+  }
+
+  h3 {
+    margin-block-start: 1.2rem;
+    margin-block-end: 0.6rem;
+  }
+}
+
+// Slightly tighter when a heading follows a paragraph/list directly
+article :where(p, ul, ol, blockquote) + :where(h2, h3) {
+  margin-block-start: 1.0rem;
+}
