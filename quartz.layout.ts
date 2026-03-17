@@ -27,18 +27,18 @@ const baseExplorerSort = (a: any, b: any) => {
 
 const ruExplorerOrder = [
   "Атомы",
-  "Миссия проекта",
   "Как я сюда пришёл",
   "Как устроено исследование",
   "Область исследования",
+  "Миссия",
 ]
 
 const enExplorerOrder = [
   "Atoms",
-  "Mission",
   "How I got here",
   "How the research is structured",
   "Scope of the research",
+  "Mission",
 ]
 
 const ruExplorerOrderMap = new Map(ruExplorerOrder.map((name, index) => [name, index]))
@@ -90,7 +90,7 @@ const explorerSort = (a: any, b: any) => {
   let bOrder = -1
 
   const ruOrder = ["Атомы", "Как я сюда пришёл", "Как устроено исследование", "Область исследования", "Миссия"]
-  const enOrder = ["Атомы", "Как я сюда пришёл", "Как устроено исследование", "Область исследования", "Миссия"]
+  const enOrder = ["Atoms", "How I got here", "How the research is structured", "Scope of the research", "Mission"]
 
   if (aParts[0] === "en" && aParts.length > 1) {
     aGroup = "en"
