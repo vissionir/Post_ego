@@ -89,23 +89,23 @@ const explorerSort = (a: any, b: any) => {
   let aOrder = -1
   let bOrder = -1
 
-  const ruOrder = ["Атомы", "Как я сюда пришёл", "Как устроено исследование", "Область исследования", "Миссия"]
+  const ruOrder = ["Атомы", "Как я сюда пришёл?", "Как устроено исследование", "Область исследования", "Миссия проекта"]
   const enOrder = ["Atoms", "How I got here", "How the research is structured", "Scope of the research", "Mission"]
 
   if (aParts[0] === "en" && aParts.length > 1) {
     aGroup = "en"
-    aOrder = enOrder.indexOf(aParts[1])
+    aOrder = enOrder.indexOf(a.displayName ?? aParts[1])
   } else {
     aGroup = "ru"
-    aOrder = ruOrder.indexOf(aParts[0])
+    aOrder = ruOrder.indexOf(a.displayName ?? aParts[0])
   }
 
   if (bParts[0] === "en" && bParts.length > 1) {
     bGroup = "en"
-    bOrder = enOrder.indexOf(bParts[1])
+    bOrder = enOrder.indexOf(b.displayName ?? bParts[1])
   } else {
     bGroup = "ru"
-    bOrder = ruOrder.indexOf(bParts[0])
+    bOrder = ruOrder.indexOf(b.displayName ?? bParts[0])
   }
 
   if (aOrder >= 0 && bOrder >= 0 && aGroup === bGroup && aOrder !== bOrder) {
