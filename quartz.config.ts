@@ -89,8 +89,8 @@ const config: QuartzConfig = {
       Plugin.Static(),
       Plugin.Favicon(),
       Plugin.NotFoundPage(),
-      // Comment out CustomOgImages to speed up build time
-      Plugin.CustomOgImages(),
+      // Disabled to avoid stale social-card cache mismatches in messengers
+      // Plugin.CustomOgImages(),
     ],
   },
 }
