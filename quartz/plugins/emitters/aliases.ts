@@ -25,23 +25,23 @@ function getLegacyPathAlias(file: VFile): FullSlug | null {
   return withoutExt as FullSlug
 }
 
-function getReadablePathAlias(slug: FullSlug): FullSlug | null {
+function getReadablePathAlias(slug: string): string | null {
   const readable = slug
     .split("/")
     .map((segment) => segment.replace(/-/g, " "))
-    .join("/") as FullSlug
+    .join("/")
 
   return readable === slug ? null : readable
 }
 
-function getYoNormalizedAlias(slug: FullSlug): FullSlug | null {
-  const normalized = slug.replace(/ё/g, "е").replace(/Ё/g, "Е") as FullSlug
+function getYoNormalizedAlias(slug: string): string | null {
+  const normalized = slug.replace(/ё/g, "е").replace(/Ё/g, "Е")
   return normalized === slug ? null : normalized
 }
 
 async function* processFile(ctx: BuildCtx, file: VFile) {
   const ogSlug = simplifySlug(file.data.slug!)
-  const aliasTargets = new Set(file.data.aliases ?? [])
+  const aliasTargets = new Set<string>(file.data.aliases ?? [])
   const legacyPathAlias = getLegacyPathAlias(file)
   if (legacyPathAlias) {
     aliasTargets.add(legacyPathAlias)

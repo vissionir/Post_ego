@@ -61,7 +61,6 @@ const getExplorerOrder = (node: any) => {
   return null
 }
 
-
 const explorerFilter = (node: any) => {
   const p = window.location.pathname
   const isEn = /\/en(\/|$)/.test(p)
@@ -74,50 +73,23 @@ const explorerFilter = (node: any) => {
 }
 
 const explorerSort = (a: any, b: any) => {
-  const aSlug = (a?.slug ?? "").replace(/\/index$/, "")
-  const bSlug = (b?.slug ?? "").replace(/\/index$/, "")
-  const aParts = aSlug.split("/")
-  const bParts = bSlug.split("/")
+  const aExplorerOrder = getExplorerOrder(a)
+  const bExplorerOrder = getExplorerOrder(b)
 
-  let aGroup: "ru" | "en" | null = null
-  let bGroup: "ru" | "en" | null = null
-  let aOrder = -1
-  let bOrder = -1
-
-  const ruOrder = ["Атомы", "Как я сюда пришёл?", "Как устроено исследование", "Область исследования", "Миссия проекта"]
-  const enOrder = ["Atoms", "How I got here", "How the research is structured", "Scope of the research", "Mission"]
-
-  if (aParts[0] === "en" && aParts.length > 1) {
-    aGroup = "en"
-    aOrder = enOrder.indexOf(a.displayName ?? aParts[1])
-  } else {
-    aGroup = "ru"
-    aOrder = ruOrder.indexOf(a.displayName ?? aParts[0])
+  if (aExplorerOrder && bExplorerOrder) {
+    if (
+      aExplorerOrder.group === bExplorerOrder.group &&
+      aExplorerOrder.order !== bExplorerOrder.order
+    ) {
+      return aExplorerOrder.order - bExplorerOrder.order
+    }
+  } else if (aExplorerOrder) {
+    return -1
+  } else if (bExplorerOrder) {
+    return 1
   }
 
-  if (bParts[0] === "en" && bParts.length > 1) {
-    bGroup = "en"
-    bOrder = enOrder.indexOf(b.displayName ?? bParts[1])
-  } else {
-    bGroup = "ru"
-    bOrder = ruOrder.indexOf(b.displayName ?? bParts[0])
-  }
-
-  if (aOrder >= 0 && bOrder >= 0 && aGroup === bGroup && aOrder !== bOrder) {
-    return aOrder - bOrder
-  }
-
-  if (aOrder >= 0 && bOrder < 0) return -1
-  if (aOrder < 0 && bOrder >= 0) return 1
-
-  if ((!a.isFolder && !b.isFolder) || (a.isFolder && b.isFolder)) {
-    return a.displayName.localeCompare(b.displayName, undefined, {
-      numeric: true,
-      sensitivity: "base",
-    })
-  }
-
-  return a.isFolder ? -1 : 1
+  return baseExplorerSort(a, b)
 }
 
 // components for pages that display a single page (e.g. a single note)
