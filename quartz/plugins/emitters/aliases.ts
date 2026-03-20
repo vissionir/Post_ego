@@ -34,6 +34,11 @@ function getReadablePathAlias(slug: FullSlug): FullSlug | null {
   return readable === slug ? null : readable
 }
 
+function getYoNormalizedAlias(slug: FullSlug): FullSlug | null {
+  const normalized = slug.replace(/ё/g, "е").replace(/Ё/g, "Е") as FullSlug
+  return normalized === slug ? null : normalized
+}
+
 async function* processFile(ctx: BuildCtx, file: VFile) {
   const ogSlug = simplifySlug(file.data.slug!)
   const aliasTargets = new Set(file.data.aliases ?? [])
@@ -46,6 +51,22 @@ async function* processFile(ctx: BuildCtx, file: VFile) {
     const readableAlias = getReadablePathAlias(aliasTarget)
     if (readableAlias) {
       aliasTargets.add(readableAlias)
+    }
+  }
+
+  const ogSlugYoAlias = getYoNormalizedAlias(ogSlug)
+  if (ogSlugYoAlias) {
+    aliasTargets.add(ogSlugYoAlias)
+    const readableOgSlugYoAlias = getReadablePathAlias(ogSlugYoAlias)
+    if (readableOgSlugYoAlias) {
+      aliasTargets.add(readableOgSlugYoAlias)
+    }
+  }
+
+  for (const aliasTarget of [...aliasTargets]) {
+    const yoAlias = getYoNormalizedAlias(aliasTarget)
+    if (yoAlias) {
+      aliasTargets.add(yoAlias)
     }
   }
 
