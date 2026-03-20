@@ -5,10 +5,35 @@ import { BuildCtx } from "../../util/ctx"
 import { VFile } from "vfile"
 import path from "path"
 
+function getLegacyPathAlias(file: VFile): FullSlug | null {
+  const relativePath = file.data.relativePath
+  if (!relativePath) return null
+
+  const ext = path.extname(relativePath)
+  const withoutExt = relativePath.slice(0, relativePath.length - ext.length).replace(/\\/g, "/")
+
+  // Folder indexes already resolve to their canonical directory paths.
+  if (withoutExt === "index" || withoutExt.endsWith("/index")) {
+    return null
+  }
+
+  const canonical = simplifySlug(file.data.slug!)
+  if (withoutExt === canonical) {
+    return null
+  }
+
+  return withoutExt as FullSlug
+}
+
 async function* processFile(ctx: BuildCtx, file: VFile) {
   const ogSlug = simplifySlug(file.data.slug!)
+  const aliasTargets = new Set(file.data.aliases ?? [])
+  const legacyPathAlias = getLegacyPathAlias(file)
+  if (legacyPathAlias) {
+    aliasTargets.add(legacyPathAlias)
+  }
 
-  for (const aliasTarget of file.data.aliases ?? []) {
+  for (const aliasTarget of aliasTargets) {
     const aliasTargetSlug = (
       isRelativeURL(aliasTarget)
         ? path.normalize(path.join(ogSlug, "..", aliasTarget))
