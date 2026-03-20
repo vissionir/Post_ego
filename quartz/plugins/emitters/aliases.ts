@@ -25,12 +25,28 @@ function getLegacyPathAlias(file: VFile): FullSlug | null {
   return withoutExt as FullSlug
 }
 
+function getReadablePathAlias(slug: FullSlug): FullSlug | null {
+  const readable = slug
+    .split("/")
+    .map((segment) => segment.replace(/-/g, " "))
+    .join("/") as FullSlug
+
+  return readable === slug ? null : readable
+}
+
 async function* processFile(ctx: BuildCtx, file: VFile) {
   const ogSlug = simplifySlug(file.data.slug!)
   const aliasTargets = new Set(file.data.aliases ?? [])
   const legacyPathAlias = getLegacyPathAlias(file)
   if (legacyPathAlias) {
     aliasTargets.add(legacyPathAlias)
+  }
+
+  for (const aliasTarget of [...aliasTargets]) {
+    const readableAlias = getReadablePathAlias(aliasTarget)
+    if (readableAlias) {
+      aliasTargets.add(readableAlias)
+    }
   }
 
   for (const aliasTarget of aliasTargets) {
