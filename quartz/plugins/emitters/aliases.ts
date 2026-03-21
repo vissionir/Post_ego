@@ -39,9 +39,19 @@ function getYoNormalizedAlias(slug: string): string | null {
   return normalized === slug ? null : normalized
 }
 
+function getTrailingSlashAlias(slug: string): FullSlug | null {
+  if (slug === "/" || slug.endsWith("/index")) {
+    return null
+  }
+
+  return `${slug}/index` as FullSlug
+}
+
 async function* processFile(ctx: BuildCtx, file: VFile) {
-  const ogSlug = simplifySlug(file.data.slug!)
+  const fullSlug = file.data.slug!
+  const ogSlug = simplifySlug(fullSlug)
   const aliasTargets = new Set<string>(file.data.aliases ?? [])
+  const redirectTargets = new Set<FullSlug>()
   const legacyPathAlias = getLegacyPathAlias(file)
   if (legacyPathAlias) {
     aliasTargets.add(legacyPathAlias)
@@ -77,6 +87,23 @@ async function* processFile(ctx: BuildCtx, file: VFile) {
         : aliasTarget
     ) as FullSlug
 
+    redirectTargets.add(aliasTargetSlug)
+    const trailingSlashAlias = getTrailingSlashAlias(aliasTargetSlug)
+    if (trailingSlashAlias) {
+      redirectTargets.add(trailingSlashAlias)
+    }
+  }
+
+  // Support accidental deep-link variants with a trailing slash,
+  // e.g. /Атомы/Эго/ should resolve to /Атомы/Эго on GitHub Pages.
+  if (fullSlug !== "index" && !fullSlug.endsWith("/index")) {
+    const canonicalTrailingSlashAlias = getTrailingSlashAlias(ogSlug)
+    if (canonicalTrailingSlashAlias) {
+      redirectTargets.add(canonicalTrailingSlashAlias)
+    }
+  }
+
+  for (const aliasTargetSlug of redirectTargets) {
     const redirUrl = resolveRelative(aliasTargetSlug, ogSlug)
     yield write({
       ctx,
