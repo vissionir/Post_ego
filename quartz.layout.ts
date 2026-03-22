@@ -9,58 +9,6 @@ export const sharedPageComponents: SharedLayout = {
   footer: Component.Footer(),
 }
 
-const baseExplorerSort = (a: any, b: any) => {
-  if ((!a.isFolder && !b.isFolder) || (a.isFolder && b.isFolder)) {
-    return a.displayName.localeCompare(b.displayName, undefined, {
-      numeric: true,
-      sensitivity: "base",
-    })
-  }
-
-  return a.isFolder ? -1 : 1
-}
-
-const ruExplorerOrder = [
-  "Атомы",
-  "Как я сюда пришёл",
-  "Как устроено исследование",
-  "Область исследования",
-  "Миссия",
-]
-
-const enExplorerOrder = [
-  "Atoms",
-  "How I got here",
-  "How the research is structured",
-  "Scope of the research",
-  "Mission",
-]
-
-const ruExplorerOrderMap = new Map(ruExplorerOrder.map((name, index) => [name, index]))
-const enExplorerOrderMap = new Map(enExplorerOrder.map((name, index) => [name, index]))
-
-const normalizeExplorerSlug = (slug?: string) => (slug ?? "").replace(/\/index$/, "")
-
-const getExplorerOrder = (node: any) => {
-  if (!node?.slug) return null
-  const normalized = normalizeExplorerSlug(node.slug)
-  const parts = normalized.split("/")
-
-  if (parts[0] === "en" && parts.length > 1) {
-    const order = enExplorerOrderMap.get(parts[1])
-    if (order !== undefined) {
-      return { group: "en", order }
-    }
-  } else {
-    const order = ruExplorerOrderMap.get(parts[0])
-    if (order !== undefined) {
-      return { group: "ru", order }
-    }
-  }
-
-  return null
-}
-
 const explorerFilter = (node: any) => {
   const p = window.location.pathname
   const isEn = /\/en(\/|$)/.test(p)
@@ -73,23 +21,68 @@ const explorerFilter = (node: any) => {
 }
 
 const explorerSort = (a: any, b: any) => {
-  const aExplorerOrder = getExplorerOrder(a)
-  const bExplorerOrder = getExplorerOrder(b)
+  const ruExplorerOrder = [
+    "Атомы",
+    "Как я сюда пришёл",
+    "Как устроено исследование",
+    "Область исследования",
+    "Миссия",
+  ]
 
-  if (aExplorerOrder && bExplorerOrder) {
-    if (
-      aExplorerOrder.group === bExplorerOrder.group &&
-      aExplorerOrder.order !== bExplorerOrder.order
-    ) {
-      return aExplorerOrder.order - bExplorerOrder.order
+  const enExplorerOrder = [
+    "Atoms",
+    "How I got here",
+    "How the research is structured",
+    "Scope of the research",
+    "Mission",
+  ]
+
+  const aParts = String(a?.slug ?? "")
+    .replace(/\/index$/, "")
+    .split("/")
+  const bParts = String(b?.slug ?? "")
+    .replace(/\/index$/, "")
+    .split("/")
+
+  let aGroup: "ru" | "en" | null = null
+  let bGroup: "ru" | "en" | null = null
+  let aOrder = -1
+  let bOrder = -1
+
+  if (aParts[0] === "en" && aParts.length > 1) {
+    aOrder = enExplorerOrder.indexOf(aParts[1])
+    if (aOrder !== -1) aGroup = "en"
+  } else {
+    aOrder = ruExplorerOrder.indexOf(aParts[0])
+    if (aOrder !== -1) aGroup = "ru"
+  }
+
+  if (bParts[0] === "en" && bParts.length > 1) {
+    bOrder = enExplorerOrder.indexOf(bParts[1])
+    if (bOrder !== -1) bGroup = "en"
+  } else {
+    bOrder = ruExplorerOrder.indexOf(bParts[0])
+    if (bOrder !== -1) bGroup = "ru"
+  }
+
+  if (aGroup && bGroup) {
+    if (aGroup === bGroup && aOrder !== bOrder) {
+      return aOrder - bOrder
     }
-  } else if (aExplorerOrder) {
+  } else if (aGroup) {
     return -1
-  } else if (bExplorerOrder) {
+  } else if (bGroup) {
     return 1
   }
 
-  return baseExplorerSort(a, b)
+  if ((!a.isFolder && !b.isFolder) || (a.isFolder && b.isFolder)) {
+    return a.displayName.localeCompare(b.displayName, undefined, {
+      numeric: true,
+      sensitivity: "base",
+    })
+  }
+
+  return a.isFolder ? -1 : 1
 }
 
 // components for pages that display a single page (e.g. a single note)
