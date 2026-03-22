@@ -220,15 +220,22 @@ async function setupExplorer(currentSlug: FullSlug) {
     }
     explorerUl.insertBefore(fragment, explorerUl.firstChild)
 
-    // restore explorer scrollTop position if it exists
-    const scrollTop = sessionStorage.getItem("explorerScrollTop")
-    if (scrollTop) {
-      explorerUl.scrollTop = parseInt(scrollTop)
+    const activeElement = explorerUl.querySelector(".active")
+
+    // Prefer the current active node over stale scroll state.
+    // This avoids an "empty explorer" effect on pages like the homepage,
+    // where there is no active item but an old deep scroll position may exist.
+    if (activeElement) {
+      activeElement.scrollIntoView({ block: "nearest" })
     } else {
-      // try to scroll to the active element if it exists
-      const activeElement = explorerUl.querySelector(".active")
-      if (activeElement) {
-        activeElement.scrollIntoView({ behavior: "smooth" })
+      const scrollTop = sessionStorage.getItem("explorerScrollTop")
+      const shouldResetScroll =
+        currentSlug === ("index" as FullSlug) || currentSlug === ("en/index" as FullSlug)
+
+      if (scrollTop && !shouldResetScroll) {
+        explorerUl.scrollTop = parseInt(scrollTop)
+      } else {
+        explorerUl.scrollTop = 0
       }
     }
 
