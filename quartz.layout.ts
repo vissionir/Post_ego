@@ -23,18 +23,18 @@ const explorerFilter = (node: any) => {
 const explorerSort = (a: any, b: any) => {
   const ruExplorerOrder = [
     "Атомы",
-    "Как я сюда пришёл",
     "Как устроено исследование",
     "Область исследования",
     "Миссия",
+    "Как я сюда пришёл",
   ]
 
   const enExplorerOrder = [
     "Atoms",
-    "How I got here",
     "How the research is structured",
     "Scope of the research",
     "Mission",
+    "How I got here",
   ]
 
   const aParts = String(a?.slug ?? "")

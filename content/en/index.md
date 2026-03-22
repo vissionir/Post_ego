@@ -10,7 +10,6 @@ This site is the public corpus of the Post-Ego project. It brings together mater
 ## Sections
 
 - [[en/Атомы|Atoms]]
-- [[en/Как я сюда пришёл|How I got here]]
 - [[en/Как устроено исследование|How the research is structured]]
 - [[en/Область исследования|Scope of the research]]
   - [[en/Область исследования#empirical-basis-of-the-research|Empirical basis of the research]]
@@ -21,6 +20,7 @@ This site is the public corpus of the Post-Ego project. It brings together mater
   - [[en/Область исследования#boundary-of-thinking|Boundary of thinking]]
   - [[en/Область исследования#critical-remark|Critical remark]]
 - [[en/Миссия|Mission]]
+- [[en/Как я сюда пришёл|How I got here]]
 
 ---
 
