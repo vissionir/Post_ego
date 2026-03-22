@@ -25,8 +25,8 @@ const explorerSort = (a: any, b: any) => {
     "Атомы",
     "Как устроено исследование",
     "Область исследования",
-    "Миссия",
-    "Как я сюда пришёл",
+    "Миссия проекта",
+    "Как я сюда пришёл?",
   ]
 
   const enExplorerOrder = [
@@ -43,6 +43,8 @@ const explorerSort = (a: any, b: any) => {
   const bParts = String(b?.slug ?? "")
     .replace(/\/index$/, "")
     .split("/")
+  const aLabel = String(a?.displayName ?? "").trim()
+  const bLabel = String(b?.displayName ?? "").trim()
 
   let aGroup: "ru" | "en" | null = null
   let bGroup: "ru" | "en" | null = null
@@ -50,18 +52,18 @@ const explorerSort = (a: any, b: any) => {
   let bOrder = -1
 
   if (aParts[0] === "en" && aParts.length > 1) {
-    aOrder = enExplorerOrder.indexOf(aParts[1])
+    aOrder = enExplorerOrder.indexOf(aLabel)
     if (aOrder !== -1) aGroup = "en"
   } else {
-    aOrder = ruExplorerOrder.indexOf(aParts[0])
+    aOrder = ruExplorerOrder.indexOf(aLabel)
     if (aOrder !== -1) aGroup = "ru"
   }
 
   if (bParts[0] === "en" && bParts.length > 1) {
-    bOrder = enExplorerOrder.indexOf(bParts[1])
+    bOrder = enExplorerOrder.indexOf(bLabel)
     if (bOrder !== -1) bGroup = "en"
   } else {
-    bOrder = ruExplorerOrder.indexOf(bParts[0])
+    bOrder = ruExplorerOrder.indexOf(bLabel)
     if (bOrder !== -1) bGroup = "ru"
   }
 
