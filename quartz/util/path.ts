@@ -169,7 +169,9 @@ export function pathToRoot(slug: FullSlug): RelativeURL {
 }
 
 export function resolveRelative(current: FullSlug, target: FullSlug | SimpleSlug): RelativeURL {
-  const res = joinSegments(pathToRoot(current), simplifySlug(target as FullSlug)) as RelativeURL
+  const simplifiedTarget = simplifySlug(target as FullSlug)
+  const folderTail = isFolderPath(target) ? "/" : ""
+  const res = (joinSegments(pathToRoot(current), simplifiedTarget) + folderTail) as RelativeURL
   return res
 }
 
@@ -228,13 +230,16 @@ export interface TransformOptions {
 
 export function transformLink(src: FullSlug, target: string, opts: TransformOptions): RelativeURL {
   let targetSlug = transformInternalLink(target)
+  const canonicalSlug = stripSlashes(targetSlug.slice(".".length))
+  let [targetCanonical, targetAnchor] = splitAnchor(canonicalSlug)
 
   if (opts.strategy === "relative") {
     return targetSlug as RelativeURL
   } else {
-    const folderTail = isFolderPath(targetSlug) ? "/" : ""
-    const canonicalSlug = stripSlashes(targetSlug.slice(".".length))
-    let [targetCanonical, targetAnchor] = splitAnchor(canonicalSlug)
+    const getFolderTail = (canonical: string) => {
+      const folderCandidate = `${stripSlashes(canonical)}/index` as FullSlug
+      return isFolderPath(targetSlug) || opts.allSlugs.includes(folderCandidate) ? "/" : ""
+    }
 
     if (opts.strategy === "shortest") {
       // if the file name is unique, then it's just the filename
@@ -246,7 +251,9 @@ export function transformLink(src: FullSlug, target: string, opts: TransformOpti
 
       // i18n: prefer same-language twin when duplicates exist
       const srcIsEn = src === ("en" as FullSlug) || src.startsWith("en/")
-      const preferred = matchingFileNames.filter((s) => (srcIsEn ? s.startsWith("en/") : !s.startsWith("en/")))
+      const preferred = matchingFileNames.filter((s) =>
+        srcIsEn ? s.startsWith("en/") : !s.startsWith("en/"),
+      )
       const candidates = preferred.length > 0 ? preferred : matchingFileNames
 
       // only match, just use it
@@ -259,17 +266,18 @@ export function transformLink(src: FullSlug, target: string, opts: TransformOpti
     // i18n: if target exists in the same language subtree, prefer it
     const srcIsEn = src === ("en" as FullSlug) || src.startsWith("en/")
     if (srcIsEn && !targetCanonical.startsWith("en/")) {
-      const enCandidate = (`en/${targetCanonical}` as FullSlug)
+      const enCandidate = `en/${targetCanonical}` as FullSlug
       if (opts.allSlugs.includes(enCandidate)) {
         targetCanonical = enCandidate
       }
     } else if (!srcIsEn && targetCanonical.startsWith("en/")) {
-      const ruCandidate = (targetCanonical.replace(/^en\//, "") as FullSlug)
+      const ruCandidate = targetCanonical.replace(/^en\//, "") as FullSlug
       if (opts.allSlugs.includes(ruCandidate)) {
         targetCanonical = ruCandidate
       }
     }
 
+    const folderTail = getFolderTail(targetCanonical)
     // if it's not unique, then it's the absolute path from the vault root
     return (joinSegments(pathToRoot(src), targetCanonical) + folderTail) as RelativeURL
   }
