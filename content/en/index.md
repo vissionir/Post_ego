@@ -27,3 +27,5 @@ This site is the public corpus of the Post-Ego project. It brings together mater
 If you want to know who I am and how this project relates to the rest of my work, see: <https://linktr.ee/vissionir>.
 
 Project updates also appear in the Telegram channel: <https://t.me/post_ego>.
+
+For contact, suggestions, and collaboration: [postegoglobal@gmail.com](mailto:postegoglobal@gmail.com).

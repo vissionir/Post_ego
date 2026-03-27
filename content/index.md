@@ -27,3 +27,5 @@ socialDescription: Корпус знаний о «Я» и его реально�
 Если вам интересно, кто я и как этот проект связан с остальной моей работой, это можно посмотреть здесь: [https://linktr.ee/vissionir](https://linktr.ee/vissionir).
 
 Материалы проекта также публикуются в Telegram-канале: [https://t.me/post_ego](https://t.me/post_ego)
+
+Для связи, предложений и сотрудничества: [postegoglobal@gmail.com](mailto:postegoglobal@gmail.com)
