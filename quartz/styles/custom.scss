@@ -18,3 +18,11 @@ article {
 article :where(p, ul, ol, blockquote) + :where(h2, h3) {
   margin-block-start: 1.0rem;
 }
+
+.tight-list-intro {
+  margin-bottom: 0.35rem;
+}
+
+.tight-list-intro + ul {
+  margin-top: 0.25rem;
+}
