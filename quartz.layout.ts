@@ -26,7 +26,6 @@ const explorerSort = (a: any, b: any) => {
     "Как устроено исследование",
     "Область исследования",
     "Миссия проекта",
-    "Материалы",
     "Как я сюда пришёл?",
   ]
 
@@ -35,7 +34,6 @@ const explorerSort = (a: any, b: any) => {
     "How the research is structured",
     "Scope of the research",
     "Mission",
-    "Materials",
     "How I got here",
   ]
 
