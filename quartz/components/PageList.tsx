@@ -6,6 +6,12 @@ import { GlobalConfiguration } from "../cfg"
 
 export type SortFn = (f1: QuartzPluginData, f2: QuartzPluginData) => number
 
+function compareAlphabetically(f1: QuartzPluginData, f2: QuartzPluginData) {
+  const f1Title = f1.frontmatter?.title.toLowerCase() ?? ""
+  const f2Title = f2.frontmatter?.title.toLowerCase() ?? ""
+  return f1Title.localeCompare(f2Title)
+}
+
 export function byDateAndAlphabetical(cfg: GlobalConfiguration): SortFn {
   return (f1, f2) => {
     // Sort by date/alphabetical
@@ -20,9 +26,7 @@ export function byDateAndAlphabetical(cfg: GlobalConfiguration): SortFn {
     }
 
     // otherwise, sort lexographically by title
-    const f1Title = f1.frontmatter?.title.toLowerCase() ?? ""
-    const f2Title = f2.frontmatter?.title.toLowerCase() ?? ""
-    return f1Title.localeCompare(f2Title)
+    return compareAlphabetically(f1, f2)
   }
 }
 
@@ -46,9 +50,22 @@ export function byDateAndAlphabeticalFolderFirst(cfg: GlobalConfiguration): Sort
     }
 
     // otherwise, sort lexographically by title
-    const f1Title = f1.frontmatter?.title.toLowerCase() ?? ""
-    const f2Title = f2.frontmatter?.title.toLowerCase() ?? ""
-    return f1Title.localeCompare(f2Title)
+    return compareAlphabetically(f1, f2)
+  }
+}
+
+export function byAlphabetical(): SortFn {
+  return (f1, f2) => compareAlphabetically(f1, f2)
+}
+
+export function byAlphabeticalFolderFirst(): SortFn {
+  return (f1, f2) => {
+    const f1IsFolder = isFolderPath(f1.slug ?? "")
+    const f2IsFolder = isFolderPath(f2.slug ?? "")
+    if (f1IsFolder && !f2IsFolder) return -1
+    if (!f1IsFolder && f2IsFolder) return 1
+
+    return compareAlphabetically(f1, f2)
   }
 }
 
@@ -58,7 +75,7 @@ type Props = {
 } & QuartzComponentProps
 
 export const PageList: QuartzComponent = ({ cfg, fileData, allFiles, limit, sort }: Props) => {
-  const sorter = sort ?? byDateAndAlphabeticalFolderFirst(cfg)
+  const sorter = sort ?? byAlphabeticalFolderFirst()
   let list = allFiles.sort(sorter)
   if (limit) {
     list = list.slice(0, limit)
