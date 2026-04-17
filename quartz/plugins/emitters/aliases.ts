@@ -87,6 +87,10 @@ async function* processFile(ctx: BuildCtx, file: VFile) {
         : aliasTarget
     ) as FullSlug
 
+    if (String(aliasTargetSlug) === ogSlug) {
+      continue
+    }
+
     redirectTargets.add(aliasTargetSlug)
     const trailingSlashAlias = getTrailingSlashAlias(aliasTargetSlug)
     if (trailingSlashAlias) {
