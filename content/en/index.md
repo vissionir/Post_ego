@@ -19,7 +19,7 @@ This site is the public corpus of the Post-Ego project. It gathers materials on 
   - [[en/Область исследования#project-boundaries|Project boundaries]]
   - [[en/Область исследования#boundary-of-thinking|Boundary of thinking]]
   - [[en/Область исследования#critical-remark|Critical remark]]
-- [[en/Миссия|Mission]]
+- [[en/Миссия проекта|Project Mission]]
 - [[en/Как я сюда пришёл|How I got here]]
 
 ---
