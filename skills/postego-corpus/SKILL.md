@@ -29,13 +29,14 @@ Always read `/Users/denisalesev/Projects/Post_ego/CANON.md` before substantial w
 ## Default Workflow
 
 1. Read the target atom.
-2. Read the atoms it links to.
-3. If the atom sits on a bearing line, inspect adjacent causal nodes too.
-4. Identify the level of the concept: presupposition, property, mechanism, process, transition, state, mode, model, consequence, etc.
-5. Reconstruct the local line as:
+2. Read every atom it links to before proposing or editing wording.
+3. Check that each linked atom's current definition still coheres with the proposed formulation.
+4. If the atom sits on a bearing line, inspect adjacent causal nodes too.
+5. Identify the level of the concept: presupposition, property, mechanism, process, transition, state, mode, model, consequence, etc.
+6. Reconstruct the local line as:
    cause -> mechanism -> consequence
-6. Check whether the proposed meaning is already expressed by the existing network.
-7. Prefer tightening an existing atom over adding a new one.
+7. Check whether the proposed meaning is already expressed by the existing network.
+8. Prefer tightening an existing atom over adding a new one.
 
 ## Non-Negotiables
 
@@ -47,6 +48,7 @@ Always read `/Users/denisalesev/Projects/Post_ego/CANON.md` before substantial w
 6. Do not treat `Предсказуемость` and `Базовая безопасность` as the same thing.
 7. Do not treat `Делегитимация ума` and `Смерть эго` as the same thing.
 8. Do not use deleted lines such as `Праджня` or `Путь знания` as current canonical foundations unless the user explicitly reopens them.
+9. Do not propose or publish atom wording without first checking the current definitions of the atoms it links to.
 
 ## User Preference Rules
 
