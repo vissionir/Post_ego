@@ -20,6 +20,8 @@ The current RU corpus is both:
 
 Do not treat the corpus as a loose note collection. Treat it as an internally assembled model with its own causal logic.
 
+Do not assume the corpus has a single center, master atom, or one privileged line that explains everything. Treat it as a network of bearing lines that intersect without collapsing into one hub.
+
 External philosophy, psychology, neuroscience, or spiritual traditions may help orientation, but they do not override the corpus.
 
 Always read `/Users/denisalesev/Projects/Post_ego/CANON.md` before substantial work.
@@ -28,7 +30,7 @@ Always read `/Users/denisalesev/Projects/Post_ego/CANON.md` before substantial w
 
 1. Read the target atom.
 2. Read the atoms it links to.
-3. If the atom sits on a core line, inspect adjacent causal nodes too.
+3. If the atom sits on a bearing line, inspect adjacent causal nodes too.
 4. Identify the level of the concept: presupposition, property, mechanism, process, transition, state, mode, model, consequence, etc.
 5. Reconstruct the local line as:
    cause -> mechanism -> consequence
@@ -59,7 +61,7 @@ Always read `/Users/denisalesev/Projects/Post_ego/CANON.md` before substantial w
 
 When asked to audit the corpus:
 
-1. Start from the core branches, not isolated atoms.
+1. Start from the bearing lines, not isolated atoms.
 2. Check for:
    - direct contradictions
    - duplicated meanings
