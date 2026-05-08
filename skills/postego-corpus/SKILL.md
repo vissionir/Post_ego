@@ -27,6 +27,7 @@ Do not assume the corpus has a single center, master atom, or one privileged lin
 External philosophy, psychology, neuroscience, or spiritual traditions may help orientation, but they do not override the corpus.
 
 Always read `/Users/denisalesev/Projects/Post_ego/CANON.md` before substantial work.
+Always work inside `/Users/denisalesev/Projects/Post_ego` when the user refers to the PostEgo corpus. Do not substitute sibling folders such as `/Users/denisalesev/Projects/🔬 PostEgo`, even if they contain related drafts, mirrors, or older working layers.
 
 ## Default Workflow
 
