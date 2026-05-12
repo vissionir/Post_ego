@@ -1,0 +1,48 @@
+---
+title: How the research is structured
+---
+
+The research is arranged as a network of atomic notes — atoms — organized as a semantic network.
+
+A semantic network is a structure of knowledge in which units of meaning appear as nodes and the links between them register [[Semantic thinking|semantic relations]].
+
+> **Atomic (adj.)** — logically indivisible: an atomic unit / atomic operation / atomic statement — something that either happens in full or does not happen at all.
+>
+> **[[Atoms|Atom]]** — the minimal indivisible semantic unit of the corpus.
+>
+> **Atomic note** — one fixed thought: one distinction, one observation, one conclusion, or one constraint. It is the smallest semantic unit.
+
+---
+
+A note does not try to explain the whole picture and is not a self-sufficient text.
+
+In this system, meaning is not contained inside an individual note. It emerges from the links between atomic notes — from the way they clarify, constrain, supplement, or redefine one another.
+
+If the outcome of the research is not, by its nature, a system, then it cannot honestly be presented as one. That is why the materials are organized not as a single theory but as a semantic network. This format does not impose a final picture of the world and does not prescribe a single route to understanding. Instead, it preserves a space of distinctions in which a reader can move freely from node to node, assembling their own configuration of understanding.
+
+That is why this site is structured as a network.
+
+> **There is no main text. There is no correct reading order.**
+> **There are only nodes and connections.**
+
+The format follows the logic of Zettelkasten: knowledge here is not accumulated as “chapters” but assembled as a network. Nodes do not exist on their own but only as part of a configuration.
+
+[[Fragmentary thinking|An isolated formulation]] may seem dry or incomplete until it appears in the context of neighboring nodes.
+
+It is important to understand that comprehension here does not arise at the moment of reading, but at the moment when a coherent picture begins to emerge.
+
+Individual notes are not meant to be “understood” in isolation. The effect of the research appears when the links between notes become visible and can be held.
+
+The notes are written, by default, for myself — as working nodes of thought rather than as explanations for a reader.
+
+If a formulation feels unclear or overly sharp, that only means it requires its context. In that case, it makes sense to look at the linked notes and assemble meaning through neighboring notions rather than search for an explanation inside a single text.
+
+Reading here presumes navigation, comparison, and returns.
+
+Understanding forms gradually — when the same connections begin to repeat in different places and can be held as stable distinctions.
+
+I maintain a denser, more interactive layer of work in the open Telegram channel. There you can ask questions, discuss notes, and follow the development of the research:
+
+https://t.me/post_ego
+
+This format was chosen not for aesthetic reasons, but because it was the only way to preserve the result of the research without distortion: without reducing it to a single theory and without losing connectedness.

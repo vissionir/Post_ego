@@ -2,4 +2,4 @@
 title: Management
 ---
 
-Management is a form of [[Влияние|influence]] in which the subject realizes their [[Миссия|mission]] through [[Вовлечение|the involvement]] of others in its realization.
+Management is a form of [[Influence|influence]] in which the subject realizes their [[Mission|mission]] through [[Involvement|the involvement]] of others in its realization.

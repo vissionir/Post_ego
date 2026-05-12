@@ -1,0 +1,80 @@
+---
+title: Project Mission
+---
+
+The mission of Post-Ego is to shape a [[Culture|cultural form]] of awareness and make it a recognizable form within human culture.
+
+Post-Ego works with a key transition: moving awareness out of the realm of [[Spirituality|spiritual experience]] and into the realm of culture.
+
+Awareness is treated here not as a private inner episode and not as yet another interpretation of spirituality, but as a human phenomenon capable of taking on a cultural form — one that can be described, recognized, transmitted, and reproduced.
+
+The project seeks to shape a form of awareness that can exist in the world as a durable human practice, a cultural position, and an intellectual tradition.
+
+This is not only a matter of describing experience. It is about shaping a **reproducible form** that can be carried through language, practice, shared environments, and cultural mechanisms while preserving its inner integrity and distinctness.
+
+## The key transition
+
+Historically, awareness has almost always existed within spiritual traditions — as part of religious practices, schools of thought, or individual paths of self-inquiry.
+
+Post-Ego works on another level of the task.
+
+It is about **moving awareness from the domain of spiritual experience into the domain of culture** — into a space where it can exist as a distinct human stance, a mode of thinking, and a form of life.
+
+Such a move means that awareness ceases to be merely an inner state of particular people and begins to exist as a **cultural phenomenon** with its own language, body of knowledge, tradition, modes of transmission, and an environment of its carriers.
+
+That transition — from spiritual practice to cultural form — is the project’s central task.
+
+## Ontological level
+
+At the deepest level, the project aims at allowing awareness to become a cultural form of human reality.
+
+That implies that awareness ceases to be treated only as an individual experience and begins to exist in culture as a distinguishable human position — a way of perceiving, thinking, and acting.
+
+The foundation of this form is a discernible core of awareness — the state of [[Presence|presence]].
+
+Such a core forms the basis for a new cultural position in which awareness is no longer an episodic state, but a stable way of relating to reality and to one’s own life.
+
+## Institutional level
+
+For such a form to exist and reproduce itself, it needs structure.
+
+Post-Ego is working to assemble that structure by gathering:
+
+- language and a system of distinctions;
+- a body of texts and knowledge;
+- ways of discriminating experience;
+- principles and methods for studying consciousness;
+- a cultural code and symbols;
+- a community capable of carrying it and mechanisms of transmission.
+
+This work is aimed at enabling awareness to exist not only as the private experience of isolated individuals, but as a **durable cultural structure** capable of being passed across generations and reproduced in different contexts.
+
+The foundation of this work is the study of consciousness and a drive toward a [[Coherence|coherent]] architecture of understanding in which experience, language, and practice form an internally consistent system.
+
+Here, [[Coherence|coherence]] is not only a methodological requirement, but a value: the project seeks a lattice of distinctions whose elements do not contradict one another but fit together into a connected and resilient model.
+
+## Cultural level
+
+For awareness to exist in culture, it must appear not only in texts and explanations, but in cultural forms as well.
+
+That is why Post-Ego engages in cultural production, creating visual motifs, symbols, memes, literary texts, and other forms of expression through which awareness becomes visible and recognizable in the cultural field.
+
+Through such forms, a cultural layer emerges in which awareness begins to exist as a living cultural phenomenon rather than merely an intellectual concept.
+
+This allows awareness to stop dissolving into [[Esotericism|esotericism]], spiritual marketing, and random interpretations, and to take its own place in culture as an independent human stance.
+
+## Social level
+
+Once such a cultural form begins to take shape, another level emerges — an environment of people of awareness.
+
+Post-Ego becomes a space in which people for whom awareness is not an interest or a topic of conversation, but a real mode of experiencing life, can recognize one another, build a common language, and work together.
+
+Within this environment, a **community capable of carrying a culture of awareness** gradually begins to form — people for whom this mode of perception and action becomes a natural way of organizing life.
+
+In that sense, Post-Ego functions as a **center of gravity and a node around which such an environment can form** — a place where recognition, convergence, and collaboration among people of awareness become possible.
+
+This is how a new form of human cooperation comes into being.
+
+It is built not on origin, ideology, or belonging to a tradition, but on a shared level of discernment, responsibility, and practical action.
+
+Within such an environment, awareness ceases to be only an inner experience and becomes the basis for joint activity, practical work, and durable forms of cooperation.

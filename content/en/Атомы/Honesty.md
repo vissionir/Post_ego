@@ -1,0 +1,5 @@
+---
+title: Honesty
+---
+
+Honesty is a state in which what is conveyed is not distorted relative to actual perception and [[Intention|intention]].

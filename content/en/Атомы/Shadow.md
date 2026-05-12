@@ -1,0 +1,5 @@
+---
+title: Shadow
+---
+
+Shadow is the parts of the psyche that are not recognized as "one's own" and are therefore displaced out of [[The conscious|the conscious]].

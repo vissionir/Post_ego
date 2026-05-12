@@ -1,0 +1,5 @@
+---
+title: Flow State
+---
+
+The flow state is a mode of action in which attention becomes fully engaged in the process; it is a particular manifestation of [[Wu-wei|wu-wei]].
