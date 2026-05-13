@@ -2,4 +2,4 @@
 title: Self-Acceptance
 ---
 
-Self-acceptance is a [[Presupposition|presupposition]] according to which any of the subject's own experiences, states, and aspects are [[Acceptance|accepted]] without requiring their change, suppression, or conformity.
+Self-acceptance is a [[Presupposition|presupposition]] according to which any of the subject's own experiences, states, and aspects are [[Acceptance|accepted]] without requiring their change, suppression, or conformity; it is a necessary step toward [[Wholeness|wholeness]].
