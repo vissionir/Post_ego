@@ -2,4 +2,4 @@
 title: Self-Coercion
 ---
 
-Self-coercion is a form of [[Inner Coercion|inner coercion]] in which [[The conscious|the conscious]] suppresses [[Resistance|resistance]] in order to continue action without resolving the [[Inner Conflict|inner conflict]].
+Self-coercion is a form of [[Inner Coercion|inner coercion]] in which [[The conscious|the conscious]] suppresses [[Resistance|resistance]] in order to continue action without resolving the [[Inner Conflict|inner conflict]]; it is opposite to [[Inner Freedom|inner freedom]].
