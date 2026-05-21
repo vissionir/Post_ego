@@ -8,6 +8,7 @@ type AiNode = {
   id: string
   title: string
   type: "atom" | "page"
+  language: "ru" | "en"
   path: string
   url: string
   summary: string
@@ -438,6 +439,10 @@ function atomId(title: string): string {
     .replace(/^-+|-+$/g, "")
 }
 
+function knowledgeId(node: AiNode): string {
+  return `${node.language}-${atomId(node.title)}`
+}
+
 function titleWords(title: string): string[] {
   return title
     .split(/[\s,;:()«»"—-]+/)
@@ -483,6 +488,7 @@ function buildAtomsKnowledge(atomNodes: AiNode[]): string {
 
 Этот файл подготовлен специально для Knowledge в Custom GPT.
 Он не является страницей сайта. Его задача — помочь GPT находить атомы карты Post-Ego по обычным человеческим запросам.
+Внутри файла есть русские и английские атомы. Отвечай на языке пользователя, но опирайся на точный атом и его связи.
 
 Правило использования:
 - сначала найди релевантные атомы по названию, синонимам, блоку "Когда использовать" и примерам запросов;
@@ -500,8 +506,9 @@ function buildAtomsKnowledge(atomNodes: AiNode[]): string {
 
       return `# ${node.title}
 
-ID: ${atomId(node.title)}
+ID: ${knowledgeId(node)}
 Тип: атом
+Язык: ${node.language}
 Синонимы: ${synonyms.join(", ")}
 Связанные узлы: ${links}
 URL: ${node.url}
@@ -540,13 +547,14 @@ function buildIndexKnowledge(atomNodes: AiNode[]): string {
     .map((node) => {
       const synonyms = atomSynonyms(node).slice(0, 8).join(", ")
       const links = node.links.slice(0, 8).join(", ")
-      return `- ${node.title} (${atomId(node.title)}): синонимы: ${synonyms}${links ? `; связанные узлы: ${links}` : ""}.`
+      return `- ${node.title} (${knowledgeId(node)}, язык: ${node.language}): синонимы: ${synonyms}${links ? `; связанные узлы: ${links}` : ""}.`
     })
     .join("\n")
 
   return `# Индекс карты Post-Ego
 
 Этот файл — навигационная карта для GPT. Используй его перед ответом, чтобы выбрать релевантные атомы.
+Индекс включает русские и английские атомы в одном файле, чтобы не плодить отдельные Knowledge-файлы для каждого языка.
 
 ## Маршруты по обычным запросам
 
@@ -607,6 +615,7 @@ function buildCorpusKnowledge(pageNodes: AiNode[]): string {
       return `# ${node.title}
 
 Тип: страница корпуса
+Язык: ${node.language}
 URL: ${node.url}
 Связанные узлы: ${links}
 
@@ -620,7 +629,7 @@ ${node.body}`
 
   return `# Корпус Post-Ego: основные страницы
 
-Этот файл дополняет атомы. Используй его, когда пользователь спрашивает не отдельное понятие, а проект целиком: миссию, устройство исследования, область исследования, вход в карту, Нейронавигатор или общий смысл Post-Ego.
+Этот файл дополняет атомы. Используй его, когда пользователь спрашивает не отдельное понятие, а проект целиком: миссию, устройство исследования, область исследования, вход в карту, Нейронавигатор или общий смысл Post-Ego. В файле могут быть русские и английские страницы корпуса.
 
 Правило использования:
 - если вопрос про "миссию", "проект", "корпус", "исследование", "сайт", "зачем это нужно" или "что такое Post-Ego", сначала смотри этот файл;
@@ -645,7 +654,7 @@ function buildGptSetupGuide(): string {
 3. post-ego-corpus.md
 4. post-ego-core.md
 
-Лучше не грузить весь сайт архивом. GPT должен искать не страницы, а специально подготовленные атомы с синонимами, связанными узлами и примерами запросов.
+Лучше не грузить весь сайт архивом. GPT должен искать не сырые страницы, а специально подготовленные файлы с атомами, синонимами, связанными узлами, страницами корпуса и примерами запросов. Русская и английская версии лежат внутри тех же файлов, чтобы не плодить отдельные загрузки.
 
 ## Instructions
 
@@ -661,7 +670,7 @@ ${siteBaseUrl}/ai/openapi.yaml
 
 Но для качества ответов основной упор должен быть на Knowledge-файлы:
 - post-ego-index.md выбирает релевантные атомы;
-- post-ego-atoms.md даёт определения и связи;
+- post-ego-atoms.md даёт определения и связи на русском и английском;
 - post-ego-corpus.md даёт основные страницы проекта, включая миссию;
 - post-ego-core.md держит общую рамку модели.
 
@@ -716,11 +725,16 @@ function buildNode(filePath: string): AiNode {
   const title = typeof parsed.data.title === "string" ? parsed.data.title : fallbackTitle
   const body = cleanMarkdown(parsed.content)
   const truncated = body.length > maxBodyLength
+  const language = relativePath.startsWith(`en${path.sep}`) ? "en" : "ru"
+  const isAtom =
+    relativePath.startsWith(`Атомы${path.sep}`) ||
+    relativePath.startsWith(`en${path.sep}Атомы${path.sep}`)
 
   return {
     id: nodeId(relativePath),
     title,
-    type: relativePath.startsWith(`Атомы${path.sep}`) ? "atom" : "page",
+    type: isAtom ? "atom" : "page",
+    language,
     path: relativePath.split(path.sep).join("/"),
     url: pageUrl(relativePath),
     summary: summarize(parsed.content),
@@ -748,10 +762,10 @@ const nodes = walk(contentDir)
     if (a.type !== b.type) return a.type === "page" ? -1 : 1
     return a.title.localeCompare(b.title, "ru")
   })
-const atomNodes = nodes.filter((node) => node.type === "atom" && node.path !== "Атомы/index.md")
-const primaryPageNodes = nodes.filter(
-  (node) => node.type === "page" && !node.path.startsWith("en/"),
+const atomNodes = nodes.filter(
+  (node) => node.type === "atom" && !node.path.endsWith("Атомы/index.md"),
 )
+const primaryPageNodes = nodes.filter((node) => node.type === "page")
 
 for (const node of nodes) {
   writeJson(path.join(nodesDir, `${node.id}.json`), {
@@ -786,10 +800,11 @@ writeJson(path.join(aiDir, "search-index.json"), {
   generated_at: generatedAt,
   source: siteBaseUrl,
   count: nodes.length,
-  nodes: nodes.map(({ id, title, type, path: nodePath, url, summary, links }) => ({
+  nodes: nodes.map(({ id, title, type, language, path: nodePath, url, summary, links }) => ({
     id,
     title,
     type,
+    language,
     path: nodePath,
     url,
     summary,
@@ -869,8 +884,8 @@ Post-Ego не является религией, психотерапией, д�
 
 Главный источник ответа — загруженные Knowledge-файлы:
 1. post-ego-index.md — навигационный индекс: помогает выбрать релевантные атомы по обычному языку пользователя.
-2. post-ego-atoms.md — основной корпус атомов: определения, связи, синонимы, примеры запросов и тексты атомов.
-3. post-ego-corpus.md — основные страницы проекта: миссия, устройство исследования, область исследования, вход в карту, Нейронавигатор.
+2. post-ego-atoms.md — основной корпус атомов на русском и английском: определения, связи, синонимы, примеры запросов и тексты атомов.
+3. post-ego-corpus.md — основные страницы проекта на русском и английском: миссия, устройство исследования, область исследования, вход в карту, Нейронавигатор.
 4. post-ego-core.md — базовая рамка модели и правила ответа.
 
 Всегда сначала ищи ответ внутри этих файлов.
