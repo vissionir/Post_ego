@@ -863,7 +863,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
+                $ref: "#/components/schemas/Manifest"
   /ai/search-index.json:
     get:
       operationId: getPostEgoSearchIndex
@@ -875,7 +875,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
+                $ref: "#/components/schemas/SearchIndex"
   /ai/nodes/{id}.json:
     get:
       operationId: getPostEgoNode
@@ -893,7 +893,134 @@ paths:
           content:
             application/json:
               schema:
-                type: object
+                $ref: "#/components/schemas/NodeResponse"
+components:
+  schemas:
+    Manifest:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        source:
+          type: string
+        generated_at:
+          type: string
+        version:
+          type: string
+        count:
+          type: integer
+        entrypoints:
+          type: object
+          properties:
+            manifest:
+              type: string
+            search_index:
+              type: string
+            node:
+              type: string
+            openapi:
+              type: string
+            custom_gpt_instructions:
+              type: string
+            knowledge_atoms:
+              type: string
+            knowledge_index:
+              type: string
+            knowledge_corpus:
+              type: string
+            knowledge_core:
+              type: string
+            gpt_setup:
+              type: string
+          additionalProperties:
+            type: string
+      additionalProperties: true
+    SearchIndex:
+      type: object
+      properties:
+        generated_at:
+          type: string
+        source:
+          type: string
+        count:
+          type: integer
+        nodes:
+          type: array
+          items:
+            $ref: "#/components/schemas/NodeSummary"
+      additionalProperties: true
+    NodeSummary:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        type:
+          type: string
+          enum:
+            - atom
+            - page
+        language:
+          type: string
+          enum:
+            - ru
+            - en
+        path:
+          type: string
+        url:
+          type: string
+        summary:
+          type: string
+        links:
+          type: array
+          items:
+            type: string
+      additionalProperties: true
+    NodeResponse:
+      type: object
+      properties:
+        generated_at:
+          type: string
+        source:
+          type: string
+        node:
+          $ref: "#/components/schemas/AiNode"
+      additionalProperties: true
+    AiNode:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        type:
+          type: string
+          enum:
+            - atom
+            - page
+        language:
+          type: string
+          enum:
+            - ru
+            - en
+        path:
+          type: string
+        url:
+          type: string
+        summary:
+          type: string
+        links:
+          type: array
+          items:
+            type: string
+        body:
+          type: string
+        truncated:
+          type: boolean
+      additionalProperties: true
 `,
 )
 
