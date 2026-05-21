@@ -44,6 +44,12 @@ function getTrailingSlashAlias(slug: string): FullSlug | null {
     return null
   }
 
+  // Keep Neuronavigator as a regular page in the explorer and avoid
+  // generating folder-style redirects that shadow extensionless URLs locally.
+  if (slug === "Нейронавигатор" || slug === "en/Нейронавигатор") {
+    return null
+  }
+
   return `${slug}/index` as FullSlug
 }
 

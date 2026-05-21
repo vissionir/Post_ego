@@ -35,6 +35,9 @@ jobs:
       - name: Build site
         run: npx quartz build
 
+      - name: Build AI context
+        run: npm run build:ai
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:

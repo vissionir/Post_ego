@@ -16,7 +16,7 @@ article {
 
 // Slightly tighter when a heading follows a paragraph/list directly
 article :where(p, ul, ol, blockquote) + :where(h2, h3) {
-  margin-block-start: 1.0rem;
+  margin-block-start: 1rem;
 }
 
 .tight-list-intro {

@@ -23,6 +23,7 @@ const explorerFilter = (node: any) => {
 const explorerSort = (a: any, b: any) => {
   const ruExplorerOrder = [
     "Атомы",
+    "Нейронавигатор",
     "Как устроено исследование",
     "Область исследования",
     "Миссия проекта",
@@ -31,6 +32,7 @@ const explorerSort = (a: any, b: any) => {
 
   const enExplorerOrder = [
     "Atoms",
+    "Neuronavigator",
     "How the research is structured",
     "Scope of the research",
     "Mission",
