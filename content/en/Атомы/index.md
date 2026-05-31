@@ -1,6 +1,7 @@
 ---
 title: Atoms
 aliases:
+  - Atoms
   - en/Atoms
   - en/Атомы/Atoms
 ---
