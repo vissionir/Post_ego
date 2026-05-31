@@ -35,7 +35,7 @@ const explorerSort = (a: any, b: any) => {
     "Neuronavigator",
     "How the research is structured",
     "Scope of the research",
-    "Mission",
+    "Project Mission",
     "How I got here",
   ]
 
@@ -118,6 +118,7 @@ export const defaultContentPageLayout: PageLayout = {
       filterFn: explorerFilter,
       mapFn: (node) => {
         if (node.slugSegment === "en" && node.isFolder) node.displayName = ""
+        if (node.slug === "en/Атомы/index" && node.isFolder) node.displayName = "Atoms"
         return node
       },
       sortFn: explorerSort,
@@ -150,6 +151,7 @@ export const defaultListPageLayout: PageLayout = {
       filterFn: explorerFilter,
       mapFn: (node) => {
         if (node.slugSegment === "en" && node.isFolder) node.displayName = ""
+        if (node.slug === "en/Атомы/index" && node.isFolder) node.displayName = "Atoms"
         return node
       },
       sortFn: explorerSort,

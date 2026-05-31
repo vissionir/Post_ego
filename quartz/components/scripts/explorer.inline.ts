@@ -209,9 +209,16 @@ async function setupExplorer(currentSlug: FullSlug) {
     const explorerUl = explorer.querySelector(".explorer-ul")
     if (!explorerUl) continue
 
+    const rootChildren =
+      trie.children.length === 1 &&
+      trie.children[0].isFolder &&
+      trie.children[0].displayName.trim() === ""
+        ? trie.children[0].children
+        : trie.children
+
     // Create and insert new content
     const fragment = document.createDocumentFragment()
-    for (const child of trie.children) {
+    for (const child of rootChildren) {
       const node = child.isFolder
         ? createFolderNode(currentSlug, child, opts)
         : createFileNode(currentSlug, child)
