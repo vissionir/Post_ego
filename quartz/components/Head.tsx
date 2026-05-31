@@ -35,6 +35,50 @@ export default (() => {
       (e) => e.name === CustomOgImagesEmitterName,
     )
     const ogImageDefaultPath = `https://${cfg.baseUrl}/static/og-image.png?v=20260318-1`
+    const languageRoutingScript = `(() => {
+  try {
+    const basePath = ${JSON.stringify(path)}
+    const key = "siteLang"
+    const pathname = window.location.pathname
+
+    // Persist language choice on click (works for all pages)
+    window.addEventListener("click", (e) => {
+      const t = e.target
+      if (!(t instanceof Element)) return
+      const a = t.closest("a[data-set-lang]")
+      if (!a) return
+      const lang = a.getAttribute("data-set-lang")
+      if (lang) localStorage.setItem(key, lang)
+    })
+
+    const stored = localStorage.getItem(key)
+
+    // Normalize accidental trailing slash on atom deep links (e.g. /Атомы/Миссия/)
+    if (pathname.startsWith(basePath) && pathname.endsWith("/")) {
+      const rel = pathname.slice(basePath.length)
+      const parts = rel.split("/").filter(Boolean)
+      const depth = parts.length
+      const shouldNormalize = parts[0] === "en" ? depth >= 3 : depth >= 2
+      if (shouldNormalize) {
+        window.location.replace(pathname.replace(/\\/+$/, "") + window.location.search + window.location.hash)
+        return
+      }
+    }
+
+    const isRoot = pathname === basePath || pathname === basePath + "index.html"
+
+    // Auto-redirect ONLY on the root entrypoint
+    if (isRoot) {
+      const desired = stored || ((navigator.language || "").toLowerCase().startsWith("ru") ? "ru" : "en")
+      if (!stored) localStorage.setItem(key, desired)
+
+      const enRoot = basePath.endsWith("/") ? basePath + "en/" : basePath + "/en/"
+      if (desired === "en" && pathname !== enRoot) {
+        window.location.replace(enRoot)
+      }
+    }
+  } catch (_) {}
+})()`
 
     return (
       <head>
@@ -56,7 +100,7 @@ export default (() => {
         {/* Language routing (RU at /, EN at /en/) */}
         <script
           dangerouslySetInnerHTML={{
-            __html: `(() => {\n  try {\n    const basePath = ${JSON.stringify(path)}\n    const key = "siteLang"\n    const pathname = window.location.pathname\n\n    // Persist language choice on click (works for all pages)\n    window.addEventListener(\"click\", (e) => {\n      const t = e.target\n      if (!(t instanceof Element)) return\n      const a = t.closest(\"a[data-set-lang]\")\n      if (!a) return\n      const lang = a.getAttribute(\"data-set-lang\")\n      if (lang) localStorage.setItem(key, lang)\n    })\n\n    const stored = localStorage.getItem(key)\n\n    // Normalize accidental trailing slash on deep links (e.g. /Атомы/Миссия/)\n    if (pathname.startsWith(basePath) && pathname.endsWith(\"/\")) {\n      const rel = pathname.slice(basePath.length)\n      const depth = rel.split(\"/\").filter(Boolean).length\n      if (depth >= 2) {\n        window.location.replace(pathname.replace(/\\/+$/, \"\") + window.location.search + window.location.hash)\n        return\n      }\n    }\n\n    const isRoot = pathname === basePath || pathname === basePath + \"index.html\"\n\n    // Auto-redirect ONLY on the root entrypoint\n    if (isRoot) {\n      const desired = stored || ((navigator.language || \"\").toLowerCase().startsWith(\"ru\") ? \"ru\" : \"en\")\n      if (!stored) localStorage.setItem(key, desired)\n\n      const enRoot = basePath.endsWith(\"/\") ? basePath + \"en/\" : basePath + \"/en/\"\n      if (desired === \"en\" && pathname !== enRoot) {\n        window.location.replace(enRoot)\n      }\n    }\n  } catch (_) {}\n})()`,
+            __html: languageRoutingScript,
           }}
         />
 
