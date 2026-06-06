@@ -2,4 +2,4 @@
 title: Escapism
 ---
 
-Escapism is the avoidance of current experience through leaving the “here and now” for more predictable or controllable states, allowing one not to come into contact with a [[Complex|complex]]; it is based on [[Fear of the Present|fear of the present]], is a behavioral expression of [[Anxiety|anxiety]], and is opposed to [[Presence|presence]].
+Escapism is [[Avoidance|avoidance]] of current experience through leaving the “here and now” for more predictable or controllable states, allowing one not to come into contact with a [[Complex|complex]]; it is a behavioral expression of [[Anxiety|anxiety]] and is opposed to [[Presence|presence]].
