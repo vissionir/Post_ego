@@ -1,5 +1,0 @@
----
-title: Warrior state
----
-
-Warrior state is a way of living in which a person takes responsibility for every step and acts without self-pity or personal importance; they do not seek safety, excuses, or guarantees, but act precisely and in time, with the knowledge of death. In [[Carlos Castaneda|Castaneda]], a warrior is one who refuses to be a victim of circumstances and thereby gains freedom of action.
