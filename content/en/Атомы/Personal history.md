@@ -4,4 +4,4 @@ related:
   - "[[Carlos Castaneda]]"
 ---
 
-Personal history is a narrative about the past used by the [[Mind|mind]] as a basis of identity; as long as a person relies on this narrative, the [[Assemblage point|assemblage point]] remains fixed.
+Personal history is an [[Illusion of the Mind|illusion of the mind]] in which a narrative about the past is used by the [[Mind|mind]] as the basis of [[Personality|personality]], obstructing the [[Mobility of the Assemblage Point|mobility of the assemblage point]].
