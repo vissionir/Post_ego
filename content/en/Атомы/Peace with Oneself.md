@@ -2,4 +2,4 @@
 title: Peace with Oneself
 ---
 
-Peace with oneself is a position arising through [[Integration|integration]], in which parts repressed into the [[Shadow|shadow]] are recognized as one's own and do not create a current [[Inner Conflict|inner conflict]].
+Peace with oneself is a state of inner coherence between [[The conscious|the conscious]] and [[The unconscious|the unconscious]], grounded in [[Trust in the Mind|trust in the mind]] and [[Self-Trust|self-trust]] and characterized by the absence of [[Inner Conflict|inner conflict]].
