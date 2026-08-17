@@ -9,6 +9,8 @@ import { QuartzPluginData } from "../../plugins/vfile"
 import { ComponentChildren } from "preact"
 import { concatenateResources } from "../../util/resources"
 import { trieFromAllFiles } from "../../util/ctx"
+// @ts-ignore
+import sortScript from "../scripts/pageListSort.inline"
 
 interface FolderContentOptions {
   /**
@@ -101,6 +103,8 @@ export default ((opts?: Partial<FolderContentOptions>) => {
         ? fileData.description
         : htmlToJsx(fileData.filePath!, tree)
     ) as ComponentChildren
+    const isEnglishAtoms = fileData.slug === "en/Атомы/index"
+    const isAtomsFolder = fileData.slug === "Атомы/index" || isEnglishAtoms
 
     return (
       <div class="popover-hint">
@@ -113,6 +117,27 @@ export default ((opts?: Partial<FolderContentOptions>) => {
               })}
             </p>
           )}
+          {isAtomsFolder && (
+            <div
+              class="page-list-sort"
+              data-page-list-sort
+              data-sort-locale={isEnglishAtoms ? "en" : "ru"}
+            >
+              <span>{isEnglishAtoms ? "Sort:" : "Сортировка:"}</span>
+              <div
+                class="page-list-sort-options"
+                role="group"
+                aria-label={isEnglishAtoms ? "Sort atoms" : "Сортировка атомов"}
+              >
+                <button type="button" data-sort-mode="alphabetical" aria-pressed="true">
+                  {isEnglishAtoms ? "Alphabetical" : "По алфавиту"}
+                </button>
+                <button type="button" data-sort-mode="modified" aria-pressed="false">
+                  {isEnglishAtoms ? "Last modified" : "По дате изменения"}
+                </button>
+              </div>
+            </div>
+          )}
           <div>
             <PageList {...listProps} />
           </div>
@@ -122,5 +147,6 @@ export default ((opts?: Partial<FolderContentOptions>) => {
   }
 
   FolderContent.css = concatenateResources(style, PageList.css)
+  FolderContent.afterDOMLoaded = sortScript
   return FolderContent
 }) satisfies QuartzComponentConstructor
