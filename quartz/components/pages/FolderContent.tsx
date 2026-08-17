@@ -27,7 +27,7 @@ const defaultOptions: FolderContentOptions = {
 }
 
 function atomCountLabel(count: number, isEnglish: boolean) {
-  if (isEnglish) return `${count} atoms`
+  if (isEnglish) return `${count} atoms.`
 
   const lastTwo = count % 100
   const last = count % 10
@@ -40,7 +40,7 @@ function atomCountLabel(count: number, isEnglish: boolean) {
           ? "атома"
           : "атомов"
 
-  return `${count} ${noun}`
+  return `${count} ${noun}.`
 }
 
 export default ((opts?: Partial<FolderContentOptions>) => {
@@ -134,26 +134,28 @@ export default ((opts?: Partial<FolderContentOptions>) => {
                   {atomCountLabel(allPagesInFolder.length, isEnglishAtoms)}
                 </p>
               )}
-              <label class="page-list-sort">
-                <svg aria-hidden="true" viewBox="0 0 16 16" class="page-list-sort-icon">
-                  <path d="M5 3v10M2.5 5.5 5 3l2.5 2.5M11 13V3m-2.5 7.5L11 13l2.5-2.5" />
-                </svg>
-                <select
-                  data-page-list-sort
-                  data-sort-locale={isEnglishAtoms ? "en" : "ru"}
+              <div
+                class="page-list-sort"
+                data-page-list-sort
+                data-sort-locale={isEnglishAtoms ? "en" : "ru"}
+              >
+                <span class="page-list-sort-label">{isEnglishAtoms ? "Sort" : "Сортировка"}</span>
+                <div
+                  class="page-list-sort-options"
+                  role="group"
                   aria-label={isEnglishAtoms ? "Sort atoms" : "Сортировка атомов"}
                 >
-                  <option value="alphabetical">
+                  <button type="button" data-sort-mode="alphabetical" aria-pressed="true">
                     {isEnglishAtoms ? "Alphabetical" : "По алфавиту"}
-                  </option>
-                  <option value="modified">
-                    {isEnglishAtoms ? "Last modified" : "По дате изменения"}
-                  </option>
-                </select>
-                <svg aria-hidden="true" viewBox="0 0 16 16" class="page-list-sort-chevron">
-                  <path d="m4 6 4 4 4-4" />
-                </svg>
-              </label>
+                  </button>
+                  <button type="button" data-sort-mode="newest" aria-pressed="false">
+                    {isEnglishAtoms ? "Newest first" : "Сначала новые"}
+                  </button>
+                  <button type="button" data-sort-mode="oldest" aria-pressed="false">
+                    {isEnglishAtoms ? "Oldest first" : "Сначала старые"}
+                  </button>
+                </div>
+              </div>
             </div>
           ) : (
             options.showFolderCount && (
