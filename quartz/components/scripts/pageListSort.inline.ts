@@ -17,16 +17,13 @@ function storeSortMode(mode: PageListSortMode) {
 }
 
 document.addEventListener("nav", () => {
-  document.querySelectorAll<HTMLElement>("[data-page-list-sort]").forEach((controls) => {
-    const listing = controls.closest(".page-listing")
+  document.querySelectorAll<HTMLSelectElement>("select[data-page-list-sort]").forEach((select) => {
+    const listing = select.closest(".page-listing")
     const list = listing?.querySelector<HTMLElement>("ul.section-ul")
     if (!list) return
 
-    const locale = controls.dataset.sortLocale === "en" ? "en" : "ru"
+    const locale = select.dataset.sortLocale === "en" ? "en" : "ru"
     const collator = new Intl.Collator(locale, { numeric: true, sensitivity: "base" })
-    const buttons = Array.from(
-      controls.querySelectorAll<HTMLButtonElement>("button[data-sort-mode]"),
-    )
 
     const applySort = (mode: PageListSortMode, persist: boolean) => {
       const items = Array.from(list.children).filter(
@@ -43,20 +40,16 @@ document.addEventListener("nav", () => {
       })
 
       list.append(...items)
-      buttons.forEach((button) => {
-        button.setAttribute("aria-pressed", String(button.dataset.sortMode === mode))
-      })
+      select.value = mode
       if (persist) storeSortMode(mode)
     }
 
-    buttons.forEach((button) => {
-      const onClick = () => {
-        const mode = button.dataset.sortMode === "modified" ? "modified" : "alphabetical"
-        applySort(mode, true)
-      }
-      button.addEventListener("click", onClick)
-      window.addCleanup(() => button.removeEventListener("click", onClick))
-    })
+    const onChange = () => {
+      const mode = select.value === "modified" ? "modified" : "alphabetical"
+      applySort(mode, true)
+    }
+    select.addEventListener("change", onChange)
+    window.addCleanup(() => select.removeEventListener("change", onChange))
 
     applySort(getStoredSortMode(), false)
   })

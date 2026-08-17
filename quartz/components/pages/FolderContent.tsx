@@ -26,6 +26,23 @@ const defaultOptions: FolderContentOptions = {
   showSubfolders: true,
 }
 
+function atomCountLabel(count: number, isEnglish: boolean) {
+  if (isEnglish) return `${count} atoms`
+
+  const lastTwo = count % 100
+  const last = count % 10
+  const noun =
+    lastTwo >= 11 && lastTwo <= 14
+      ? "атомов"
+      : last === 1
+        ? "атом"
+        : last >= 2 && last <= 4
+          ? "атома"
+          : "атомов"
+
+  return `${count} ${noun}`
+}
+
 export default ((opts?: Partial<FolderContentOptions>) => {
   const options: FolderContentOptions = { ...defaultOptions, ...opts }
 
@@ -110,33 +127,42 @@ export default ((opts?: Partial<FolderContentOptions>) => {
       <div class="popover-hint">
         <article class={classes}>{content}</article>
         <div class="page-listing">
-          {options.showFolderCount && (
-            <p>
-              {i18n(cfg.locale).pages.folderContent.itemsUnderFolder({
-                count: allPagesInFolder.length,
-              })}
-            </p>
-          )}
-          {isAtomsFolder && (
-            <div
-              class="page-list-sort"
-              data-page-list-sort
-              data-sort-locale={isEnglishAtoms ? "en" : "ru"}
-            >
-              <span>{isEnglishAtoms ? "Sort:" : "Сортировка:"}</span>
-              <div
-                class="page-list-sort-options"
-                role="group"
-                aria-label={isEnglishAtoms ? "Sort atoms" : "Сортировка атомов"}
-              >
-                <button type="button" data-sort-mode="alphabetical" aria-pressed="true">
-                  {isEnglishAtoms ? "Alphabetical" : "По алфавиту"}
-                </button>
-                <button type="button" data-sort-mode="modified" aria-pressed="false">
-                  {isEnglishAtoms ? "Last modified" : "По дате изменения"}
-                </button>
-              </div>
+          {isAtomsFolder ? (
+            <div class="page-list-toolbar">
+              {options.showFolderCount && (
+                <p class="page-list-count">
+                  {atomCountLabel(allPagesInFolder.length, isEnglishAtoms)}
+                </p>
+              )}
+              <label class="page-list-sort">
+                <svg aria-hidden="true" viewBox="0 0 16 16" class="page-list-sort-icon">
+                  <path d="M5 3v10M2.5 5.5 5 3l2.5 2.5M11 13V3m-2.5 7.5L11 13l2.5-2.5" />
+                </svg>
+                <select
+                  data-page-list-sort
+                  data-sort-locale={isEnglishAtoms ? "en" : "ru"}
+                  aria-label={isEnglishAtoms ? "Sort atoms" : "Сортировка атомов"}
+                >
+                  <option value="alphabetical">
+                    {isEnglishAtoms ? "Alphabetical" : "По алфавиту"}
+                  </option>
+                  <option value="modified">
+                    {isEnglishAtoms ? "Last modified" : "По дате изменения"}
+                  </option>
+                </select>
+                <svg aria-hidden="true" viewBox="0 0 16 16" class="page-list-sort-chevron">
+                  <path d="m4 6 4 4 4-4" />
+                </svg>
+              </label>
             </div>
+          ) : (
+            options.showFolderCount && (
+              <p>
+                {i18n(cfg.locale).pages.folderContent.itemsUnderFolder({
+                  count: allPagesInFolder.length,
+                })}
+              </p>
+            )
           )}
           <div>
             <PageList {...listProps} />
