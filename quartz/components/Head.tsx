@@ -1,24 +1,27 @@
 import { i18n } from "../i18n"
-import { FullSlug, getFileExtension, joinSegments, pathToRoot } from "../util/path"
+import { FullSlug, getFileExtension, joinSegments, pathToRoot, simplifySlug } from "../util/path"
 import { CSSResourceToStyleElement, JSResourceToScriptElement } from "../util/resources"
 import { googleFontHref, googleFontSubsetHref } from "../util/theme"
 import { QuartzComponent, QuartzComponentConstructor, QuartzComponentProps } from "./types"
 import { unescapeHTML } from "../util/escape"
 import { CustomOgImagesEmitterName } from "../plugins/emitters/ogImage"
+import { localeForSlug } from "../util/lang"
+import { getLanguagePair } from "../util/languagePair"
 export default (() => {
   const Head: QuartzComponent = ({
     cfg,
     fileData,
     externalResources,
     ctx,
+    allFiles,
   }: QuartzComponentProps) => {
+    const locale = localeForSlug(fileData.slug)
     const titleSuffix = cfg.pageTitleSuffix ?? ""
-    const title =
-      (fileData.frontmatter?.title ?? i18n(cfg.locale).propertyDefaults.title) + titleSuffix
+    const title = (fileData.frontmatter?.title ?? i18n(locale).propertyDefaults.title) + titleSuffix
     const description =
       fileData.frontmatter?.socialDescription ??
       fileData.frontmatter?.description ??
-      unescapeHTML(fileData.description?.trim() ?? i18n(cfg.locale).propertyDefaults.description)
+      unescapeHTML(fileData.description?.trim() ?? i18n(locale).propertyDefaults.description)
 
     const { css, js, additionalHead } = externalResources
 
@@ -27,9 +30,14 @@ export default (() => {
     const baseDir = fileData.slug === "404" ? path : pathToRoot(fileData.slug!)
     const iconPath = joinSegments(baseDir, "static/icon.png")
 
-    // Url of current page
-    const socialUrl =
-      fileData.slug === "404" ? url.toString() : joinSegments(url.toString(), fileData.slug!)
+    const siteRoot = new URL(url.toString())
+    if (!siteRoot.pathname.endsWith("/")) siteRoot.pathname += "/"
+    const absoluteUrlForSlug = (slug: FullSlug) => new URL(simplifySlug(slug), siteRoot).toString()
+
+    const canonicalUrl =
+      fileData.slug === "404" ? url.toString() : absoluteUrlForSlug(fileData.slug!)
+    const socialUrl = canonicalUrl
+    const languagePair = getLanguagePair(fileData.slug, allFiles)
 
     const usesCustomOgImage = ctx.cfg.plugins.emitters.some(
       (e) => e.name === CustomOgImagesEmitterName,
@@ -40,6 +48,19 @@ export default (() => {
     const basePath = ${JSON.stringify(path)}
     const key = "siteLang"
     const pathname = window.location.pathname
+
+    const updateDocumentLanguage = () => {
+      const currentPath = window.location.pathname
+      const relativePath = currentPath.startsWith(basePath)
+        ? currentPath.slice(basePath.length)
+        : currentPath.replace(/^\\/+/, "")
+      document.documentElement.lang = relativePath === "en" || relativePath.startsWith("en/")
+        ? "en"
+        : "ru"
+    }
+
+    updateDocumentLanguage()
+    document.addEventListener("nav", updateDocumentLanguage)
 
     // Persist language choice on click (works for all pages)
     window.addEventListener("click", (e) => {
@@ -96,6 +117,15 @@ export default (() => {
         )}
         <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossOrigin="anonymous" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+        {cfg.baseUrl && fileData.slug !== "404" && <link rel="canonical" href={canonicalUrl} />}
+        {cfg.baseUrl && languagePair && (
+          <>
+            <link rel="alternate" hrefLang="ru" href={absoluteUrlForSlug(languagePair.ru)} />
+            <link rel="alternate" hrefLang="en" href={absoluteUrlForSlug(languagePair.en)} />
+            <link rel="alternate" hrefLang="x-default" href={absoluteUrlForSlug(languagePair.ru)} />
+          </>
+        )}
 
         {/* Language routing (RU at /, EN at /en/) */}
         <script

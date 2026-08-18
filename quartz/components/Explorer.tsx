@@ -3,7 +3,7 @@ import style from "./styles/explorer.scss"
 
 // @ts-ignore
 import script from "./scripts/explorer.inline"
-import { classNames } from "../util/lang"
+import { classNames, localeForSlug } from "../util/lang"
 import { i18n } from "../i18n"
 import { FileTrieNode } from "../util/fileTrie"
 import OverflowListFactory from "./OverflowList"
@@ -60,8 +60,9 @@ export default ((userOpts?: Partial<Options>) => {
   const opts: Options = { ...defaultOptions, ...userOpts }
   const { OverflowList, overflowListAfterDOMLoaded } = OverflowListFactory()
 
-  const Explorer: QuartzComponent = ({ cfg, displayClass }: QuartzComponentProps) => {
+  const Explorer: QuartzComponent = ({ fileData, displayClass }: QuartzComponentProps) => {
     const id = `explorer-${numExplorers++}`
+    const title = opts.title ?? i18n(localeForSlug(fileData.slug)).components.explorer.title
 
     return (
       <div
@@ -81,6 +82,7 @@ export default ((userOpts?: Partial<Options>) => {
           class="explorer-toggle mobile-explorer hide-until-loaded"
           data-mobile={true}
           aria-controls={id}
+          aria-label={title}
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -103,7 +105,7 @@ export default ((userOpts?: Partial<Options>) => {
           data-mobile={false}
           aria-expanded={true}
         >
-          <h2>{opts.title ?? i18n(cfg.locale).components.explorer.title}</h2>
+          <h2>{title}</h2>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="14"

@@ -228,7 +228,7 @@ describe("link strategies", () => {
     test("from a/b/index", () => {
       const cur = "a/b/index" as FullSlug
       assert.strictEqual(path.transformLink(cur, "a/b/d", opts), "../../a/b/d")
-      assert.strictEqual(path.transformLink(cur, "a/b", opts), "../../a/b")
+      assert.strictEqual(path.transformLink(cur, "a/b", opts), "../../a/b/")
       assert.strictEqual(path.transformLink(cur, "index", opts), "../../")
     })
 

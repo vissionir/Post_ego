@@ -12,6 +12,7 @@ import { BuildCtx } from "../../util/ctx"
 import { QuartzPluginData } from "../vfile"
 import fs from "node:fs/promises"
 import { styleText } from "util"
+import { localeForSlug } from "../../util/lang"
 
 const defaultOptions: SocialImageOptions = {
   colorScheme: "lightMode",
@@ -73,13 +74,13 @@ async function processOgImage(
 ) {
   const cfg = ctx.cfg.configuration
   const slug = fileData.slug!
+  const locale = localeForSlug(slug)
   const titleSuffix = cfg.pageTitleSuffix ?? ""
-  const title =
-    (fileData.frontmatter?.title ?? i18n(cfg.locale).propertyDefaults.title) + titleSuffix
+  const title = (fileData.frontmatter?.title ?? i18n(locale).propertyDefaults.title) + titleSuffix
   const description =
     fileData.frontmatter?.socialDescription ??
     fileData.frontmatter?.description ??
-    unescapeHTML(fileData.description?.trim() ?? i18n(cfg.locale).propertyDefaults.description)
+    unescapeHTML(fileData.description?.trim() ?? i18n(locale).propertyDefaults.description)
 
   const stream = await generateSocialImage(
     {

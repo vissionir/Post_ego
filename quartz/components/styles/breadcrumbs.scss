@@ -20,3 +20,8 @@
   align-items: center;
   justify-content: center;
 }
+
+.breadcrumb-current {
+  color: var(--secondary);
+  font-weight: 600;
+}

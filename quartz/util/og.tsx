@@ -10,6 +10,7 @@ import { formatDate, getDate } from "../components/Date"
 import readingTime from "reading-time"
 import { i18n } from "../i18n"
 import { styleText } from "util"
+import { localeForSlug } from "./lang"
 
 const defaultHeaderWeight = [700]
 const defaultBodyWeight = [400]
@@ -182,14 +183,15 @@ export const defaultImage: SocialImageOptions["imageStructure"] = ({
   const { colorScheme } = userOpts
   const fontBreakPoint = 32
   const useSmallerFont = title.length > fontBreakPoint
+  const locale = localeForSlug(fileData.slug)
 
   // Format date if available
   const rawDate = getDate(cfg, fileData)
-  const date = rawDate ? formatDate(rawDate, cfg.locale) : null
+  const date = rawDate ? formatDate(rawDate, locale) : null
 
   // Calculate reading time
   const { minutes } = readingTime(fileData.text ?? "")
-  const readingTimeText = i18n(cfg.locale).components.contentMeta.readingTime({
+  const readingTimeText = i18n(locale).components.contentMeta.readingTime({
     minutes: Math.ceil(minutes),
   })
 

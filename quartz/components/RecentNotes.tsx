@@ -6,7 +6,7 @@ import style from "./styles/recentNotes.scss"
 import { Date, getDate } from "./Date"
 import { GlobalConfiguration } from "../cfg"
 import { i18n } from "../i18n"
-import { classNames } from "../util/lang"
+import { classNames, localeForSlug } from "../util/lang"
 
 interface Options {
   title?: string
@@ -33,14 +33,15 @@ export default ((userOpts?: Partial<Options>) => {
     cfg,
   }: QuartzComponentProps) => {
     const opts = { ...defaultOptions(cfg), ...userOpts }
+    const locale = localeForSlug(fileData.slug)
     const pages = allFiles.filter(opts.filter).sort(opts.sort)
     const remaining = Math.max(0, pages.length - opts.limit)
     return (
       <div class={classNames(displayClass, "recent-notes")}>
-        <h3>{opts.title ?? i18n(cfg.locale).components.recentNotes.title}</h3>
+        <h3>{opts.title ?? i18n(locale).components.recentNotes.title}</h3>
         <ul class="recent-ul">
           {pages.slice(0, opts.limit).map((page) => {
-            const title = page.frontmatter?.title ?? i18n(cfg.locale).propertyDefaults.title
+            const title = page.frontmatter?.title ?? i18n(locale).propertyDefaults.title
             const tags = page.frontmatter?.tags ?? []
 
             return (
@@ -55,7 +56,7 @@ export default ((userOpts?: Partial<Options>) => {
                   </div>
                   {page.dates && (
                     <p class="meta">
-                      <Date date={getDate(cfg, page)!} locale={cfg.locale} />
+                      <Date date={getDate(cfg, page)!} locale={locale} />
                     </p>
                   )}
                   {opts.showTags && (
@@ -80,7 +81,7 @@ export default ((userOpts?: Partial<Options>) => {
         {opts.linkToMore && remaining > 0 && (
           <p>
             <a href={resolveRelative(fileData.slug!, opts.linkToMore)}>
-              {i18n(cfg.locale).components.recentNotes.seeRemainingMore({ remaining })}
+              {i18n(locale).components.recentNotes.seeRemainingMore({ remaining })}
             </a>
           </p>
         )}

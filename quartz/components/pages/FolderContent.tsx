@@ -9,6 +9,7 @@ import { QuartzPluginData } from "../../plugins/vfile"
 import { ComponentChildren } from "preact"
 import { concatenateResources } from "../../util/resources"
 import { trieFromAllFiles } from "../../util/ctx"
+import { localeForSlug } from "../../util/lang"
 // @ts-ignore
 import sortScript from "../scripts/pageListSort.inline"
 
@@ -47,7 +48,7 @@ export default ((opts?: Partial<FolderContentOptions>) => {
   const options: FolderContentOptions = { ...defaultOptions, ...opts }
 
   const FolderContent: QuartzComponent = (props: QuartzComponentProps) => {
-    const { tree, fileData, allFiles, cfg } = props
+    const { tree, fileData, allFiles } = props
 
     const trie = (props.ctx.trie ??= trieFromAllFiles(allFiles))
     const folder = trie.findNode(fileData.slug!.split("/"))
@@ -160,7 +161,7 @@ export default ((opts?: Partial<FolderContentOptions>) => {
           ) : (
             options.showFolderCount && (
               <p>
-                {i18n(cfg.locale).pages.folderContent.itemsUnderFolder({
+                {i18n(localeForSlug(fileData.slug)).pages.folderContent.itemsUnderFolder({
                   count: allPagesInFolder.length,
                 })}
               </p>

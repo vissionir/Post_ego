@@ -1,5 +1,7 @@
 import { QuartzComponent, QuartzComponentConstructor, QuartzComponentProps } from "./types"
 import { FullSlug, resolveRelative } from "../util/path"
+import { getLanguagePair } from "../util/languagePair"
+import { isEnglishSlug } from "../util/lang"
 
 /**
  * Global RU/EN switcher.
@@ -7,24 +9,22 @@ import { FullSlug, resolveRelative } from "../util/path"
  * Spec:
  * - RU lives at / (root)
  * - EN lives at /en/
- * - File names/slugs are NOT translated (1:1 mapping)
- * - Only title/body are translated
- *
- * Notes:
- * - We rely on client-side script (in Head) to persist the choice in localStorage.
+ * File names and slugs are translated, so the switcher resolves the semantic RU/EN pair.
  */
-const LanguageSwitcher: QuartzComponent = ({ fileData }: QuartzComponentProps) => {
+const LanguageSwitcher: QuartzComponent = ({ fileData, allFiles }: QuartzComponentProps) => {
   const slug = (fileData.slug ?? "index") as FullSlug
-  const isEn = slug === ("en" as FullSlug) || slug.startsWith("en/")
+  const isEn = isEnglishSlug(slug)
+  const pair = getLanguagePair(slug, allFiles)
 
-  const ruSlug = (isEn ? slug.replace(/^en\//, "") : slug) as FullSlug
-  const enSlug = `en/${ruSlug}`.replace(/^en\/en\//, "en/") as FullSlug
+  // Service pages without a translated counterpart fall back to the language home page.
+  const ruSlug = pair?.ru ?? ("index" as FullSlug)
+  const enSlug = pair?.en ?? ("en/index" as FullSlug)
 
   const ruHref = resolveRelative(slug, ruSlug)
   const enHref = resolveRelative(slug, enSlug)
 
   return (
-    <div class="lang-switch" aria-label="Language switch">
+    <div class="lang-switch" aria-label={isEn ? "Language switch" : "Переключение языка"}>
       <a class={`lang-link ${!isEn ? "active" : ""}`} href={ruHref} data-set-lang="ru">
         RU
       </a>

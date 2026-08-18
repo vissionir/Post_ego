@@ -10,6 +10,7 @@ import { Root, Element, ElementContent } from "hast"
 import { GlobalConfiguration } from "../cfg"
 import { i18n } from "../i18n"
 import { styleText } from "util"
+import { languageForSlug, localeForSlug } from "../util/lang"
 
 interface RenderComponents {
   head: QuartzComponent
@@ -72,11 +73,11 @@ export function pageResources(
 
 function renderTranscludes(
   root: Root,
-  cfg: GlobalConfiguration,
   slug: FullSlug,
   componentData: QuartzComponentProps,
   visited: Set<FullSlug>,
 ) {
+  const locale = localeForSlug(slug)
   // process transcludes in componentData
   visit(root, "element", (node, _index, _parent) => {
     if (node.tagName === "blockquote") {
@@ -135,7 +136,7 @@ function renderTranscludes(
                 tagName: "a",
                 properties: { href: inner.properties?.href, class: ["internal", "transclude-src"] },
                 children: [
-                  { type: "text", value: i18n(cfg.locale).components.transcludes.linkToOriginal },
+                  { type: "text", value: i18n(locale).components.transcludes.linkToOriginal },
                 ],
               },
             ]
@@ -178,7 +179,7 @@ function renderTranscludes(
               tagName: "a",
               properties: { href: inner.properties?.href, class: ["internal", "transclude-src"] },
               children: [
-                { type: "text", value: i18n(cfg.locale).components.transcludes.linkToOriginal },
+                { type: "text", value: i18n(locale).components.transcludes.linkToOriginal },
               ],
             },
           ]
@@ -194,7 +195,7 @@ function renderTranscludes(
                   type: "text",
                   value:
                     page.frontmatter?.title ??
-                    i18n(cfg.locale).components.transcludes.transcludeOf({
+                    i18n(locale).components.transcludes.transcludeOf({
                       targetSlug: page.slug!,
                     }),
                 },
@@ -208,7 +209,7 @@ function renderTranscludes(
               tagName: "a",
               properties: { href: inner.properties?.href, class: ["internal", "transclude-src"] },
               children: [
-                { type: "text", value: i18n(cfg.locale).components.transcludes.linkToOriginal },
+                { type: "text", value: i18n(locale).components.transcludes.linkToOriginal },
               ],
             },
           ]
@@ -219,7 +220,7 @@ function renderTranscludes(
 }
 
 export function renderPage(
-  cfg: GlobalConfiguration,
+  _cfg: GlobalConfiguration,
   slug: FullSlug,
   componentData: QuartzComponentProps,
   components: RenderComponents,
@@ -229,7 +230,7 @@ export function renderPage(
   // for the file cached in contentMap in build.ts
   const root = clone(componentData.tree) as Root
   const visited = new Set<FullSlug>([slug])
-  renderTranscludes(root, cfg, slug, componentData, visited)
+  renderTranscludes(root, slug, componentData, visited)
 
   // set componentData.tree to the edited html that has transclusions rendered
   componentData.tree = root
@@ -263,8 +264,9 @@ export function renderPage(
     </div>
   )
 
-  const lang = componentData.fileData.frontmatter?.lang ?? cfg.locale?.split("-")[0] ?? "en"
-  const direction = i18n(cfg.locale).direction ?? "ltr"
+  const locale = localeForSlug(slug)
+  const lang = componentData.fileData.frontmatter?.lang ?? languageForSlug(slug)
+  const direction = i18n(locale).direction ?? "ltr"
   const doc = (
     <html lang={lang} dir={direction}>
       <Head {...componentData} />

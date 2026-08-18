@@ -1,7 +1,7 @@
 import { QuartzComponent, QuartzComponentConstructor, QuartzComponentProps } from "./types"
 import breadcrumbsStyle from "./styles/breadcrumbs.scss"
 import { FullSlug, SimpleSlug, resolveRelative, simplifySlug } from "../util/path"
-import { classNames } from "../util/lang"
+import { classNames, localeForSlug } from "../util/lang"
 import { trieFromAllFiles } from "../util/ctx"
 
 type CrumbData = {
@@ -53,6 +53,11 @@ export default ((opts?: Partial<BreadcrumbOptions>) => {
     const trie = (ctx.trie ??= trieFromAllFiles(allFiles))
     const slugParts = fileData.slug!.split("/")
     const pathNodes = trie.ancestryChain(slugParts)
+    const locale = localeForSlug(fileData.slug)
+    const rootName =
+      options.rootName === defaultOptions.rootName && locale === "ru-RU"
+        ? "Главная"
+        : options.rootName
 
     if (!pathNodes) {
       return null
@@ -61,7 +66,7 @@ export default ((opts?: Partial<BreadcrumbOptions>) => {
     const crumbs: CrumbData[] = pathNodes.map((node, idx) => {
       const crumb = formatCrumb(node.displayName, fileData.slug!, simplifySlug(node.slug))
       if (idx === 0) {
-        crumb.displayName = options.rootName
+        crumb.displayName = rootName
       }
 
       // For last node (current page), set empty path
@@ -77,13 +82,25 @@ export default ((opts?: Partial<BreadcrumbOptions>) => {
     }
 
     return (
-      <nav class={classNames(displayClass, "breadcrumb-container")} aria-label="breadcrumbs">
-        {crumbs.map((crumb, index) => (
-          <div class="breadcrumb-element">
-            <a href={crumb.path}>{crumb.displayName}</a>
-            {index !== crumbs.length - 1 && <p>{` ${options.spacerSymbol} `}</p>}
-          </div>
-        ))}
+      <nav
+        class={classNames(displayClass, "breadcrumb-container")}
+        aria-label={locale === "ru-RU" ? "Навигационная цепочка" : "Breadcrumbs"}
+      >
+        {crumbs.map((crumb, index) => {
+          const isCurrent = options.showCurrentPage && index === crumbs.length - 1
+          return (
+            <div class="breadcrumb-element">
+              {isCurrent ? (
+                <span class="breadcrumb-current" aria-current="page">
+                  {crumb.displayName}
+                </span>
+              ) : (
+                <a href={crumb.path}>{crumb.displayName}</a>
+              )}
+              {index !== crumbs.length - 1 && <p>{` ${options.spacerSymbol} `}</p>}
+            </div>
+          )
+        })}
       </nav>
     )
   }

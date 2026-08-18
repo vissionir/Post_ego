@@ -278,9 +278,11 @@ export function transformLink(src: FullSlug, target: string, opts: TransformOpti
       }
     }
 
-    const folderTail = getFolderTail(targetCanonical)
+    const joined = joinSegments(pathToRoot(src), targetCanonical)
+    const needsFolderTail = targetCanonical === "" || getFolderTail(targetCanonical)
+    const folderTail = needsFolderTail && !joined.endsWith("/") ? "/" : ""
     // if it's not unique, then it's the absolute path from the vault root
-    return (joinSegments(pathToRoot(src), targetCanonical) + folderTail) as RelativeURL
+    return (joined + folderTail + targetAnchor) as RelativeURL
   }
 }
 

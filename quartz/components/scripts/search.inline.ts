@@ -376,9 +376,10 @@ async function setupSearch(searchElement: Element, currentSlug: FullSlug, data: 
   async function displayResults(finalResults: Item[]) {
     removeAllChildren(results)
     if (finalResults.length === 0) {
+      const isRussian = document.documentElement.lang === "ru"
       results.innerHTML = `<a class="result-card no-match">
-          <h3>No results.</h3>
-          <p>Try another search term?</p>
+          <h3>${isRussian ? "Ничего не найдено." : "No results."}</h3>
+          <p>${isRussian ? "Попробуйте другой запрос." : "Try another search term?"}</p>
       </a>`
     } else {
       results.append(...finalResults.map(resultToHTML))

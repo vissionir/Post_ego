@@ -1,7 +1,7 @@
 import { QuartzComponent, QuartzComponentConstructor, QuartzComponentProps } from "./types"
 import legacyStyle from "./styles/legacyToc.scss"
 import modernStyle from "./styles/toc.scss"
-import { classNames } from "../util/lang"
+import { classNames, localeForSlug } from "../util/lang"
 
 // @ts-ignore
 import script from "./scripts/toc.inline"
@@ -21,16 +21,13 @@ let numTocs = 0
 export default ((opts?: Partial<Options>) => {
   const layout = opts?.layout ?? defaultOptions.layout
   const { OverflowList, overflowListAfterDOMLoaded } = OverflowListFactory()
-  const TableOfContents: QuartzComponent = ({
-    fileData,
-    displayClass,
-    cfg,
-  }: QuartzComponentProps) => {
+  const TableOfContents: QuartzComponent = ({ fileData, displayClass }: QuartzComponentProps) => {
     if (!fileData.toc) {
       return null
     }
 
     const id = `toc-${numTocs++}`
+    const locale = localeForSlug(fileData.slug)
     return (
       <div class={classNames(displayClass, "toc")}>
         <button
@@ -39,7 +36,7 @@ export default ((opts?: Partial<Options>) => {
           aria-controls={id}
           aria-expanded={!fileData.collapseToc}
         >
-          <h3>{i18n(cfg.locale).components.tableOfContents.title}</h3>
+          <h3>{i18n(locale).components.tableOfContents.title}</h3>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="24"
@@ -74,14 +71,14 @@ export default ((opts?: Partial<Options>) => {
   TableOfContents.css = modernStyle
   TableOfContents.afterDOMLoaded = concatenateResources(script, overflowListAfterDOMLoaded)
 
-  const LegacyTableOfContents: QuartzComponent = ({ fileData, cfg }: QuartzComponentProps) => {
+  const LegacyTableOfContents: QuartzComponent = ({ fileData }: QuartzComponentProps) => {
     if (!fileData.toc) {
       return null
     }
     return (
       <details class="toc" open={!fileData.collapseToc}>
         <summary>
-          <h3>{i18n(cfg.locale).components.tableOfContents.title}</h3>
+          <h3>{i18n(localeForSlug(fileData.slug)).components.tableOfContents.title}</h3>
         </summary>
         <ul>
           {fileData.toc.map((tocEntry) => (
