@@ -2,4 +2,4 @@
 title: Dereification
 ---
 
-Dereification is a mode of perception arising from [[Disidentification|disidentification]] in which the [[Ego|ego]] and [[Personal history|personal history]] are recognized as local constructions of the [[Mind|mind]].
+Dereification is the recognition of the content of the [[Mind|mind]] as a construct, as a consequence of which it ceases to be taken for [[Reality|reality]] or "I".

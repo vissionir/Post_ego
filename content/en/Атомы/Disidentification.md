@@ -2,4 +2,4 @@
 title: Disidentification
 ---
 
-Disidentification is the cessation of identification with [[Ego|ego]], in which it ceases to be experienced as "I".
+Disidentification is the cessation of [[Identification|identification]], in which the object of identification ceases to be experienced as "I".
