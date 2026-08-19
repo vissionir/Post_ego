@@ -2,4 +2,4 @@
 title: Disidentification
 ---
 
-Disidentification is the cessation of [[Identification|identification]], in which the object of identification ceases to be experienced as "I".
+Disidentification is an [[Irreversible shift|irreversible shift]] in which [[Identification|identification]] with the [[Mind|mind]] and its contents ceases.
