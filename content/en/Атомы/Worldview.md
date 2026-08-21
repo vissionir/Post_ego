@@ -2,4 +2,4 @@
 title: Worldview
 ---
 
-Worldview is a stable configuration of the [[Map|map]] that determines the interpretation of [[Reality|reality]]; within it, separate [[Frame|frames]] are formed.
+Worldview is a position arising from [[Self-Transcendence|self-transcendence]] in which [[Mission|mission]] becomes a system for perceiving [[Reality|reality]].
