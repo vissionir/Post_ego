@@ -2,4 +2,4 @@
 title: Meta-worldview
 ---
 
-Meta-worldview is a [[Meta-position|position]] from which one's own [[Worldview|worldview]] is regarded as an object of observation, description, and reconstruction.
+Meta-worldview is a mode of relating to one's own [[Worldview|worldview]] in which the subject, from a [[Meta-position|meta-position]], regards it as an object of observation, description, and reconstruction.
