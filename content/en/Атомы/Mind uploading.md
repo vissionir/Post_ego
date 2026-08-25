@@ -2,4 +2,4 @@
 title: Mind uploading
 ---
 
-Mind uploading is a procedure for creating a digital copy of a subject, regarded in the logic of [[Transhumanism|transhumanism]] as an engineering solution to the problem of life extension, while not ensuring the transfer of [[Qualia|subjective experience]].
+Mind uploading is a hypothetical procedure for continuing [[Consciousness|consciousness]] [[Posthumanism|beyond the human being]] by transferring it to another substrate while preserving the continuity of [[Qualia|subjective experience]].
