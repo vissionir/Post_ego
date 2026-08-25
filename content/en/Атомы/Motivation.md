@@ -2,4 +2,4 @@
 title: Motivation
 ---
 
-Motivation is a form of movement toward a [[Goal|goal]] arising from [[Deficit|deficit]] and directed toward its compensation.
+Motivation is a process that determines the direction, intensity, and persistence of the psyche's movement toward an [[Attractor|attractor]].
