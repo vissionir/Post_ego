@@ -56,7 +56,9 @@ export default (() => {
         : currentPath.replace(/^\\/+/, "")
       document.documentElement.lang = relativePath === "en" || relativePath.startsWith("en/")
         ? "en"
-        : "ru"
+        : relativePath === "th" || relativePath.startsWith("th/")
+          ? "th"
+          : "ru"
     }
 
     updateDocumentLanguage()
@@ -79,7 +81,7 @@ export default (() => {
       const rel = pathname.slice(basePath.length)
       const parts = rel.split("/").filter(Boolean)
       const depth = parts.length
-      const shouldNormalize = parts[0] === "en" ? depth >= 3 : depth >= 2
+      const shouldNormalize = parts[0] === "en" || parts[0] === "th" ? depth >= 3 : depth >= 2
       if (shouldNormalize) {
         window.location.replace(pathname.replace(/\\/+$/, "") + window.location.search + window.location.hash)
         return
@@ -90,12 +92,21 @@ export default (() => {
 
     // Auto-redirect ONLY on the root entrypoint
     if (isRoot) {
-      const desired = stored || ((navigator.language || "").toLowerCase().startsWith("ru") ? "ru" : "en")
+      const browserLanguage = (navigator.language || "").toLowerCase()
+      const detected = browserLanguage.startsWith("ru")
+        ? "ru"
+        : browserLanguage.startsWith("th")
+          ? "th"
+          : "en"
+      const desired = stored === "ru" || stored === "en" || stored === "th" ? stored : detected
       if (!stored) localStorage.setItem(key, desired)
 
       const enRoot = basePath.endsWith("/") ? basePath + "en/" : basePath + "/en/"
+      const thRoot = basePath.endsWith("/") ? basePath + "th/" : basePath + "/th/"
       if (desired === "en" && pathname !== enRoot) {
         window.location.replace(enRoot)
+      } else if (desired === "th" && pathname !== thRoot) {
+        window.location.replace(thRoot)
       }
     }
   } catch (_) {}
@@ -113,6 +124,12 @@ export default (() => {
             {cfg.theme.typography.title && (
               <link rel="stylesheet" href={googleFontSubsetHref(cfg.theme, cfg.pageTitle)} />
             )}
+            {locale === "th-TH" && (
+              <link
+                rel="stylesheet"
+                href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;600;700&display=swap"
+              />
+            )}
           </>
         )}
         <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossOrigin="anonymous" />
@@ -123,11 +140,12 @@ export default (() => {
           <>
             <link rel="alternate" hrefLang="ru" href={absoluteUrlForSlug(languagePair.ru)} />
             <link rel="alternate" hrefLang="en" href={absoluteUrlForSlug(languagePair.en)} />
+            <link rel="alternate" hrefLang="th" href={absoluteUrlForSlug(languagePair.th)} />
             <link rel="alternate" hrefLang="x-default" href={absoluteUrlForSlug(languagePair.ru)} />
           </>
         )}
 
-        {/* Language routing (RU at /, EN at /en/) */}
+        {/* Language routing (RU at /, EN at /en/, TH at /th/) */}
         <script
           dangerouslySetInnerHTML={{
             __html: languageRoutingScript,

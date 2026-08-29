@@ -12,75 +12,77 @@ export const sharedPageComponents: SharedLayout = {
 const explorerFilter = (node: any) => {
   const p = window.location.pathname
   const isEn = /\/en(\/|$)/.test(p)
+  const isTh = /\/th(\/|$)/.test(p)
 
   if (node.slugSegment === "tags") return false
 
   const slug = typeof node.slug === "string" ? node.slug : ""
-  const isEnNode = node.slugSegment === "en" || /(^|\/)en(\/|$)/.test(slug)
-  return isEn ? isEnNode : !isEnNode
+  const nodeLanguage =
+    node.slugSegment === "en" || slug === "en" || slug.startsWith("en/")
+      ? "en"
+      : node.slugSegment === "th" || slug === "th" || slug.startsWith("th/")
+        ? "th"
+        : "ru"
+  const currentLanguage = isEn ? "en" : isTh ? "th" : "ru"
+  return nodeLanguage === currentLanguage
 }
 
 const explorerSort = (a: any, b: any) => {
-  const ruExplorerOrder = [
-    "Атомы",
-    "Нейронавигатор",
-    "Как устроено исследование",
-    "Область исследования",
-    "Миссия проекта",
-    "Как я сюда пришёл?",
-  ]
-
-  const enExplorerOrder = [
-    "Atoms",
-    "Neuronavigator",
-    "How the research is structured",
-    "Scope of the research",
-    "Project Mission",
-    "How I got here",
-  ]
+  const explorerOrder: Record<"ru" | "en" | "th", readonly string[]> = {
+    ru: [
+      "Атомы",
+      "Нейронавигатор",
+      "Как-устроено-исследование",
+      "Область-исследования",
+      "Миссия-проекта",
+      "Как-я-сюда-пришёл",
+    ],
+    en: [
+      "Атомы",
+      "Нейронавигатор",
+      "How-the-research-is-structured",
+      "Scope-of-the-research",
+      "Project-Mission",
+      "How-I-got-here",
+    ],
+    th: [
+      "Atoms",
+      "Нейронавигатор",
+      "How-the-research-is-structured",
+      "Scope-of-the-research",
+      "Project-Mission",
+      "How-I-got-here",
+    ],
+  }
 
   const aParts = String(a?.slug ?? "")
     .replace(/\/index$/, "")
     .split("/")
+    .filter(Boolean)
   const bParts = String(b?.slug ?? "")
     .replace(/\/index$/, "")
     .split("/")
-  const aLabel = String(a?.displayName ?? "").trim()
-  const bLabel = String(b?.displayName ?? "").trim()
+    .filter(Boolean)
+  const aLanguage = aParts[0] === "en" ? "en" : aParts[0] === "th" ? "th" : "ru"
+  const bLanguage = bParts[0] === "en" ? "en" : bParts[0] === "th" ? "th" : "ru"
+  const aIndex = explorerOrder[aLanguage].indexOf(
+    (aLanguage === "ru" ? aParts : aParts.slice(1)).join("/"),
+  )
+  const bIndex = explorerOrder[bLanguage].indexOf(
+    (bLanguage === "ru" ? bParts : bParts.slice(1)).join("/"),
+  )
 
-  let aGroup: "ru" | "en" | null = null
-  let bGroup: "ru" | "en" | null = null
-  let aOrder = -1
-  let bOrder = -1
-
-  if (aParts[0] === "en" && aParts.length > 1) {
-    aOrder = enExplorerOrder.indexOf(aLabel)
-    if (aOrder !== -1) aGroup = "en"
-  } else {
-    aOrder = ruExplorerOrder.indexOf(aLabel)
-    if (aOrder !== -1) aGroup = "ru"
-  }
-
-  if (bParts[0] === "en" && bParts.length > 1) {
-    bOrder = enExplorerOrder.indexOf(bLabel)
-    if (bOrder !== -1) bGroup = "en"
-  } else {
-    bOrder = ruExplorerOrder.indexOf(bLabel)
-    if (bOrder !== -1) bGroup = "ru"
-  }
-
-  if (aGroup && bGroup) {
-    if (aGroup === bGroup && aOrder !== bOrder) {
-      return aOrder - bOrder
+  if (aLanguage === bLanguage) {
+    if (aIndex !== -1 && bIndex !== -1 && aIndex !== bIndex) {
+      return aIndex - bIndex
     }
-  } else if (aGroup) {
-    return -1
-  } else if (bGroup) {
-    return 1
+    if (aIndex !== -1) return -1
+    if (bIndex !== -1) return 1
   }
 
   if ((!a.isFolder && !b.isFolder) || (a.isFolder && b.isFolder)) {
-    return a.displayName.localeCompare(b.displayName, undefined, {
+    const locale = aLanguage === "th" ? "th" : aLanguage === "en" ? "en" : "ru"
+    return a.displayName.localeCompare(b.displayName, locale, {
       numeric: true,
       sensitivity: "base",
     })
@@ -89,12 +91,26 @@ const explorerSort = (a: any, b: any) => {
   return a.isFolder ? -1 : 1
 }
 
+const explorerMap = (node: any) => {
+  if ((node.slugSegment === "en" || node.slugSegment === "th") && node.isFolder) {
+    node.displayName = ""
+  }
+  if (node.slug === "en/Атомы/index" && node.isFolder) node.displayName = "Atoms"
+  if (node.slug === "th/Atoms/index" && node.isFolder) node.displayName = "อะตอม"
+  return node
+}
+
 // components for pages that display a single page (e.g. a single note)
 export const defaultContentPageLayout: PageLayout = {
   beforeBody: [
     Component.ConditionalRender({
       component: Component.Breadcrumbs(),
-      condition: (page) => page.fileData.slug !== "index" && page.fileData.slug !== "en/index",
+      condition: (page) =>
+        page.fileData.slug !== "index" &&
+        page.fileData.slug !== "en" &&
+        page.fileData.slug !== "en/index" &&
+        page.fileData.slug !== "th" &&
+        page.fileData.slug !== "th/index",
     }),
     Component.ArticleTitle(),
     Component.ContentMeta(),
@@ -116,11 +132,7 @@ export const defaultContentPageLayout: PageLayout = {
     }),
     Component.Explorer({
       filterFn: explorerFilter,
-      mapFn: (node) => {
-        if (node.slugSegment === "en" && node.isFolder) node.displayName = ""
-        if (node.slug === "en/Атомы/index" && node.isFolder) node.displayName = "Atoms"
-        return node
-      },
+      mapFn: explorerMap,
       sortFn: explorerSort,
     }),
   ],
@@ -133,7 +145,19 @@ export const defaultContentPageLayout: PageLayout = {
 
 // components for pages that display lists of pages  (e.g. tags or folders)
 export const defaultListPageLayout: PageLayout = {
-  beforeBody: [Component.Breadcrumbs(), Component.ArticleTitle(), Component.ContentMeta()],
+  beforeBody: [
+    Component.ConditionalRender({
+      component: Component.Breadcrumbs(),
+      condition: (page) =>
+        page.fileData.slug !== "index" &&
+        page.fileData.slug !== "en" &&
+        page.fileData.slug !== "en/index" &&
+        page.fileData.slug !== "th" &&
+        page.fileData.slug !== "th/index",
+    }),
+    Component.ArticleTitle(),
+    Component.ContentMeta(),
+  ],
   left: [
     Component.PageTitle(),
     Component.MobileOnly(Component.Spacer()),
@@ -149,11 +173,7 @@ export const defaultListPageLayout: PageLayout = {
     }),
     Component.Explorer({
       filterFn: explorerFilter,
-      mapFn: (node) => {
-        if (node.slugSegment === "en" && node.isFolder) node.displayName = ""
-        if (node.slug === "en/Атомы/index" && node.isFolder) node.displayName = "Atoms"
-        return node
-      },
+      mapFn: explorerMap,
       sortFn: explorerSort,
     }),
   ],

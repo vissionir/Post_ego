@@ -1,17 +1,20 @@
 import assert from "node:assert"
-import { describe, test } from "node:test"
-import { isEnglishSlug, languageForSlug, localeForSlug } from "./lang"
+import test, { describe } from "node:test"
+import { languageForSlug, localeForSlug } from "./lang"
 
-describe("page language helpers", () => {
-  test("uses Russian outside the English subtree", () => {
-    assert.equal(isEnglishSlug("index"), false)
-    assert.equal(localeForSlug("Атомы/Миссия"), "ru-RU")
-    assert.equal(languageForSlug("Атомы/Миссия"), "ru")
+describe("content language detection", () => {
+  test("uses Russian at the site root", () => {
+    assert.strictEqual(languageForSlug("Атомы/Ум"), "ru")
+    assert.strictEqual(localeForSlug("index"), "ru-RU")
   })
 
-  test("uses English inside the English subtree", () => {
-    assert.equal(isEnglishSlug("en/index"), true)
-    assert.equal(localeForSlug("en/Атомы/Mission"), "en-US")
-    assert.equal(languageForSlug("en/Атомы/Mission"), "en")
+  test("detects English pages", () => {
+    assert.strictEqual(languageForSlug("en/Атомы/Mind"), "en")
+    assert.strictEqual(localeForSlug("en/index"), "en-US")
+  })
+
+  test("detects Thai pages", () => {
+    assert.strictEqual(languageForSlug("th/Atoms/Mind"), "th")
+    assert.strictEqual(localeForSlug("th/index"), "th-TH")
   })
 })

@@ -19,7 +19,7 @@ export default {
       danger: "อันตราย",
       bug: "บั๊ก",
       example: "ตัวอย่าง",
-      quote: "คำพูกยกมา",
+      quote: "คำพูดยกมา",
     },
     backlinks: {
       title: "หน้าที่กล่าวถึง",
@@ -33,7 +33,7 @@ export default {
       title: "โหมดอ่าน",
     },
     explorer: {
-      title: "รายการหน้า",
+      title: "สำรวจ",
     },
     footer: {
       createdWith: "สร้างด้วย",
@@ -51,7 +51,7 @@ export default {
     },
     search: {
       title: "ค้นหา",
-      searchBarPlaceholder: "ค้นหาบางอย่าง",
+      searchBarPlaceholder: "ค้นหา",
     },
     tableOfContents: {
       title: "สารบัญ",

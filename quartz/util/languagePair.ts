@@ -4,6 +4,7 @@ import { FullSlug, simplifySlug } from "./path"
 export interface LanguagePair {
   ru: FullSlug
   en: FullSlug
+  th: FullSlug
 }
 
 type AtomGraph = {
@@ -12,14 +13,30 @@ type AtomGraph = {
   incoming: number[][]
 }
 
-const fixedPagePairs: [FullSlug, FullSlug][] = [
-  ["index" as FullSlug, "en/index" as FullSlug],
-  ["Атомы/index" as FullSlug, "en/Атомы/index" as FullSlug],
-  ["Как-устроено-исследование" as FullSlug, "en/How-the-research-is-structured" as FullSlug],
-  ["Как-я-сюда-пришёл" as FullSlug, "en/How-I-got-here" as FullSlug],
-  ["Миссия-проекта" as FullSlug, "en/Project-Mission" as FullSlug],
-  ["Нейронавигатор" as FullSlug, "en/Нейронавигатор" as FullSlug],
-  ["Область-исследования" as FullSlug, "en/Scope-of-the-research" as FullSlug],
+const fixedPagePairs: [FullSlug, FullSlug, FullSlug][] = [
+  ["index" as FullSlug, "en/index" as FullSlug, "th/index" as FullSlug],
+  ["Атомы/index" as FullSlug, "en/Атомы/index" as FullSlug, "th/Atoms/index" as FullSlug],
+  [
+    "Как-устроено-исследование" as FullSlug,
+    "en/How-the-research-is-structured" as FullSlug,
+    "th/How-the-research-is-structured" as FullSlug,
+  ],
+  [
+    "Как-я-сюда-пришёл" as FullSlug,
+    "en/How-I-got-here" as FullSlug,
+    "th/How-I-got-here" as FullSlug,
+  ],
+  [
+    "Миссия-проекта" as FullSlug,
+    "en/Project-Mission" as FullSlug,
+    "th/Project-Mission" as FullSlug,
+  ],
+  ["Нейронавигатор" as FullSlug, "en/Нейронавигатор" as FullSlug, "th/Нейронавигатор" as FullSlug],
+  [
+    "Область-исследования" as FullSlug,
+    "en/Scope-of-the-research" as FullSlug,
+    "th/Scope-of-the-research" as FullSlug,
+  ],
 ]
 
 // These stable semantic anchors align the two near-isomorphic atom graphs.
@@ -29,6 +46,8 @@ const atomAnchors: [string, string][] = [
   ["Эго", "Ego"],
   ["Реальность", "Reality"],
   ["Выбор", "Choice"],
+  ["Влечение", "Attraction"],
+  ["Аверсия", "Aversion"],
   ["Сопротивление", "Resistance"],
   ["Присутствие", "Presence"],
   ["Отождествление", "Identification"],
@@ -62,11 +81,13 @@ function addSlugPair(
   available: Set<FullSlug>,
   ru: FullSlug,
   en: FullSlug,
+  th: FullSlug,
 ) {
-  if (!available.has(ru) || !available.has(en)) return
-  const pair = { ru, en }
+  if (!available.has(ru) || !available.has(en) || !available.has(th)) return
+  const pair = { ru, en, th }
   pairs.set(ru, pair)
   pairs.set(en, pair)
+  pairs.set(th, pair)
 }
 
 function buildGraph(files: QuartzPluginData[]): AtomGraph {
@@ -197,7 +218,7 @@ function alignAtomGraphs(ru: AtomGraph, en: AtomGraph) {
 function buildLanguagePairs(allFiles: QuartzPluginData[]) {
   const pairs = new Map<FullSlug, LanguagePair>()
   const available = new Set(allFiles.flatMap((file) => (file.slug ? [file.slug] : [])))
-  fixedPagePairs.forEach(([ru, en]) => addSlugPair(pairs, available, ru, en))
+  fixedPagePairs.forEach(([ru, en, th]) => addSlugPair(pairs, available, ru, en, th))
 
   const russianAtoms = allFiles.filter(
     (file) => file.slug?.startsWith("Атомы/") && file.slug !== "Атомы/index",
@@ -210,7 +231,9 @@ function buildLanguagePairs(allFiles: QuartzPluginData[]) {
   const atomMapping = alignAtomGraphs(ruGraph, enGraph)
 
   atomMapping.forEach((enIndex, ruIndex) => {
-    addSlugPair(pairs, available, ruGraph.files[ruIndex].slug!, enGraph.files[enIndex].slug!)
+    const enSlug = enGraph.files[enIndex].slug!
+    const thSlug = enSlug.replace(/^en\/Атомы\//, "th/Atoms/") as FullSlug
+    addSlugPair(pairs, available, ruGraph.files[ruIndex].slug!, enSlug, thSlug)
   })
 
   return pairs

@@ -9,7 +9,7 @@ import { QuartzPluginData } from "../../plugins/vfile"
 import { ComponentChildren } from "preact"
 import { concatenateResources } from "../../util/resources"
 import { trieFromAllFiles } from "../../util/ctx"
-import { localeForSlug } from "../../util/lang"
+import { languageForSlug, localeForSlug } from "../../util/lang"
 // @ts-ignore
 import sortScript from "../scripts/pageListSort.inline"
 
@@ -27,8 +27,9 @@ const defaultOptions: FolderContentOptions = {
   showSubfolders: true,
 }
 
-function atomCountLabel(count: number, isEnglish: boolean) {
-  if (isEnglish) return `${count} atoms.`
+function atomCountLabel(count: number, language: "ru" | "en" | "th") {
+  if (language === "en") return `${count} atoms.`
+  if (language === "th") return `${count} อะตอม.`
 
   const lastTwo = count % 100
   const last = count % 10
@@ -121,8 +122,34 @@ export default ((opts?: Partial<FolderContentOptions>) => {
         ? fileData.description
         : htmlToJsx(fileData.filePath!, tree)
     ) as ComponentChildren
+    const language = languageForSlug(fileData.slug)
     const isEnglishAtoms = fileData.slug === "en/Атомы/index"
-    const isAtomsFolder = fileData.slug === "Атомы/index" || isEnglishAtoms
+    const isThaiAtoms = fileData.slug === "th/Atoms/index"
+    const isAtomsFolder = fileData.slug === "Атомы/index" || isEnglishAtoms || isThaiAtoms
+    const labels =
+      language === "ru"
+        ? {
+            sort: "Сортировка",
+            sortAria: "Сортировка атомов",
+            alphabetical: "По алфавиту",
+            newest: "Сначала новые",
+            oldest: "Сначала старые",
+          }
+        : language === "th"
+          ? {
+              sort: "เรียงลำดับ",
+              sortAria: "เรียงลำดับอะตอม",
+              alphabetical: "ตามตัวอักษร",
+              newest: "ใหม่ล่าสุดก่อน",
+              oldest: "เก่าที่สุดก่อน",
+            }
+          : {
+              sort: "Sort",
+              sortAria: "Sort atoms",
+              alphabetical: "Alphabetical",
+              newest: "Newest first",
+              oldest: "Oldest first",
+            }
 
     return (
       <div class="popover-hint">
@@ -131,29 +158,19 @@ export default ((opts?: Partial<FolderContentOptions>) => {
           {isAtomsFolder ? (
             <div class="page-list-toolbar">
               {options.showFolderCount && (
-                <p class="page-list-count">
-                  {atomCountLabel(allPagesInFolder.length, isEnglishAtoms)}
-                </p>
+                <p class="page-list-count">{atomCountLabel(allPagesInFolder.length, language)}</p>
               )}
-              <div
-                class="page-list-sort"
-                data-page-list-sort
-                data-sort-locale={isEnglishAtoms ? "en" : "ru"}
-              >
-                <span class="page-list-sort-label">{isEnglishAtoms ? "Sort" : "Сортировка"}</span>
-                <div
-                  class="page-list-sort-options"
-                  role="group"
-                  aria-label={isEnglishAtoms ? "Sort atoms" : "Сортировка атомов"}
-                >
+              <div class="page-list-sort" data-page-list-sort data-sort-locale={language}>
+                <span class="page-list-sort-label">{labels.sort}</span>
+                <div class="page-list-sort-options" role="group" aria-label={labels.sortAria}>
                   <button type="button" data-sort-mode="alphabetical" aria-pressed="true">
-                    {isEnglishAtoms ? "Alphabetical" : "По алфавиту"}
+                    {labels.alphabetical}
                   </button>
                   <button type="button" data-sort-mode="newest" aria-pressed="false">
-                    {isEnglishAtoms ? "Newest first" : "Сначала новые"}
+                    {labels.newest}
                   </button>
                   <button type="button" data-sort-mode="oldest" aria-pressed="false">
-                    {isEnglishAtoms ? "Oldest first" : "Сначала старые"}
+                    {labels.oldest}
                   </button>
                 </div>
               </div>

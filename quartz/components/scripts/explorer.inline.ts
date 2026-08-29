@@ -237,7 +237,9 @@ async function setupExplorer(currentSlug: FullSlug) {
     } else {
       const scrollTop = sessionStorage.getItem("explorerScrollTop")
       const shouldResetScroll =
-        currentSlug === ("index" as FullSlug) || currentSlug === ("en/index" as FullSlug)
+        currentSlug === ("index" as FullSlug) ||
+        currentSlug === ("en/index" as FullSlug) ||
+        currentSlug === ("th/index" as FullSlug)
 
       if (scrollTop && !shouldResetScroll) {
         explorerUl.scrollTop = parseInt(scrollTop)

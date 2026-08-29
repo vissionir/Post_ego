@@ -1,5 +1,37 @@
 @use "./base.scss";
 
+html[lang="th"] {
+  --headerFont: "Noto Sans Thai", sans-serif;
+  --bodyFont: "Noto Sans Thai", sans-serif;
+}
+
+@media all and (max-width: 480px) {
+  .sidebar.left > .page-title {
+    white-space: nowrap;
+  }
+
+  .sidebar.left > .flex-component {
+    gap: 0.65rem !important;
+  }
+
+  .sidebar.left .search > .search-button {
+    width: 2.25rem;
+    padding: 0;
+
+    > span {
+      display: none;
+    }
+
+    > svg {
+      margin: 0 auto;
+    }
+  }
+
+  .sidebar.left .lang-switch {
+    gap: 0.25rem;
+  }
+}
+
 // Typography tweaks
 // On mobile the gap before H2/H3 looked too large (esp. after paragraphs).
 article {

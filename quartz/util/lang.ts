@@ -8,12 +8,20 @@ export function isEnglishSlug(slug?: string): boolean {
   return slug === "en" || slug?.startsWith("en/") === true
 }
 
-export function localeForSlug(slug?: string): ValidLocale {
-  return isEnglishSlug(slug) ? "en-US" : "ru-RU"
+export function isThaiSlug(slug?: string): boolean {
+  return slug === "th" || slug?.startsWith("th/") === true
 }
 
-export function languageForSlug(slug?: string): "en" | "ru" {
-  return isEnglishSlug(slug) ? "en" : "ru"
+export function localeForSlug(slug?: string): ValidLocale {
+  if (isEnglishSlug(slug)) return "en-US"
+  if (isThaiSlug(slug)) return "th-TH"
+  return "ru-RU"
+}
+
+export function languageForSlug(slug?: string): "en" | "ru" | "th" {
+  if (isEnglishSlug(slug)) return "en"
+  if (isThaiSlug(slug)) return "th"
+  return "ru"
 }
 
 export function classNames(

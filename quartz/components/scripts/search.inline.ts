@@ -22,6 +22,12 @@ const encoder = (str: string): string[] => {
   let bufferEnd = -1
   const lower = str.toLowerCase()
 
+  if (/\p{Script=Thai}/u.test(lower) && typeof Intl.Segmenter === "function") {
+    return [...new Intl.Segmenter("th", { granularity: "word" }).segment(lower)]
+      .filter((segment) => segment.isWordLike)
+      .map((segment) => segment.segment)
+  }
+
   let i = 0
   for (const char of lower) {
     const code = char.codePointAt(0)!
@@ -203,6 +209,13 @@ async function setupSearch(searchElement: Element, currentSlug: FullSlug, data: 
   if (!searchLayout) return
 
   const idDataMap = Object.keys(data) as FullSlug[]
+  const slugLanguage = (slug: FullSlug) =>
+    slug === "en" || slug.startsWith("en/")
+      ? "en"
+      : slug === "th" || slug.startsWith("th/")
+        ? "th"
+        : "ru"
+  const currentLanguage = slugLanguage(currentSlug)
   const appendLayout = (el: HTMLElement) => {
     searchLayout.appendChild(el)
   }
@@ -376,10 +389,10 @@ async function setupSearch(searchElement: Element, currentSlug: FullSlug, data: 
   async function displayResults(finalResults: Item[]) {
     removeAllChildren(results)
     if (finalResults.length === 0) {
-      const isRussian = document.documentElement.lang === "ru"
+      const language = document.documentElement.lang
       results.innerHTML = `<a class="result-card no-match">
-          <h3>${isRussian ? "Ничего не найдено." : "No results."}</h3>
-          <p>${isRussian ? "Попробуйте другой запрос." : "Try another search term?"}</p>
+          <h3>${language === "ru" ? "Ничего не найдено." : language === "th" ? "ไม่พบผลลัพธ์" : "No results."}</h3>
+          <p>${language === "ru" ? "Попробуйте другой запрос." : language === "th" ? "ลองใช้คำค้นหาอื่น" : "Try another search term?"}</p>
       </a>`
     } else {
       results.append(...finalResults.map(resultToHTML))
@@ -474,7 +487,7 @@ async function setupSearch(searchElement: Element, currentSlug: FullSlug, data: 
     } else if (searchType === "basic") {
       searchResults = await index.searchAsync({
         query: currentSearchTerm,
-        limit: numSearchResults,
+        limit: numSearchResults * 10,
         index: ["title", "content"],
       })
     }
@@ -490,7 +503,10 @@ async function setupSearch(searchElement: Element, currentSlug: FullSlug, data: 
       ...getByField("content"),
       ...getByField("tags"),
     ])
-    const finalResults = [...allIds].map((id) => formatForDisplay(currentSearchTerm, id))
+    const finalResults = [...allIds]
+      .map((id) => formatForDisplay(currentSearchTerm, id))
+      .filter((result) => slugLanguage(result.slug) === currentLanguage)
+      .slice(0, numSearchResults)
     await displayResults(finalResults)
   }
 

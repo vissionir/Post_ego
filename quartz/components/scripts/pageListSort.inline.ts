@@ -25,7 +25,8 @@ document.addEventListener("nav", () => {
     const list = listing?.querySelector<HTMLElement>("ul.section-ul")
     if (!list) return
 
-    const locale = controls.dataset.sortLocale === "en" ? "en" : "ru"
+    const requestedLocale = controls.dataset.sortLocale
+    const locale = requestedLocale === "en" || requestedLocale === "th" ? requestedLocale : "ru"
     const collator = new Intl.Collator(locale, { numeric: true, sensitivity: "base" })
     const buttons = Array.from(
       controls.querySelectorAll<HTMLButtonElement>("button[data-sort-mode]"),

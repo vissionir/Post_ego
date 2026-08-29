@@ -8,6 +8,12 @@ const encoder = (str: string): string[] => {
   let bufferEnd = -1
   const lower = str.toLowerCase()
 
+  if (/\p{Script=Thai}/u.test(lower) && typeof Intl.Segmenter === "function") {
+    return [...new Intl.Segmenter("th", { granularity: "word" }).segment(lower)]
+      .filter((segment) => segment.isWordLike)
+      .map((segment) => segment.segment)
+  }
+
   let i = 0
   for (const char of lower) {
     const code = char.codePointAt(0)!
@@ -126,6 +132,18 @@ describe("search encoder", () => {
     test("should handle mixed Chinese and English", () => {
       const result = encoder("你好 world")
       assert.deepStrictEqual(result, ["你", "好", "world"])
+    })
+  })
+
+  describe("Thai text", () => {
+    test("should segment Thai text into searchable words", () => {
+      const result = encoder("จิตคือเครื่องมือแห่งการตีความ")
+      assert.deepStrictEqual(result, ["จิต", "คือ", "เครื่อง", "มือ", "แห่ง", "การ", "ตีความ"])
+    })
+
+    test("should retain Latin terms in Thai text", () => {
+      const result = encoder("ระบบ Post-Ego เชื่อมโยงความหมาย")
+      assert.deepStrictEqual(result, ["ระบบ", "post", "ego", "เชื่อม", "โยง", "ความ", "หมาย"])
     })
   })
 

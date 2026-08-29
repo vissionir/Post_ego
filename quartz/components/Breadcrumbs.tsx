@@ -55,9 +55,13 @@ export default ((opts?: Partial<BreadcrumbOptions>) => {
     const pathNodes = trie.ancestryChain(slugParts)
     const locale = localeForSlug(fileData.slug)
     const rootName =
-      options.rootName === defaultOptions.rootName && locale === "ru-RU"
-        ? "Главная"
-        : options.rootName
+      options.rootName !== defaultOptions.rootName
+        ? options.rootName
+        : locale === "ru-RU"
+          ? "Главная"
+          : locale === "th-TH"
+            ? "หน้าแรก"
+            : options.rootName
 
     if (!pathNodes) {
       return null
@@ -84,7 +88,13 @@ export default ((opts?: Partial<BreadcrumbOptions>) => {
     return (
       <nav
         class={classNames(displayClass, "breadcrumb-container")}
-        aria-label={locale === "ru-RU" ? "Навигационная цепочка" : "Breadcrumbs"}
+        aria-label={
+          locale === "ru-RU"
+            ? "Навигационная цепочка"
+            : locale === "th-TH"
+              ? "เส้นทางการนำทาง"
+              : "Breadcrumbs"
+        }
       >
         {crumbs.map((crumb, index) => {
           const isCurrent = options.showCurrentPage && index === crumbs.length - 1
