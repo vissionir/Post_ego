@@ -4,4 +4,4 @@ related:
   - "[[Carlos Castaneda]]"
 ---
 
-The loss of the human form is an [[Irreversible shift|irreversible shift]] arising from the [[Unfixed Assemblage Point|loss of fixation of the assemblage point]], in which the human form ceases to be held by [[Personal history|personal history]] and [[Maintaining an Image|the image of oneself]].
+The loss of the human form is an [[Irreversible shift|irreversible displacement]] of the [[Assemblage point|assemblage point]] arising as a result of [[Ego Death|ego death]], in which [[Identification|identification]] with the [[Human Form|human form]] ceases.

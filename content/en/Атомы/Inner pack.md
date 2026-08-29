@@ -2,4 +2,4 @@
 title: Inner pack
 ---
 
-Inner pack is the part of [[Predictive modeling|predictive modeling]] in which the [[Mind|mind]] forms and maintains models of other people and their possible reactions in order to orient in the social field and coordinate behavior.
+Inner pack is a system of models of other people, their possible reactions, and one's own position relative to them, formed through [[Mentalization|mentalization]] and maintained by the [[Mind|mind]], and organized into a social hierarchy for orientation in the social field and coordination of behavior.
