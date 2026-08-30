@@ -113,7 +113,6 @@ export const defaultContentPageLayout: PageLayout = {
         page.fileData.slug !== "th/index",
     }),
     Component.ArticleTitle(),
-    Component.ContentMeta(),
     Component.TagList(),
   ],
   left: [
@@ -156,7 +155,6 @@ export const defaultListPageLayout: PageLayout = {
         page.fileData.slug !== "th/index",
     }),
     Component.ArticleTitle(),
-    Component.ContentMeta(),
   ],
   left: [
     Component.PageTitle(),
