@@ -13,6 +13,7 @@ import path from "path"
 import { visit } from "unist-util-visit"
 import isAbsoluteUrl from "is-absolute-url"
 import { Root } from "hast"
+import { isNeuronavigatorPathname } from "../../util/neuronavigator"
 
 interface Options {
   /** How to resolve Markdown paths */
@@ -123,6 +124,11 @@ export const CrawlLinks: QuartzTransformerPlugin<Partial<Options>> = (userOpts) 
                   const simple = simplifySlug(full)
                   outgoing.add(simple)
                   node.properties["data-slug"] = full
+
+                  if (isNeuronavigatorPathname(full)) {
+                    node.properties.target = "_blank"
+                    node.properties.rel = "noopener noreferrer"
+                  }
                 }
 
                 // rewrite link internals if prettylinks is on

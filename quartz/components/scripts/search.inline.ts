@@ -2,6 +2,7 @@ import FlexSearch, { DefaultDocumentSearchResults } from "flexsearch"
 import { ContentDetails } from "../../plugins/emitters/contentIndex"
 import { registerEscapeHandler, removeAllChildren } from "./util"
 import { FullSlug, normalizeRelativeURLs, resolveRelative } from "../../util/path"
+import { isNeuronavigatorPathname } from "../../util/neuronavigator"
 
 interface Item {
   id: number
@@ -357,6 +358,10 @@ async function setupSearch(searchElement: Element, currentSlug: FullSlug, data: 
     itemTile.classList.add("result-card")
     itemTile.id = slug
     itemTile.href = resolveUrl(slug).toString()
+    if (isNeuronavigatorPathname(slug)) {
+      itemTile.target = "_blank"
+      itemTile.rel = "noopener noreferrer"
+    }
     itemTile.innerHTML = `
       <h3 class="card-title">${title}</h3>
       ${htmlTags}

@@ -7,6 +7,7 @@ import { Date, getDate } from "./Date"
 import { GlobalConfiguration } from "../cfg"
 import { i18n } from "../i18n"
 import { classNames, localeForSlug } from "../util/lang"
+import { isNeuronavigatorPathname } from "../util/neuronavigator"
 
 interface Options {
   title?: string
@@ -49,7 +50,14 @@ export default ((userOpts?: Partial<Options>) => {
                 <div class="section">
                   <div class="desc">
                     <h3>
-                      <a href={resolveRelative(fileData.slug!, page.slug!)} class="internal">
+                      <a
+                        href={resolveRelative(fileData.slug!, page.slug!)}
+                        class="internal"
+                        target={isNeuronavigatorPathname(page.slug!) ? "_blank" : undefined}
+                        rel={
+                          isNeuronavigatorPathname(page.slug!) ? "noopener noreferrer" : undefined
+                        }
+                      >
                         {title}
                       </a>
                     </h3>

@@ -1,6 +1,7 @@
 import { FileTrieNode } from "../../util/fileTrie"
 import { FullSlug, resolveRelative, simplifySlug } from "../../util/path"
 import { ContentDetails } from "../../plugins/emitters/contentIndex"
+import { isNeuronavigatorPathname } from "../../util/neuronavigator"
 
 type MaybeHTMLElement = HTMLElement | undefined
 
@@ -87,6 +88,11 @@ function createFileNode(currentSlug: FullSlug, node: FileTrieNode): HTMLLIElemen
   a.href = resolveRelative(currentSlug, node.slug)
   a.dataset.for = node.slug
   a.textContent = node.displayName
+
+  if (isNeuronavigatorPathname(node.slug)) {
+    a.target = "_blank"
+    a.rel = "noopener noreferrer"
+  }
 
   if (currentSlug === node.slug) {
     a.classList.add("active")

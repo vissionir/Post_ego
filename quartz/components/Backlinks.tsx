@@ -4,6 +4,7 @@ import { resolveRelative, simplifySlug } from "../util/path"
 import { i18n } from "../i18n"
 import { classNames, localeForSlug } from "../util/lang"
 import OverflowListFactory from "./OverflowList"
+import { isNeuronavigatorPathname } from "../util/neuronavigator"
 
 interface BacklinksOptions {
   hideWhenEmpty: boolean
@@ -35,7 +36,12 @@ export default ((opts?: Partial<BacklinksOptions>) => {
           {backlinkFiles.length > 0 ? (
             backlinkFiles.map((f) => (
               <li>
-                <a href={resolveRelative(fileData.slug!, f.slug!)} class="internal">
+                <a
+                  href={resolveRelative(fileData.slug!, f.slug!)}
+                  class="internal"
+                  target={isNeuronavigatorPathname(f.slug!) ? "_blank" : undefined}
+                  rel={isNeuronavigatorPathname(f.slug!) ? "noopener noreferrer" : undefined}
+                >
                   {f.frontmatter?.title}
                 </a>
               </li>
