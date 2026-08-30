@@ -13,7 +13,8 @@ import path from "path"
 import { visit } from "unist-util-visit"
 import isAbsoluteUrl from "is-absolute-url"
 import { Root } from "hast"
-import { isNeuronavigatorPathname } from "../../util/neuronavigator"
+
+const postEgoGptUrl = "https://chatgpt.com/g/g-6a0d8be1ae548191afe51a435401e106-post-ego-gpt"
 
 interface Options {
   /** How to resolve Markdown paths */
@@ -99,6 +100,11 @@ export const CrawlLinks: QuartzTransformerPlugin<Partial<Options>> = (userOpts) 
                   node.properties.target = "_blank"
                 }
 
+                if (isExternal && dest.replace(/\/$/, "") === postEgoGptUrl) {
+                  node.properties.target = "_blank"
+                  node.properties.rel = "noopener noreferrer"
+                }
+
                 // don't process external links or intra-document anchors
                 const isInternal = !(
                   isAbsoluteUrl(dest, { httpOnly: false }) || dest.startsWith("#")
@@ -124,11 +130,6 @@ export const CrawlLinks: QuartzTransformerPlugin<Partial<Options>> = (userOpts) 
                   const simple = simplifySlug(full)
                   outgoing.add(simple)
                   node.properties["data-slug"] = full
-
-                  if (isNeuronavigatorPathname(full)) {
-                    node.properties.target = "_blank"
-                    node.properties.rel = "noopener noreferrer"
-                  }
                 }
 
                 // rewrite link internals if prettylinks is on

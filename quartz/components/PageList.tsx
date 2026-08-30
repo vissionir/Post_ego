@@ -4,7 +4,6 @@ import { Date, getDate } from "./Date"
 import { QuartzComponent, QuartzComponentProps } from "./types"
 import { GlobalConfiguration } from "../cfg"
 import { localeForSlug } from "../util/lang"
-import { isNeuronavigatorPathname } from "../util/neuronavigator"
 
 export type SortFn = (f1: QuartzPluginData, f2: QuartzPluginData) => number
 
@@ -102,12 +101,7 @@ export const PageList: QuartzComponent = ({ cfg, fileData, allFiles, limit, sort
               </p>
               <div class="desc">
                 <h3>
-                  <a
-                    href={resolveRelative(fileData.slug!, page.slug!)}
-                    class="internal"
-                    target={isNeuronavigatorPathname(page.slug!) ? "_blank" : undefined}
-                    rel={isNeuronavigatorPathname(page.slug!) ? "noopener noreferrer" : undefined}
-                  >
+                  <a href={resolveRelative(fileData.slug!, page.slug!)} class="internal">
                     {title}
                   </a>
                 </h3>
