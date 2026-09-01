@@ -2,4 +2,4 @@
 title: Rescuing
 ---
 
-Rescuing is a form of help in which one's own [[Deficit|deficit]] is experienced through [[Projection|projection]] as the lack of an [[There are no people|other]], and helping them is used for one's own compensation.
+Rescuing is a form of [[Self-Sacrifice|self-sacrifice]] in which the subject, through [[Projection|projection]], transfers their own vulnerability or [[Deficit|deficit]] onto another, acting [[Illusion of the Other|as if]] the corresponding protection or compensation were necessary for the other.
