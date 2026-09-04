@@ -1,6 +1,4 @@
 ---
 title: Encounter with the unknown
 ---
-An encounter with the unknown is the moment when the habitual [[Map|map]] of perception stops explaining what is happening and a person meets a slice of experience that lies outside their previous description of the world.
-
-It is an [[Irreversible shift|irreversible shift]]: any world-picture, even one absorbed since childhood, is revealed as a description rather than [[Reality|reality]] itself. From that point on, a fixed interpretation no longer feels final, and [[Reality|reality]] is experienced differently.
+An encounter with the unknown is a direct confrontation with [[Reality|reality]] that lies beyond the descriptions and modes of action available in the current [[Map|map]].
