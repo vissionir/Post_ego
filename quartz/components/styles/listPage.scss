@@ -77,14 +77,14 @@ li.section-li {
 
   & > .section {
     display: grid;
-    grid-template-columns: 7rem minmax(0, 3fr) minmax(0, 1fr);
+    grid-template-columns: 6.5rem minmax(0, 3fr) minmax(0, 1fr);
 
     & > .desc > h3 > a {
       background-color: transparent;
     }
 
     & .meta {
-      margin: 0 1em 0 0;
+      margin: 0 0.5em 0 0;
       opacity: 0.6;
     }
 
@@ -93,6 +93,10 @@ li.section-li {
 
       & > .tags {
         display: none;
+      }
+
+      & > .meta {
+        margin-right: 1em;
       }
     }
   }
@@ -105,4 +109,8 @@ li.section-li {
   & > .tags {
     display: none;
   }
+}
+
+.popover li.section-li > .section > .meta {
+  margin-right: 1em;
 }
