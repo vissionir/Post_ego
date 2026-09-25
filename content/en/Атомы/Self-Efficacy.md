@@ -2,4 +2,4 @@
 title: Self-Efficacy
 ---
 
-Self-efficacy is a [[Presupposition|presupposition]] according to which the subject is capable of organizing and carrying out the actions necessary to achieve a [[Goal|goal]].
+Self-efficacy is a [[Presupposition|presupposition]] that a person can organize and carry out the actions needed to achieve [[Goal|goals]] and overcome difficulties that arise.

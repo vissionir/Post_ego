@@ -2,4 +2,4 @@
 title: Shadow
 ---
 
-Shadow is the parts of the psyche that are not recognized as "one's own" and are therefore displaced out of [[The conscious|the conscious]].
+The shadow comprises parts of [[Selfhood|selfhood]] not recognized as one's own and therefore pushed out of [[The conscious|the conscious]].

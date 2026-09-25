@@ -2,4 +2,4 @@
 title: Warrior
 ---
 
-Warrior is a mode of existence in which the subject acts not from an image of "I," but as a manifestation of [[Intention|intention]], taking [[Responsibility|responsibility]] without [[Self-Pity|self-pity]] or [[Sense of Self-Importance|sense of self-importance]].
+A warrior is a way of [[Life in the Unknown|living in the unknown]]: acting from [[Presence|presence]], remaining free of [[Personal history|personal history]] and keeping an [[Unfixed Assemblage Point|unfixed assemblage point]], following [[Intention|intention]], recognizing the [[Controlled folly|conditional nature of what is chosen]], and taking [[Responsibility|responsibility]] without [[Self-Pity|self-pity]] or [[Sense of Self-Importance|self-importance]].

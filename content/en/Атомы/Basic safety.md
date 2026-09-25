@@ -2,4 +2,4 @@
 title: Basic safety
 ---
 
-Basic safety is the [[Presupposition|presupposition]] that existence is not under threat; only on that basis can [[Presence|presence]] be sustained as a background mode of experience, and [[Author position|the author position]] become stable.
+Basic safety is a [[Presupposition|presupposition]] that one's existence is not under threat, experienced as an inner sense of 'I am safe'. Only when it is present can [[Presence|presence]] remain the background of experience and the [[Author position|author position]] become stable.

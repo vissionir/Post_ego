@@ -22,11 +22,6 @@ const fixedPagePairs: [FullSlug, FullSlug, FullSlug][] = [
     "th/How-the-research-is-structured" as FullSlug,
   ],
   [
-    "Как-я-сюда-пришёл" as FullSlug,
-    "en/How-I-got-here" as FullSlug,
-    "th/How-I-got-here" as FullSlug,
-  ],
-  [
     "Миссия-проекта" as FullSlug,
     "en/Project-Mission" as FullSlug,
     "th/Project-Mission" as FullSlug,

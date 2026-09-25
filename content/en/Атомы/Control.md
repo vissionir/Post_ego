@@ -2,4 +2,4 @@
 title: Control
 ---
 
-Control is the way [[Mind|the mind]] carries out [[Clinging|clinging]] through restoring and maintaining [[Predictability|predictability]]; it is opposite to [[State of control|the state of management]] and serves as a form of [[Power of the mind|the mind's power]].
+Control is the way the [[Mind|mind]] restores and maintains [[Predictability|predictability]]; it is opposed to the [[State of control|state of control]] and is a form of the [[Power of the mind|power of the mind]].

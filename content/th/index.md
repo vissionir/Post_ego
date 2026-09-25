@@ -21,7 +21,6 @@ modified: 2026-05-21
   - [[Scope of the research#ขอบเขตของการคิด|ขอบเขตของการคิด]]
   - [[Scope of the research#ข้อสังเกตเชิงวิพากษ์|ข้อสังเกตเชิงวิพากษ์]]
 - [[Project Mission|พันธกิจของโครงการ]]
-- [[How I got here|ที่มาของโครงการ]]
 
 ---
 

@@ -2,4 +2,4 @@
 title: Looking Within
 ---
 
-Looking within is the direct perception of [[Qualia|qualia]] without evaluation or [[Interpretation|interpretation]], ending [[Identification|identification]] with a [[Submodal state|submodal state]] and leading to an [[Encounter with Reality|encounter with reality]].
+Looking within is direct observation of one's own experience without judgment or [[Interpretation|interpretation]], allowing it to be recognized as content of experience and [[Identification|identification]] with it to cease.

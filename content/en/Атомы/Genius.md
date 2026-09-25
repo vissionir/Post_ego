@@ -2,4 +2,4 @@
 title: Genius
 ---
 
-A genius is a subject whose [[Independent Thinking|independent thinking]] produces a new [[Model of Reality|model of reality]] that is not reducible to ready-made modes of understanding.
+A genius is a [[Culture|cultural-historical]] designation for a person whose creative achievements are recognized as exceptional in novelty and significance.

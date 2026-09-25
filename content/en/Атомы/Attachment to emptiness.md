@@ -2,4 +2,4 @@
 title: Attachment to emptiness
 ---
 
-Attachment to emptiness is a form of [[State addiction|state addiction]] in which [[Presence|presence]] is fixed as an end in itself.
+Attachment to emptiness is [[Clinging|clinging]] to [[Presence|presence]] as a state that must be held onto or recovered.

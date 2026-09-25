@@ -21,7 +21,6 @@ This site is the public corpus of the Post-Ego project. It gathers materials on 
   - [[Scope of the research#boundary-of-thinking|Boundary of thinking]]
   - [[Scope of the research#critical-remark|Critical remark]]
 - [[Project Mission|Project Mission]]
-- [[How I got here|How I got here]]
 
 ---
 

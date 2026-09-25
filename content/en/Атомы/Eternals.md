@@ -2,6 +2,6 @@
 title: Eternals
 ---
 
-Eternals is a [[Contractual jurisdiction|contractual jurisdiction]] realized through [[Collective consciousness|collective consciousness]] in the form of the [[Sangha|sangha]] and regulated by [the Constitution of the ETERNALS Society](https://neweden1.notion.site/The-Constitution-of-the-ETERNALS-Society-57e054182b1144609a49336da3c27fcc).
+Eternals is a [[Human-Centered System|human-centered]] [[Contractual jurisdiction|contractual jurisdiction]], implemented through [[Collective consciousness|collective consciousness]] and governed by the [ETERNALS Constitution](https://neweden1.notion.site/ETERNALS-c45f828d5a2d4a2db928a03d3553bfed).
 
 <a href="Eternal" style="display:none">Eternal</a>

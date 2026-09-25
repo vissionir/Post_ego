@@ -2,4 +2,4 @@
 title: Threat verification
 ---
 
-Threat verification is a distinction in which only what is confirmed in [[VAK|VAK]] is recognized as a real threat.
+Threat verification is checking the available [[VAK|data]] for grounds to suppose a threat, distinguishing its possibility from signs that it is present now.

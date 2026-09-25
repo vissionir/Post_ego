@@ -2,4 +2,4 @@
 title: Protectedness
 ---
 
-Protectedness is a [[Presupposition|presupposition]] that follows from [[Basic safety|basic safety]], in which the subject experiences themselves as being under protection and does not have to maintain it constantly through [[Control|control]].
+Protectedness is a form of [[Basic safety|basic safety]] in which one experiences oneself as protected by [[Safety of the Environment|environmental conditions]] and [[Social Safety|social mechanisms]].
