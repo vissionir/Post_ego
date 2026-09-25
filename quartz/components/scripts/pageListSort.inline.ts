@@ -45,7 +45,10 @@ document.addEventListener("nav", () => {
         const aDate = Number(a.dataset.pageModified ?? 0)
         const bDate = Number(b.dataset.pageModified ?? 0)
         const dateOrder = mode === "newest" ? bDate - aDate : aDate - bDate
-        return dateOrder || titleOrder
+        const aRank = Number(a.dataset.pageReleaseRank ?? -1)
+        const bRank = Number(b.dataset.pageReleaseRank ?? -1)
+        const releaseOrder = mode === "newest" ? bRank - aRank : aRank - bRank
+        return dateOrder || releaseOrder || titleOrder
       })
 
       list.append(...items)

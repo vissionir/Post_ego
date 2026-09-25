@@ -3,7 +3,8 @@ import { QuartzPluginData } from "../plugins/vfile"
 import { Date, getDate } from "./Date"
 import { QuartzComponent, QuartzComponentProps } from "./types"
 import { GlobalConfiguration } from "../cfg"
-import { localeForSlug } from "../util/lang"
+import { languageForSlug, localeForSlug } from "../util/lang"
+import releaseOrderV1 from "./releaseOrderV1.json"
 
 export type SortFn = (f1: QuartzPluginData, f2: QuartzPluginData) => number
 
@@ -77,6 +78,8 @@ type Props = {
 
 export const PageList: QuartzComponent = ({ cfg, fileData, allFiles, limit, sort }: Props) => {
   const locale = localeForSlug(fileData.slug)
+  const language = languageForSlug(fileData.slug)
+  const releaseRanks = new Map(releaseOrderV1[language].map((filename, index) => [filename, index]))
   const sorter = sort ?? byAlphabeticalFolderFirst()
   let list = allFiles.sort(sorter)
   if (limit) {
@@ -88,12 +91,17 @@ export const PageList: QuartzComponent = ({ cfg, fileData, allFiles, limit, sort
       {list.map((page) => {
         const title = page.frontmatter?.title
         const tags = page.frontmatter?.tags ?? []
+        const filename = page.filePath
+          ?.split("/")
+          .at(-1)
+          ?.replace(/\.[^.]+$/, "")
 
         return (
           <li
             class="section-li"
             data-page-title={title ?? ""}
             data-page-modified={page.dates?.modified.getTime() ?? 0}
+            data-page-release-rank={releaseRanks.get(filename ?? "") ?? -1}
           >
             <div class="section">
               <p class="meta">
