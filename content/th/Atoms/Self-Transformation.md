@@ -1,5 +1,6 @@
 ---
 title: การเปลี่ยนแปลงตนเอง
+created: 2026-09-25T07:24:47+07:00
 ---
 
 การเปลี่ยนแปลงตนเองคือรูปแบบหนึ่งของ[[Meta-management|การจัดการระดับเมตา]] ซึ่ง[[The Dilts Pyramid|ระดับ]]ของ[[Identity|อัตลักษณ์]]เปลี่ยนไป[[Higher-Level Principle|โดยอ้อม]]ผ่าน[[Mission Reconfiguration|การปรับโครงสร้างพันธกิจ]]

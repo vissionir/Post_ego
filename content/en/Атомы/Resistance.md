@@ -1,5 +1,6 @@
 ---
 title: Resistance
+created: 2026-04-14T21:43:13+07:00
 ---
 
 Resistance is non-acceptance of part of the present [[Reality|reality]], accompanied by an attempt to hold, change, suppress, or avoid what is happening, creating an [[Inner Conflict|inner conflict]].

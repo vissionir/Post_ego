@@ -33,7 +33,11 @@ jobs:
         run: npm ci
 
       - name: Build site
-        run: npx quartz build
+        # Fail before publishing if an atom loses its stable origin date.
+        # Definitions and modification dates remain independent of this chronology.
+        run: |
+          node scripts/atom-chronology.mjs --check
+          npx quartz build
 
       - name: Build AI context
         run: npm run build:ai

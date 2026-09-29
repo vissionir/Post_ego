@@ -1,4 +1,5 @@
 ---
 title: Coherence
+created: 2026-03-15T16:58:03+07:00
 ---
 Coherence is a property of a [[Map|map]] in which its elements form an internally consistent system free of logical contradictions. A coherent map is one in which observations, concepts, and explanations support one another and cohere into an integral model of [[Reality|reality]].

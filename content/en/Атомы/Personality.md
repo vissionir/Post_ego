@@ -1,5 +1,6 @@
 ---
 title: Personality
+created: 2026-03-11T19:53:08+07:00
 ---
 
 Personality is a stable system of psychological patterns (beliefs, emotions, roles, strategies, [[Imprint|imprints]] and ways of interpreting) that forms a habitual way of experiencing and acting.

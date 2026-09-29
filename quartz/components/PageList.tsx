@@ -100,7 +100,7 @@ export const PageList: QuartzComponent = ({ cfg, fileData, allFiles, limit, sort
           <li
             class="section-li"
             data-page-title={title ?? ""}
-            data-page-modified={page.dates?.modified.getTime() ?? 0}
+            data-page-date={getDate(cfg, page)?.getTime() ?? 0}
             data-page-release-rank={releaseRanks.get(filename ?? "") ?? -1}
           >
             <div class="section">

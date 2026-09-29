@@ -1,5 +1,6 @@
 ---
 title: I-Thou Relation
+created: 2026-05-31T13:56:50+07:00
 ---
 
 I-Thou Relation is a [[Presupposition|presupposition]] in which the model of the other held by the [[Inner pack|inner pack]] is not taken as the other itself; the other is not reduced to an object, function, role, set of qualities, source of utility, or any representation of them, but is recognized as an irreducible “thou.”

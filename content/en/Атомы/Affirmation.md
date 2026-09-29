@@ -1,5 +1,6 @@
 ---
 title: Affirmation
+created: 2026-07-31T02:58:03+07:00
 ---
 
 Affirmation is a manifestation of the [[Will to Power|will to power]] in which the subject influences [[Reality|reality]] by embodying their own [[Choice|choice]].

@@ -42,8 +42,8 @@ document.addEventListener("nav", () => {
         const titleOrder = collator.compare(a.dataset.pageTitle ?? "", b.dataset.pageTitle ?? "")
         if (mode === "alphabetical") return titleOrder
 
-        const aDate = Number(a.dataset.pageModified ?? 0)
-        const bDate = Number(b.dataset.pageModified ?? 0)
+        const aDate = Number(a.dataset.pageDate ?? 0)
+        const bDate = Number(b.dataset.pageDate ?? 0)
         const dateOrder = mode === "newest" ? bDate - aDate : aDate - bDate
         const aRank = Number(a.dataset.pageReleaseRank ?? -1)
         const bRank = Number(b.dataset.pageReleaseRank ?? -1)

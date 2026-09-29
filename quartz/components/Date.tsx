@@ -10,6 +10,10 @@ interface Props {
 export type ValidDateType = keyof Required<QuartzPluginData>["dates"]
 
 export function getDate(cfg: GlobalConfiguration, data: QuartzPluginData): Date | undefined {
+  // Atom chronology follows the first recorded distinction, regardless of later edits.
+  if (/^(?:Атомы|en\/Атомы|th\/Atoms)\/(?!index$).+/.test(data.slug ?? "")) {
+    return data.dates?.created
+  }
   if (!cfg.defaultDateType) {
     throw new Error(
       `Field 'defaultDateType' was not set in the configuration object of quartz.config.ts. See https://quartz.jzhao.xyz/configuration#general-configuration for more details.`,
@@ -21,6 +25,7 @@ export function getDate(cfg: GlobalConfiguration, data: QuartzPluginData): Date 
 export function formatDate(d: Date, locale: ValidLocale = "en-US"): string {
   if (locale === "ru-RU") {
     const parts = new Intl.DateTimeFormat(locale, {
+      timeZone: "Asia/Bangkok",
       year: "numeric",
       month: "short",
       day: "numeric",
@@ -32,6 +37,7 @@ export function formatDate(d: Date, locale: ValidLocale = "en-US"): string {
   }
 
   return d.toLocaleDateString(locale, {
+    timeZone: "Asia/Bangkok",
     year: "numeric",
     month: "short",
     day: "2-digit",
