@@ -37,6 +37,9 @@
   }
 }
 .global-graph-outer {
+  &[hidden] {
+    display: none !important;
+  }
   position: fixed;
   z-index: 9999;
   inset: 0;
@@ -65,7 +68,8 @@
   }
   .global-graph-container {
     flex: 1;
-    min-height: 180px;
+    width: 100%;
+    min-height: 0;
     overflow: hidden;
   }
   .graph-toolbar {
@@ -123,25 +127,5 @@
   overflow-wrap: anywhere;
   strong {
     display: block;
-  }
-}
-.graph-connections {
-  font-size: 0.85rem;
-  color: var(--darkgray);
-  padding: 0.5rem;
-  flex-shrink: 0;
-  max-height: 28vh;
-  overflow-y: auto;
-  overflow-wrap: anywhere;
-  summary {
-    cursor: pointer;
-    padding: 0.3rem 0;
-  }
-  ul {
-    margin: 0.35rem 0 0.65rem;
-    padding-left: 1.25rem;
-  }
-  li {
-    padding: 0.2rem 0;
   }
 }

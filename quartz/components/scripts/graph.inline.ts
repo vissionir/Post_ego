@@ -298,7 +298,7 @@ async function renderGraph(graph: HTMLElement, fullSlug: FullSlug) {
   tweens.forEach((tween) => tween.stop())
   tweens.clear()
 
-  if (window.matchMedia("(pointer: coarse)").matches || !isWebGLSupported()) {
+  if (graph.dataset.renderer !== "webgl" || !isWebGLSupported()) {
     simulation.stop()
     return renderSvgGraph(graph, graphData, fullSlug, width, height)
   }
@@ -539,11 +539,22 @@ function renderSvgGraph(
     .force("center", forceCenter())
     .stop()
   layout.tick(160)
+  const nearby = JSON.parse(graph.dataset.cfg!).depth === 1
+  if (nearby) {
+    const neighbours = data.nodes.filter((n) => n.id !== slug)
+    const rx = Math.max(30, Math.min(230, width / 2 - 60))
+    const ry = Math.max(30, Math.min(200, height / 2 - 45))
+    neighbours.forEach((n, i) => {
+      const angle = (i * Math.PI * 2) / neighbours.length - Math.PI / 2
+      n.x = rx * Math.cos(angle)
+      n.y = ry * Math.sin(angle)
+    })
+  }
   const extent = Math.max(
     100,
     ...data.nodes.flatMap((n) => [Math.abs(n.x ?? 0), Math.abs(n.y ?? 0)]),
   )
-  const scale = Math.min(1.5, (Math.min(width, height) - 40) / (extent * 2))
+  const scale = nearby ? 1 : Math.min(1.5, (Math.min(width, height) - 40) / (extent * 2))
   const svg = select(graph)
     .append("svg")
     .attr("width", width)
@@ -597,7 +608,7 @@ function renderSvgGraph(
   let picked = slug
   let currentTransform = zoomIdentity
   function showLabels() {
-    const occupied: { x: number; y: number; width: number }[] = []
+    const occupied: { left: number; top: number; right: number; bottom: number }[] = []
     label
       .attr("display", "none")
       .attr("font-size", 12 / currentTransform.k)
@@ -609,22 +620,43 @@ function renderSvgGraph(
     )
     for (const element of ordered) {
       const d = select(element).datum() as NodeData
-      const priority = d.id === picked || d.id === slug
-      if (!priority && data.nodes.length > 8 && currentTransform.k < 1.2) continue
-      element.removeAttribute("display")
+      if (d.id === slug) continue
+      const priority = d.id === picked
+      if (!nearby && !priority && data.nodes.length > 8 && currentTransform.k < 1.2) continue
       const x = currentTransform.applyX(d.x ?? 0),
-        y = currentTransform.applyY(d.y ?? 0) - 12
-      const size = element.getComputedTextLength() * currentTransform.k + 8
-      if (
-        (!priority &&
+        y = currentTransform.applyY(d.y ?? 0)
+      element.removeAttribute("display")
+      const size = element.getComputedTextLength() * currentTransform.k
+      let placed = false
+      for (const offset of [-14, 22, -32, 40]) {
+        const shift = Math.max(size / 2 + 4 - x, Math.min(0, width - 4 - size / 2 - x))
+        const box = {
+          left: x + shift - size / 2 - 3,
+          right: x + shift + size / 2 + 3,
+          top: y + offset - 13,
+          bottom: y + offset + 4,
+        }
+        if (
+          box.left < 0 ||
+          box.right > width ||
+          box.top < 0 ||
+          box.bottom > height ||
           occupied.some(
-            (box) => Math.abs(box.y - y) < 17 && Math.abs(box.x - x) < (box.width + size) / 2,
-          )) ||
-        x - size / 2 < 0 ||
-        x + size / 2 > width
-      )
-        element.setAttribute("display", "none")
-      else occupied.push({ x, y, width: size })
+            (other) =>
+              box.left < other.right &&
+              box.right > other.left &&
+              box.top < other.bottom &&
+              box.bottom > other.top,
+          )
+        )
+          continue
+        element.setAttribute("x", String(shift / currentTransform.k))
+        element.setAttribute("y", String(offset / currentTransform.k))
+        occupied.push(box)
+        placed = true
+        break
+      }
+      if (!placed) element.setAttribute("display", "none")
     }
   }
   node.on("click", (event, d) => {
@@ -701,49 +733,12 @@ document.addEventListener("nav", async (e: CustomEventMap["nav"]) => {
             empty: "This page has no connections yet",
             error: "Could not load graph",
           }
-  let index: Awaited<typeof fetchData>
   try {
-    index = await fetchData
+    await fetchData
   } catch {
     return
   }
   if (disposed) return
-  const data = selectGraphData(index, slug, 1)
-  const current = simplifySlug(slug)
-  const title = data.nodes.find((node) => node.id === current)?.text ?? current
-  function connections() {
-    const section = document.createElement("details")
-    section.className = "graph-connections"
-    const summary = document.createElement("summary")
-    summary.textContent = data.links.length ? copy.links + " · " + title : copy.empty
-    section.append(summary)
-    for (const [heading, ids] of [
-      [
-        copy.outgoing,
-        data.links.filter((link) => link.source === current).map((link) => link.target),
-      ],
-      [
-        copy.incoming,
-        data.links.filter((link) => link.target === current).map((link) => link.source),
-      ],
-    ] as const) {
-      if (!ids.length) continue
-      const label = document.createElement("strong")
-      label.textContent = heading
-      const list = document.createElement("ul")
-      for (const id of ids) {
-        const li = document.createElement("li"),
-          anchor = document.createElement("a")
-        anchor.className = "internal"
-        anchor.href = resolveRelative(slug, id)
-        anchor.textContent = data.nodes.find((node) => node.id === id)?.text ?? id
-        li.append(anchor)
-        list.append(li)
-      }
-      section.append(label, list)
-    }
-    return section
-  }
   for (const component of document.querySelectorAll<HTMLElement>(".graph")) {
     const local = component.querySelector<HTMLElement>(".graph-container")!
     const overlay = component.querySelector<HTMLElement>(".global-graph-outer")!
@@ -751,10 +746,6 @@ document.addEventListener("nav", async (e: CustomEventMap["nav"]) => {
     const trigger = component.querySelector<HTMLButtonElement>(".global-graph-icon")!
     const close = overlay.querySelector<HTMLButtonElement>(".graph-close")!
     const modes = [...overlay.querySelectorAll<HTMLButtonElement>("[data-graph-depth]")]
-    const localList = connections(),
-      globalList = connections()
-    component.append(localList)
-    overlay.querySelector(".graph-dialog")!.append(globalList)
     document.body.append(overlay)
     let globalCleanup: (() => void) | undefined
     let localCleanup: (() => void) | undefined
@@ -777,6 +768,8 @@ document.addEventListener("nav", async (e: CustomEventMap["nav"]) => {
       modes.forEach((button) =>
         button.setAttribute("aria-pressed", String(Number(button.dataset.graphDepth) === depth)),
       )
+      await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()))
+      if (disposed || !opened || attempt !== generation) return
       const cleanup = await renderGraph(graph, slug)
       if (disposed || !opened || attempt !== generation) cleanup()
       else globalCleanup = cleanup
@@ -788,6 +781,7 @@ document.addEventListener("nav", async (e: CustomEventMap["nav"]) => {
       globalCleanup?.()
       globalCleanup = undefined
       overlay.classList.remove("active")
+      overlay.hidden = true
       document.body.style.overflow = previousOverflow
       trigger.setAttribute("aria-expanded", "false")
       if (restoreFocus) trigger.focus()
@@ -797,6 +791,7 @@ document.addEventListener("nav", async (e: CustomEventMap["nav"]) => {
       opened = true
       previousOverflow = document.body.style.overflow
       document.body.style.overflow = "hidden"
+      overlay.hidden = false
       overlay.classList.add("active")
       trigger.setAttribute("aria-expanded", "true")
       void renderMode(1).catch(() => {
@@ -847,15 +842,29 @@ document.addEventListener("nav", async (e: CustomEventMap["nav"]) => {
       })
     }
     document.addEventListener("themechange", theme)
+    let resizeTimer: ReturnType<typeof setTimeout>
+    const resize = () => {
+      clearTimeout(resizeTimer)
+      resizeTimer = setTimeout(() => {
+        theme()
+        if (opened) {
+          void renderMode(JSON.parse(graph.dataset.cfg!).depth).catch(() => {
+            graph.textContent = copy.error
+          })
+        }
+      }, 150)
+    }
+    window.addEventListener("resize", resize)
     cleanups.push(() => {
       hide(false)
       localGeneration++
       localCleanup?.()
       overlay.remove()
-      localList.remove()
       trigger.removeEventListener("click", show)
       document.removeEventListener("keydown", keydown)
       document.removeEventListener("themechange", theme)
+      window.removeEventListener("resize", resize)
+      clearTimeout(resizeTimer)
     })
     await renderLocal().catch(() => {
       local.textContent = copy.error

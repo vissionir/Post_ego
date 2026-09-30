@@ -122,7 +122,13 @@ export default ((opts?: Partial<GraphOptions>) => {
             </svg>
           </button>
         </div>
-        <div class="global-graph-outer" role="dialog" aria-modal="true" aria-label={copy.expand}>
+        <div
+          class="global-graph-outer"
+          hidden
+          role="dialog"
+          aria-modal="true"
+          aria-label={copy.expand}
+        >
           <div class="graph-dialog">
             <div class="graph-toolbar">
               <button type="button" data-graph-depth="1" aria-pressed="true">
