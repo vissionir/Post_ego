@@ -1,4 +1,3 @@
-import type { ContentDetails } from "../../plugins/emitters/contentIndex"
 import {
   SimulationNodeDatum,
   SimulationLinkDatum,
@@ -14,11 +13,12 @@ import {
   drag,
   zoom,
 } from "d3"
-import { Text, Graphics, Application, Container, Circle } from "pixi.js"
+import { Text, Graphics, Application, Container, Circle, isWebGLSupported } from "pixi.js"
 import { Group as TweenGroup, Tween as Tweened } from "@tweenjs/tween.js"
-import { registerEscapeHandler, removeAllChildren } from "./util"
-import { FullSlug, SimpleSlug, getFullSlug, resolveRelative, simplifySlug } from "../../util/path"
+import { removeAllChildren } from "./util"
+import { FullSlug, SimpleSlug, resolveRelative, simplifySlug } from "../../util/path"
 import { D3Config } from "../Graph"
+import { graphData as selectGraphData } from "../../util/graph"
 
 type GraphicsInfo = {
   color: string
@@ -32,11 +32,6 @@ type NodeData = {
   text: string
   tags: string[]
 } & SimulationNodeDatum
-
-type SimpleLinkData = {
-  source: SimpleSlug
-  target: SimpleSlug
-}
 
 type LinkData = {
   source: NodeData
@@ -54,13 +49,22 @@ type NodeRenderData = GraphicsInfo & {
 
 const localStorageKey = "graph-visited"
 function getVisited(): Set<SimpleSlug> {
-  return new Set(JSON.parse(localStorage.getItem(localStorageKey) ?? "[]"))
+  try {
+    const value = JSON.parse(localStorage.getItem(localStorageKey) ?? "[]")
+    return new Set(Array.isArray(value) ? value : [])
+  } catch {
+    return new Set()
+  }
 }
 
 function addToVisited(slug: SimpleSlug) {
   const visited = getVisited()
   visited.add(slug)
-  localStorage.setItem(localStorageKey, JSON.stringify([...visited]))
+  try {
+    localStorage.setItem(localStorageKey, JSON.stringify([...visited]))
+  } catch {
+    /* Private browsing may disable storage. */
+  }
 }
 
 type TweenNode = {
@@ -83,82 +87,20 @@ async function renderGraph(graph: HTMLElement, fullSlug: FullSlug) {
     linkDistance,
     fontSize,
     opacityScale,
-    removeTags,
-    showTags,
     focusOnHover,
     enableRadial,
   } = JSON.parse(graph.dataset["cfg"]!) as D3Config
 
-  const data: Map<SimpleSlug, ContentDetails> = new Map(
-    Object.entries<ContentDetails>(await fetchData).map(([k, v]) => [
-      simplifySlug(k as FullSlug),
-      v,
-    ]),
-  )
-  const links: SimpleLinkData[] = []
-  const tags: SimpleSlug[] = []
-  const validLinks = new Set(data.keys())
-
+  const selected = selectGraphData(await fetchData, fullSlug, depth)
   const tweens = new Map<string, TweenNode>()
-  for (const [source, details] of data.entries()) {
-    const outgoing = details.links ?? []
-
-    for (const dest of outgoing) {
-      if (validLinks.has(dest)) {
-        links.push({ source: source, target: dest })
-      }
-    }
-
-    if (showTags) {
-      const localTags = details.tags
-        .filter((tag) => !removeTags.includes(tag))
-        .map((tag) => simplifySlug(("tags/" + tag) as FullSlug))
-
-      tags.push(...localTags.filter((tag) => !tags.includes(tag)))
-
-      for (const tag of localTags) {
-        links.push({ source: source, target: tag })
-      }
-    }
-  }
-
-  const neighbourhood = new Set<SimpleSlug>()
-  const wl: (SimpleSlug | "__SENTINEL")[] = [slug, "__SENTINEL"]
-  if (depth >= 0) {
-    while (depth >= 0 && wl.length > 0) {
-      // compute neighbours
-      const cur = wl.shift()!
-      if (cur === "__SENTINEL") {
-        depth--
-        wl.push("__SENTINEL")
-      } else {
-        neighbourhood.add(cur)
-        const outgoing = links.filter((l) => l.source === cur)
-        const incoming = links.filter((l) => l.target === cur)
-        wl.push(...outgoing.map((l) => l.target), ...incoming.map((l) => l.source))
-      }
-    }
-  } else {
-    validLinks.forEach((id) => neighbourhood.add(id))
-    if (showTags) tags.forEach((tag) => neighbourhood.add(tag))
-  }
-
-  const nodes = [...neighbourhood].map((url) => {
-    const text = url.startsWith("tags/") ? "#" + url.substring(5) : (data.get(url)?.title ?? url)
-    return {
-      id: url,
-      text,
-      tags: data.get(url)?.tags ?? [],
-    }
-  })
+  const nodes: NodeData[] = selected.nodes.map((node) => ({ ...node, tags: [] }))
+  const byId = new Map(nodes.map((node) => [node.id, node]))
   const graphData: { nodes: NodeData[]; links: LinkData[] } = {
     nodes,
-    links: links
-      .filter((l) => neighbourhood.has(l.source) && neighbourhood.has(l.target))
-      .map((l) => ({
-        source: nodes.find((n) => n.id === l.source)!,
-        target: nodes.find((n) => n.id === l.target)!,
-      })),
+    links: selected.links.map((link) => ({
+      source: byId.get(link.source)!,
+      target: byId.get(link.target)!,
+    })),
   }
 
   const width = graph.offsetWidth
@@ -170,6 +112,12 @@ async function renderGraph(graph: HTMLElement, fullSlug: FullSlug) {
     .force("center", forceCenter().strength(centerForce))
     .force("link", forceLink(graphData.links).distance(linkDistance))
     .force("collide", forceCollide<NodeData>((n) => nodeRadius(n)).iterations(3))
+
+  const currentNode = nodes.find((node) => node.id === slug)
+  if (currentNode) {
+    currentNode.fx = 0
+    currentNode.fy = 0
+  }
 
   const radius = (Math.min(width, height) / 2) * 0.8
   if (enableRadial) simulation.force("radial", forceRadial(radius).strength(0.2))
@@ -217,6 +165,7 @@ async function renderGraph(graph: HTMLElement, fullSlug: FullSlug) {
   const linkRenderData: LinkRenderData[] = []
   const nodeRenderData: NodeRenderData[] = []
   function updateHoverInfo(newHoveredId: string | null) {
+    newHoveredId ??= slug
     hoveredNodeId = newHoveredId
 
     if (newHoveredId === null) {
@@ -229,7 +178,7 @@ async function renderGraph(graph: HTMLElement, fullSlug: FullSlug) {
         l.active = false
       }
     } else {
-      hoveredNeighbours = new Set()
+      hoveredNeighbours = new Set([newHoveredId])
       for (const l of linkRenderData) {
         const linkData = l.simulationData
         if (linkData.source.id === newHoveredId || linkData.target.id === newHoveredId) {
@@ -262,7 +211,7 @@ async function renderGraph(graph: HTMLElement, fullSlug: FullSlug) {
         alpha = l.active ? 1 : 0.2
       }
 
-      l.color = l.active ? computedStyleMap["--gray"] : computedStyleMap["--lightgray"]
+      l.color = l.active ? computedStyleMap["--secondary"] : computedStyleMap["--lightgray"]
       tweenGroup.add(new Tweened<LinkRenderData>(l).to({ alpha }, 200))
     }
 
@@ -349,19 +298,29 @@ async function renderGraph(graph: HTMLElement, fullSlug: FullSlug) {
   tweens.forEach((tween) => tween.stop())
   tweens.clear()
 
+  if (window.matchMedia("(pointer: coarse)").matches || !isWebGLSupported()) {
+    simulation.stop()
+    return renderSvgGraph(graph, graphData, fullSlug, width, height)
+  }
   const app = new Application()
-  await app.init({
-    width,
-    height,
-    antialias: true,
-    autoStart: false,
-    autoDensity: true,
-    backgroundAlpha: 0,
-    // webgpu is still flaky across browsers; prefer webgl for stability
-    preference: "webgl",
-    resolution: window.devicePixelRatio,
-    eventMode: "static",
-  })
+  try {
+    await app.init({
+      width,
+      height,
+      antialias: true,
+      autoStart: false,
+      autoDensity: true,
+      backgroundAlpha: 0,
+      // webgpu is still flaky across browsers; prefer webgl for stability
+      preference: "webgl",
+      resolution: Math.min(window.devicePixelRatio, 2),
+      eventMode: "static",
+    })
+  } catch (error) {
+    simulation.stop()
+    console.warn("WebGL graph unavailable; using SVG", error)
+    return renderSvgGraph(graph, graphData, fullSlug, width, height)
+  }
   graph.appendChild(app.canvas)
 
   const stage = app.stage
@@ -379,14 +338,14 @@ async function renderGraph(graph: HTMLElement, fullSlug: FullSlug) {
       interactive: false,
       eventMode: "none",
       text: n.text,
-      alpha: 0,
+      alpha: nodeId === slug || nodes.length <= 8 ? 1 : 0,
       anchor: { x: 0.5, y: 1.2 },
       style: {
-        fontSize: fontSize * 15,
+        fontSize: Math.max(12, fontSize * 15),
         fill: computedStyleMap["--dark"],
         fontFamily: computedStyleMap["--bodyFont"],
       },
-      resolution: window.devicePixelRatio * 4,
+      resolution: Math.min(window.devicePixelRatio, 2),
     })
     label.scale.set(1 / scale)
 
@@ -516,8 +475,11 @@ async function renderGraph(graph: HTMLElement, fullSlug: FullSlug) {
           const activeNodes = nodeRenderData.filter((n) => n.active).flatMap((n) => n.label)
 
           for (const label of labelsContainer.children) {
+            label.scale.set(1 / transform.k)
             if (!activeNodes.includes(label)) {
-              label.alpha = scaleOpacity
+              const owner = nodeRenderData.find((n) => n.label === label)
+              label.alpha =
+                owner?.simulationData.id === slug || nodes.length <= 8 ? 1 : scaleOpacity
             }
           }
         }),
@@ -529,7 +491,7 @@ async function renderGraph(graph: HTMLElement, fullSlug: FullSlug) {
     if (stopAnimation) return
     for (const n of nodeRenderData) {
       const { x, y } = n.simulationData
-      if (!x || !y) continue
+      if (x === undefined || y === undefined) continue
       n.gfx.position.set(x + width / 2, y + height / 2)
       if (n.label) {
         n.label.position.set(x + width / 2, y + height / 2)
@@ -550,101 +512,353 @@ async function renderGraph(graph: HTMLElement, fullSlug: FullSlug) {
     requestAnimationFrame(animate)
   }
 
+  updateHoverInfo(slug)
+  renderPixiFromD3()
   requestAnimationFrame(animate)
   return () => {
     stopAnimation = true
-    app.destroy()
+    simulation.stop()
+    tweens.forEach((tween) => tween.stop())
+    select(app.canvas).on(".zoom", null).on(".drag", null)
+    app.destroy(true, { children: true, texture: true, textureSource: true })
   }
 }
 
-let localGraphCleanups: (() => void)[] = []
-let globalGraphCleanups: (() => void)[] = []
-
-function cleanupLocalGraphs() {
-  for (const cleanup of localGraphCleanups) {
-    cleanup()
+// WebGL can be unavailable on mobile; navigation must still work.
+function renderSvgGraph(
+  graph: HTMLElement,
+  data: { nodes: NodeData[]; links: LinkData[] },
+  fullSlug: FullSlug,
+  width: number,
+  height: number,
+) {
+  const slug = simplifySlug(fullSlug)
+  const layout = forceSimulation(data.nodes)
+    .force("charge", forceManyBody().strength(-100))
+    .force("link", forceLink(data.links).distance(70))
+    .force("center", forceCenter())
+    .stop()
+  layout.tick(160)
+  const extent = Math.max(
+    100,
+    ...data.nodes.flatMap((n) => [Math.abs(n.x ?? 0), Math.abs(n.y ?? 0)]),
+  )
+  const scale = Math.min(1.5, (Math.min(width, height) - 40) / (extent * 2))
+  const svg = select(graph)
+    .append("svg")
+    .attr("width", width)
+    .attr("height", height)
+    .attr("class", "graph-svg")
+  const viewport = svg.append("g")
+  viewport
+    .selectAll("line")
+    .data(data.links)
+    .join("line")
+    .attr("x1", (d) => d.source.x ?? 0)
+    .attr("y1", (d) => d.source.y ?? 0)
+    .attr("x2", (d) => d.target.x ?? 0)
+    .attr("y2", (d) => d.target.y ?? 0)
+    .attr("stroke", (d) =>
+      d.source.id === slug || d.target.id === slug ? "var(--secondary)" : "var(--lightgray)",
+    )
+  const node = viewport
+    .selectAll("a")
+    .data(data.nodes)
+    .join("a")
+    .attr("href", (d) => resolveRelative(fullSlug, d.id))
+    .attr("class", "internal")
+    .attr("aria-label", (d) => d.text)
+    .attr("data-slug", (d) => d.id)
+    .attr("transform", (d) => `translate(${d.x ?? 0},${d.y ?? 0})`)
+  node
+    .append("circle")
+    .attr("r", (d) => (d.id === slug ? 8 : 5))
+    .attr("fill", (d) => (d.id === slug ? "var(--secondary)" : "var(--gray)"))
+  node.append("title").text((d) => d.text)
+  const label = node
+    .append("text")
+    .text((d) => d.text)
+    .attr("text-anchor", "middle")
+    .attr("fill", "var(--dark)")
+    .attr("display", (d) => (d.id === slug || data.nodes.length <= 8 ? null : "none"))
+  const card = document.createElement("div")
+  card.className = "graph-picked"
+  card.hidden = true
+  const name = document.createElement("strong"),
+    open = document.createElement("a")
+  open.className = "internal"
+  open.textContent = fullSlug.startsWith("th/")
+    ? "เปิดหน้า"
+    : fullSlug.startsWith("en/")
+      ? "Open page"
+      : "Открыть атом"
+  card.append(name, open)
+  graph.append(card)
+  let picked = slug
+  let currentTransform = zoomIdentity
+  function showLabels() {
+    const occupied: { x: number; y: number; width: number }[] = []
+    label
+      .attr("display", "none")
+      .attr("font-size", 12 / currentTransform.k)
+      .attr("y", -12 / currentTransform.k)
+    const ordered = [...label.nodes()].sort(
+      (a, b) =>
+        Number(select(b).datum() && (select(b).datum() as NodeData).id === picked) -
+        Number((select(a).datum() as NodeData).id === picked),
+    )
+    for (const element of ordered) {
+      const d = select(element).datum() as NodeData
+      const priority = d.id === picked || d.id === slug
+      if (!priority && data.nodes.length > 8 && currentTransform.k < 1.2) continue
+      element.removeAttribute("display")
+      const x = currentTransform.applyX(d.x ?? 0),
+        y = currentTransform.applyY(d.y ?? 0) - 12
+      const size = element.getComputedTextLength() * currentTransform.k + 8
+      if (
+        (!priority &&
+          occupied.some(
+            (box) => Math.abs(box.y - y) < 17 && Math.abs(box.x - x) < (box.width + size) / 2,
+          )) ||
+        x - size / 2 < 0 ||
+        x + size / 2 > width
+      )
+        element.setAttribute("display", "none")
+      else occupied.push({ x, y, width: size })
+    }
   }
-  localGraphCleanups = []
-}
-
-function cleanupGlobalGraphs() {
-  for (const cleanup of globalGraphCleanups) {
-    cleanup()
+  node.on("click", (event, d) => {
+    event.preventDefault()
+    event.stopPropagation()
+    picked = d.id
+    name.textContent = d.text
+    open.href = resolveRelative(fullSlug, d.id)
+    open.hidden = d.id === slug
+    card.hidden = false
+    viewport
+      .selectAll<SVGLineElement, LinkData>("line")
+      .attr("stroke", (link) =>
+        link.source.id === picked || link.target.id === picked
+          ? "var(--secondary)"
+          : "var(--lightgray)",
+      )
+    node
+      .select("circle")
+      .attr("fill", (item) =>
+        item.id === picked || item.id === slug ? "var(--secondary)" : "var(--gray)",
+      )
+    showLabels()
+  })
+  const zoomer = zoom<SVGSVGElement, unknown>()
+    .scaleExtent([0.08, 4])
+    .on("zoom", ({ transform }) => {
+      currentTransform = transform
+      viewport.attr("transform", transform.toString())
+      showLabels()
+    })
+  svg
+    .call(zoomer)
+    .call(zoomer.transform, zoomIdentity.translate(width / 2, height / 2).scale(scale))
+  return () => {
+    layout.stop()
+    svg.on(".zoom", null)
+    svg.remove()
+    card.remove()
   }
-  globalGraphCleanups = []
 }
 
 document.addEventListener("nav", async (e: CustomEventMap["nav"]) => {
   const slug = e.detail.url
+  let disposed = false
+  const cleanups: (() => void)[] = []
+  window.addCleanup(() => {
+    disposed = true
+    cleanups.forEach((cleanup) => cleanup())
+  })
   addToVisited(simplifySlug(slug))
-
-  async function renderLocalGraph() {
-    cleanupLocalGraphs()
-    const localGraphContainers = document.getElementsByClassName("graph-container")
-    for (const container of localGraphContainers) {
-      localGraphCleanups.push(await renderGraph(container as HTMLElement, slug))
-    }
+  const language = slug.startsWith("en/") ? "en" : slug.startsWith("th/") ? "th" : "ru"
+  const copy =
+    language === "ru"
+      ? {
+          links: "Связи",
+          outgoing: "Ссылается на",
+          incoming: "На него ссылаются",
+          empty: "У этого атома пока нет связей",
+          error: "Не удалось загрузить граф",
+        }
+      : language === "th"
+        ? {
+            links: "การเชื่อมโยง",
+            outgoing: "ลิงก์ไปยัง",
+            incoming: "ลิงก์มาจาก",
+            empty: "หน้านี้ยังไม่มีการเชื่อมโยง",
+            error: "โหลดกราฟไม่สำเร็จ",
+          }
+        : {
+            links: "Connections",
+            outgoing: "Links to",
+            incoming: "Linked from",
+            empty: "This page has no connections yet",
+            error: "Could not load graph",
+          }
+  let index: Awaited<typeof fetchData>
+  try {
+    index = await fetchData
+  } catch {
+    return
   }
-
-  await renderLocalGraph()
-  const handleThemeChange = () => {
-    void renderLocalGraph()
-  }
-
-  document.addEventListener("themechange", handleThemeChange)
-  window.addCleanup(() => {
-    document.removeEventListener("themechange", handleThemeChange)
-  })
-
-  const containers = [...document.getElementsByClassName("global-graph-outer")] as HTMLElement[]
-  async function renderGlobalGraph() {
-    const slug = getFullSlug(window)
-    for (const container of containers) {
-      container.classList.add("active")
-      const sidebar = container.closest(".sidebar") as HTMLElement
-      if (sidebar) {
-        sidebar.style.zIndex = "1"
+  if (disposed) return
+  const data = selectGraphData(index, slug, 1)
+  const current = simplifySlug(slug)
+  const title = data.nodes.find((node) => node.id === current)?.text ?? current
+  function connections() {
+    const section = document.createElement("details")
+    section.className = "graph-connections"
+    const summary = document.createElement("summary")
+    summary.textContent = data.links.length ? copy.links + " · " + title : copy.empty
+    section.append(summary)
+    for (const [heading, ids] of [
+      [
+        copy.outgoing,
+        data.links.filter((link) => link.source === current).map((link) => link.target),
+      ],
+      [
+        copy.incoming,
+        data.links.filter((link) => link.target === current).map((link) => link.source),
+      ],
+    ] as const) {
+      if (!ids.length) continue
+      const label = document.createElement("strong")
+      label.textContent = heading
+      const list = document.createElement("ul")
+      for (const id of ids) {
+        const li = document.createElement("li"),
+          anchor = document.createElement("a")
+        anchor.className = "internal"
+        anchor.href = resolveRelative(slug, id)
+        anchor.textContent = data.nodes.find((node) => node.id === id)?.text ?? id
+        li.append(anchor)
+        list.append(li)
       }
-
-      const graphContainer = container.querySelector(".global-graph-container") as HTMLElement
-      registerEscapeHandler(container, hideGlobalGraph)
-      if (graphContainer) {
-        globalGraphCleanups.push(await renderGraph(graphContainer, slug))
-      }
+      section.append(label, list)
     }
+    return section
   }
-
-  function hideGlobalGraph() {
-    cleanupGlobalGraphs()
-    for (const container of containers) {
-      container.classList.remove("active")
-      const sidebar = container.closest(".sidebar") as HTMLElement
-      if (sidebar) {
-        sidebar.style.zIndex = ""
-      }
+  for (const component of document.querySelectorAll<HTMLElement>(".graph")) {
+    const local = component.querySelector<HTMLElement>(".graph-container")!
+    const overlay = component.querySelector<HTMLElement>(".global-graph-outer")!
+    const graph = overlay.querySelector<HTMLElement>(".global-graph-container")!
+    const trigger = component.querySelector<HTMLButtonElement>(".global-graph-icon")!
+    const close = overlay.querySelector<HTMLButtonElement>(".graph-close")!
+    const modes = [...overlay.querySelectorAll<HTMLButtonElement>("[data-graph-depth]")]
+    const localList = connections(),
+      globalList = connections()
+    component.append(localList)
+    overlay.querySelector(".graph-dialog")!.append(globalList)
+    document.body.append(overlay)
+    let globalCleanup: (() => void) | undefined
+    let localCleanup: (() => void) | undefined
+    let generation = 0
+    let localGeneration = 0
+    let opened = false
+    let previousOverflow = ""
+    async function renderLocal() {
+      const attempt = ++localGeneration
+      localCleanup?.()
+      const cleanup = await renderGraph(local, slug)
+      if (disposed || attempt !== localGeneration) cleanup()
+      else localCleanup = cleanup
     }
-  }
-
-  async function shortcutHandler(e: HTMLElementEventMap["keydown"]) {
-    if (e.key === "g" && (e.ctrlKey || e.metaKey) && !e.shiftKey) {
-      e.preventDefault()
-      const anyGlobalGraphOpen = containers.some((container) =>
-        container.classList.contains("active"),
+    async function renderMode(depth: number) {
+      const attempt = ++generation
+      globalCleanup?.()
+      const config = JSON.parse(graph.dataset.cfg!)
+      graph.dataset.cfg = JSON.stringify({ ...config, depth, enableRadial: depth < 0 })
+      modes.forEach((button) =>
+        button.setAttribute("aria-pressed", String(Number(button.dataset.graphDepth) === depth)),
       )
-      anyGlobalGraphOpen ? hideGlobalGraph() : renderGlobalGraph()
+      const cleanup = await renderGraph(graph, slug)
+      if (disposed || !opened || attempt !== generation) cleanup()
+      else globalCleanup = cleanup
     }
+    function hide(restoreFocus = true) {
+      if (!opened) return
+      opened = false
+      generation++
+      globalCleanup?.()
+      globalCleanup = undefined
+      overlay.classList.remove("active")
+      document.body.style.overflow = previousOverflow
+      trigger.setAttribute("aria-expanded", "false")
+      if (restoreFocus) trigger.focus()
+    }
+    function show() {
+      if (opened) return
+      opened = true
+      previousOverflow = document.body.style.overflow
+      document.body.style.overflow = "hidden"
+      overlay.classList.add("active")
+      trigger.setAttribute("aria-expanded", "true")
+      void renderMode(1).catch(() => {
+        graph.textContent = copy.error
+      })
+      close.focus()
+    }
+    function keydown(event: KeyboardEvent) {
+      if (event.key === "g" && (event.ctrlKey || event.metaKey) && !event.shiftKey) {
+        event.preventDefault()
+        opened ? hide() : show()
+      }
+      if (opened && event.key === "Escape") {
+        event.preventDefault()
+        hide()
+      }
+      if (opened && event.key === "Tab") {
+        const items = [...overlay.querySelectorAll<HTMLElement>("button, a[href], summary")].filter(
+          (el) => el.getClientRects().length,
+        )
+        const first = items[0],
+          last = items.at(-1)
+        if (event.shiftKey && document.activeElement === first) {
+          event.preventDefault()
+          last?.focus()
+        } else if (!event.shiftKey && document.activeElement === last) {
+          event.preventDefault()
+          first?.focus()
+        }
+      }
+    }
+    trigger.addEventListener("click", show)
+    close.addEventListener("click", () => hide())
+    overlay.addEventListener("click", (event) => {
+      if (event.target === overlay) hide()
+    })
+    modes.forEach((button) =>
+      button.addEventListener("click", () => {
+        void renderMode(Number(button.dataset.graphDepth)).catch(() => {
+          graph.textContent = copy.error
+        })
+      }),
+    )
+    document.addEventListener("keydown", keydown)
+    const theme = () => {
+      void renderLocal().catch(() => {
+        local.textContent = copy.error
+      })
+    }
+    document.addEventListener("themechange", theme)
+    cleanups.push(() => {
+      hide(false)
+      localGeneration++
+      localCleanup?.()
+      overlay.remove()
+      localList.remove()
+      trigger.removeEventListener("click", show)
+      document.removeEventListener("keydown", keydown)
+      document.removeEventListener("themechange", theme)
+    })
+    await renderLocal().catch(() => {
+      local.textContent = copy.error
+    })
   }
-
-  const containerIcons = document.getElementsByClassName("global-graph-icon")
-  Array.from(containerIcons).forEach((icon) => {
-    icon.addEventListener("click", renderGlobalGraph)
-    window.addCleanup(() => icon.removeEventListener("click", renderGlobalGraph))
-  })
-
-  document.addEventListener("keydown", shortcutHandler)
-  window.addCleanup(() => {
-    document.removeEventListener("keydown", shortcutHandler)
-    cleanupLocalGraphs()
-    cleanupGlobalGraphs()
-  })
 })

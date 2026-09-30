@@ -64,13 +64,38 @@ export default ((opts?: Partial<GraphOptions>) => {
     const localGraph = { ...defaultOptions.localGraph, ...opts?.localGraph }
     const globalGraph = { ...defaultOptions.globalGraph, ...opts?.globalGraph }
     const locale = localeForSlug(fileData.slug)
-    const globalGraphLabel = locale === "ru-RU" ? "Глобальный граф" : "Global Graph"
+    const copy =
+      locale === "ru-RU"
+        ? {
+            expand: "Развернуть граф",
+            nearby: "Связи атома",
+            all: "Весь граф · RU",
+            close: "Закрыть граф",
+          }
+        : locale === "th-TH"
+          ? {
+              expand: "ขยายกราฟ",
+              nearby: "การเชื่อมโยงของหน้านี้",
+              all: "กราฟทั้งหมด · TH",
+              close: "ปิดกราฟ",
+            }
+          : {
+              expand: "Expand graph",
+              nearby: "Page connections",
+              all: "Full graph · EN",
+              close: "Close graph",
+            }
     return (
       <div class={classNames(displayClass, "graph")}>
         <h3>{i18n(locale).components.graph.title}</h3>
         <div class="graph-outer">
           <div class="graph-container" data-cfg={JSON.stringify(localGraph)}></div>
-          <button class="global-graph-icon" type="button" aria-label={globalGraphLabel}>
+          <button
+            class="global-graph-icon"
+            type="button"
+            aria-label={copy.expand}
+            aria-expanded="false"
+          >
             <svg
               version="1.1"
               xmlns="http://www.w3.org/2000/svg"
@@ -97,8 +122,21 @@ export default ((opts?: Partial<GraphOptions>) => {
             </svg>
           </button>
         </div>
-        <div class="global-graph-outer">
-          <div class="global-graph-container" data-cfg={JSON.stringify(globalGraph)}></div>
+        <div class="global-graph-outer" role="dialog" aria-modal="true" aria-label={copy.expand}>
+          <div class="graph-dialog">
+            <div class="graph-toolbar">
+              <button type="button" data-graph-depth="1" aria-pressed="true">
+                {copy.nearby}
+              </button>
+              <button type="button" data-graph-depth="-1" aria-pressed="false">
+                {copy.all}
+              </button>
+              <button type="button" class="graph-close" aria-label={copy.close}>
+                ×
+              </button>
+            </div>
+            <div class="global-graph-container" data-cfg={JSON.stringify(globalGraph)}></div>
+          </div>
         </div>
       </div>
     )
