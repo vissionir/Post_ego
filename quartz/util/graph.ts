@@ -9,6 +9,30 @@ export function graphNodeRadius(degree: number) {
   return 2 + Math.sqrt(degree)
 }
 
+export function graphLabelPolicy(
+  count: number,
+  relativeZoom: number,
+  expanded: boolean,
+  full: boolean,
+  area: number,
+) {
+  if (relativeZoom >= 3.2 || count <= (expanded && !full ? 36 : 8))
+    return { level: "all", limit: Infinity } as const
+  if ((expanded && !full) || count <= 16 || relativeZoom >= 1.35)
+    return {
+      level: "sparse",
+      limit: Math.min(32, Math.max(5, Math.floor(area / 14000))),
+    } as const
+  return { level: "none", limit: 0 } as const
+}
+
+// Stable sampling spreads captions without changing the selection on every redraw.
+export function graphLabelRank(id: string) {
+  let hash = 2166136261
+  for (const character of id) hash = Math.imul(hash ^ character.charCodeAt(0), 16777619)
+  return hash >>> 0
+}
+
 export function graphView(
   nodes: { x?: number; y?: number }[],
   width: number,

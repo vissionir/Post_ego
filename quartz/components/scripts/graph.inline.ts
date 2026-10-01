@@ -78,8 +78,8 @@ document.addEventListener("nav", async (e: CustomEventMap["nav"]) => {
     const close = overlay.querySelector<HTMLButtonElement>(".graph-close")!
     const modes = [...overlay.querySelectorAll<HTMLButtonElement>("[data-graph-depth]")]
     document.body.append(overlay)
-    let globalCleanup: (() => void) | undefined
-    let localCleanup: (() => void) | undefined
+    let globalCleanup: ReturnType<typeof renderForceGraph> | undefined
+    let localCleanup: ReturnType<typeof renderForceGraph> | undefined
     let generation = 0
     let localGeneration = 0
     let opened = false
@@ -182,7 +182,8 @@ document.addEventListener("nav", async (e: CustomEventMap["nav"]) => {
     const resize = () => {
       clearTimeout(resizeTimer)
       resizeTimer = setTimeout(() => {
-        theme()
+        localCleanup?.resize()
+        if (opened) globalCleanup?.resize()
       }, 150)
     }
     window.addEventListener("resize", resize)

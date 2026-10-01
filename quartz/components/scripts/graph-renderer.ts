@@ -12,7 +12,14 @@ import {
   type SimulationNodeDatum,
 } from "d3"
 import type { D3Config } from "../Graph"
-import { graphNodeRadius, graphView, type GraphLink, type GraphNode } from "../../util/graph"
+import {
+  graphLabelPolicy,
+  graphLabelRank,
+  graphNodeRadius,
+  graphView,
+  type GraphLink,
+  type GraphNode,
+} from "../../util/graph"
 import { resolveRelative, simplifySlug, type FullSlug, type SimpleSlug } from "../../util/path"
 
 type Node = GraphNode & SimulationNodeDatum & { radius: number }
@@ -27,7 +34,7 @@ export function renderForceGraph(
   visited: Set<SimpleSlug>,
 ) {
   const slug = simplifySlug(fullSlug)
-  const width = Math.max(1, graph.clientWidth),
+  let width = Math.max(1, graph.clientWidth),
     height = Math.max(1, graph.clientHeight)
   const full = config.depth < 0
   const expanded = graph.classList.contains("global-graph-container")
@@ -113,6 +120,9 @@ export function renderForceGraph(
   card.append(name, open)
   graph.append(card)
   const ordered = [...nodes].sort((a, b) => b.radius - a.radius)
+  const sampled = [...nodes].sort((a, b) => graphLabelRank(a.id) - graphLabelRank(b.id))
+  let lastTap: { id: SimpleSlug; time: number } | undefined
+  let lastTouchTime = 0
 
   function screen(n: Node) {
     return {
@@ -144,6 +154,20 @@ export function renderForceGraph(
     }
     canvas.dataset.selected = selected ?? ""
     requestDraw()
+  }
+  function navigate(n: Node | undefined) {
+    if (n && n.id !== slug)
+      window.spaNavigate(new URL(resolveRelative(fullSlug, n.id), window.location.href))
+  }
+  function tap(n: Node | undefined) {
+    const now = performance.now()
+    if (n && lastTap?.id === n.id && now - lastTap.time < 350) {
+      lastTap = undefined
+      navigate(n)
+    } else {
+      lastTap = n ? { id: n.id, time: now } : undefined
+      choose(n)
+    }
   }
   function requestDraw() {
     if (!disposed && !frame) frame = requestAnimationFrame(draw)
@@ -186,11 +210,22 @@ export function renderForceGraph(
     const boxes: { left: number; right: number; top: number; bottom: number }[] = []
     const labelled = new Set<SimpleSlug>()
     const priority = byId.get(active ?? slug)
-    const candidates = priority ? [priority, ...ordered.filter((n) => n !== priority)] : ordered
-    const showAll = nodes.length <= 16 || transform.k / view.k >= 2.2
+    const policy = graphLabelPolicy(
+      nodes.length,
+      transform.k / view.k,
+      expanded,
+      full,
+      width * height,
+    )
+    const order = policy.level === "sparse" ? sampled : ordered
+    const candidates = priority ? [priority, ...order.filter((n) => n !== priority)] : order
     const cardHeight = card.hidden ? 0 : card.offsetHeight + 16
     for (const n of candidates) {
-      if (n.id === slug || (!showAll && n.id !== active)) continue
+      if (
+        n.id === slug ||
+        (n.id !== active && (policy.level === "none" || labelled.size >= policy.limit))
+      )
+        continue
       const p = screen(n)
       if (p.x < 0 || p.x > width || p.y < 0 || p.y > height) continue
       const size = ctx!.measureText(n.text).width
@@ -219,12 +254,13 @@ export function renderForceGraph(
       }
     }
     canvas.dataset.labelCount = String(labelled.size)
+    canvas.dataset.labelLevel = policy.level
     canvas.dataset.scale = String(transform.k)
   }
 
   const selection = select(canvas)
   const zoomer = zoom<HTMLCanvasElement, unknown>()
-    .extent([
+    .extent((): [[number, number], [number, number]] => [
       [0, 0],
       [width, height],
     ])
@@ -240,18 +276,37 @@ export function renderForceGraph(
         return false
       return true
     })
+    .on("start", () => {
+      // Zoom changes the view, not the layout. Never reheat the simulation for a pinch.
+      simulation.stop()
+    })
     .on("zoom", ({ transform: next }) => {
       transform = next
       requestDraw()
     })
   selection.call(zoomer).on("dblclick.zoom", null)
   selection.call(zoomer.transform, transform)
+  function startNodeDrag(n: Node) {
+    lastTap = undefined
+    n.fx = n.x
+    n.fy = n.y
+    simulation.alphaTarget(0.25).restart()
+  }
+  function finishNodeDrag(n: Node) {
+    simulation.alphaTarget(0)
+    if (n.id !== slug) {
+      n.fx = null
+      n.fy = null
+    }
+  }
   if (config.drag) {
     let start: { x: number; y: number } | undefined
     let dragDistance = 0
+    let moved = false
     selection.call(
       drag<HTMLCanvasElement, unknown, DragSubject | undefined>()
         .container(() => canvas)
+        .touchable(() => false)
         .clickDistance(5)
         .subject((event) => {
           const n = hit(event.sourceEvent)
@@ -263,31 +318,89 @@ export function renderForceGraph(
           dragging = true
           start = { x: event.x, y: event.y }
           dragDistance = 0
+          moved = false
           hovered = event.subject.node.id
-          event.subject.node.fx = event.subject.node.x
-          event.subject.node.fy = event.subject.node.y
-          simulation.alphaTarget(0.25).restart()
+          simulation.stop()
         })
         .on("drag", (event) => {
           if (start)
             dragDistance = Math.max(dragDistance, Math.hypot(event.x - start.x, event.y - start.y))
+          if (!moved && dragDistance < 5) return
+          if (!moved) {
+            moved = true
+            startNodeDrag(event.subject.node)
+          }
           event.subject.node.fx = transform.invertX(event.x)
           event.subject.node.fy = transform.invertY(event.y)
           requestDraw()
         })
         .on("end", (event) => {
-          simulation.alphaTarget(0)
           const n = event.subject.node
-          if (n.id !== slug) {
-            n.fx = null
-            n.fy = null
-          }
+          if (moved) finishNodeDrag(n)
           dragging = false
           hovered = null
           if (start && dragDistance < 5) choose(n)
           requestDraw()
         }),
     )
+  }
+  const touches = new Set<number>()
+  let pinching = false
+  let touchDrag: { id: number; node: Node; x: number; y: number; moved: boolean } | undefined
+  const touchDown = (event: PointerEvent) => {
+    if (event.pointerType !== "touch") return
+    lastTouchTime = performance.now()
+    touches.add(event.pointerId)
+    if (touches.size > 1) {
+      pinching = true
+      lastTap = undefined
+      if (touchDrag?.moved) finishNodeDrag(touchDrag.node)
+      touchDrag = undefined
+      dragging = false
+      hovered = null
+      simulation.stop()
+      requestDraw()
+      return
+    }
+    const n = hit(event)
+    if (!pinching && config.drag && n) {
+      touchDrag = { id: event.pointerId, node: n, x: event.clientX, y: event.clientY, moved: false }
+      dragging = true
+      simulation.stop()
+      canvas.setPointerCapture(event.pointerId)
+    }
+  }
+  const touchMove = (event: PointerEvent) => {
+    if (!touchDrag || event.pointerId !== touchDrag.id || pinching) return
+    const distance = Math.hypot(event.clientX - touchDrag.x, event.clientY - touchDrag.y)
+    if (!touchDrag.moved && distance < 5) return
+    if (!touchDrag.moved) {
+      touchDrag.moved = true
+      startNodeDrag(touchDrag.node)
+    }
+    const [x, y] = pointer(event, canvas)
+    touchDrag.node.fx = transform.invertX(x)
+    touchDrag.node.fy = transform.invertY(y)
+    hovered = touchDrag.node.id
+    requestDraw()
+  }
+  const touchUp = (event: PointerEvent) => {
+    if (event.pointerType !== "touch") return
+    lastTouchTime = performance.now()
+    touches.delete(event.pointerId)
+    if (touchDrag?.id === event.pointerId) {
+      if (touchDrag.moved) finishNodeDrag(touchDrag.node)
+      else if (!pinching && event.type !== "pointercancel") tap(touchDrag.node)
+      touchDrag = undefined
+      dragging = false
+      hovered = null
+      requestDraw()
+    }
+    if (!touches.size) pinching = false
+  }
+  const doubleClick = (event: MouseEvent) => {
+    event.preventDefault()
+    if (performance.now() - lastTouchTime > 500) navigate(hit(event))
   }
   const move = (event: MouseEvent) => {
     if (dragging) return
@@ -315,9 +428,14 @@ export function renderForceGraph(
   canvas.addEventListener("mousemove", move)
   canvas.addEventListener("mouseleave", leave)
   canvas.addEventListener("keydown", keydown)
+  canvas.addEventListener("dblclick", doubleClick)
+  canvas.addEventListener("pointerdown", touchDown)
+  canvas.addEventListener("pointermove", touchMove)
+  canvas.addEventListener("pointerup", touchUp)
+  canvas.addEventListener("pointercancel", touchUp)
   simulation.on("tick", requestDraw).restart()
   draw()
-  return () => {
+  const cleanup = () => {
     disposed = true
     cancelAnimationFrame(frame)
     simulation.stop().on("tick", null)
@@ -325,7 +443,30 @@ export function renderForceGraph(
     canvas.removeEventListener("mousemove", move)
     canvas.removeEventListener("mouseleave", leave)
     canvas.removeEventListener("keydown", keydown)
+    canvas.removeEventListener("dblclick", doubleClick)
+    canvas.removeEventListener("pointerdown", touchDown)
+    canvas.removeEventListener("pointermove", touchMove)
+    canvas.removeEventListener("pointerup", touchUp)
+    canvas.removeEventListener("pointercancel", touchUp)
     canvas.remove()
     card.remove()
   }
+  return Object.assign(cleanup, {
+    resize() {
+      const nextWidth = Math.max(1, graph.clientWidth),
+        nextHeight = Math.max(1, graph.clientHeight)
+      if (disposed || (width === nextWidth && height === nextHeight)) return
+      transform = zoomIdentity
+        .translate(transform.x + (nextWidth - width) / 2, transform.y + (nextHeight - height) / 2)
+        .scale(transform.k)
+      width = nextWidth
+      height = nextHeight
+      canvas.width = Math.round(width * dpr)
+      canvas.height = Math.round(height * dpr)
+      canvas.style.width = `${width}px`
+      canvas.style.height = `${height}px`
+      selection.call(zoomer.transform, transform)
+      requestDraw()
+    },
+  })
 }

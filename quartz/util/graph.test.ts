@@ -1,6 +1,6 @@
 import { test } from "node:test"
 import assert from "node:assert/strict"
-import { graphData, graphNodeRadius, graphView } from "./graph"
+import { graphData, graphLabelPolicy, graphLabelRank, graphNodeRadius, graphView } from "./graph"
 import type { FullSlug } from "./path"
 
 const index = {
@@ -54,4 +54,24 @@ test("isolated and small graphs have a finite bounded initial zoom", () => {
     const view = graphView(nodes, 180, 250, false, false)
     assert(Number.isFinite(view.k) && view.k > 0 && view.k <= 1.4)
   }
+})
+
+test("dense graphs reveal captions in three zoom levels", () => {
+  const policy = (zoom: number) => graphLabelPolicy(800, zoom, true, true, 390 * 700)
+  assert.equal(policy(1).level, "none")
+  assert.equal(policy(1.8).level, "sparse")
+  assert(policy(1.8).limit > 0 && policy(1.8).limit <= 32)
+  assert.equal(policy(3.3).level, "all")
+})
+
+test("expanded neighbourhoods start labelled without overloading dense previews", () => {
+  assert.equal(graphLabelPolicy(12, 1, false, false, 250 * 250).level, "sparse")
+  assert.equal(graphLabelPolicy(12, 1, true, false, 390 * 700).level, "all")
+  assert.equal(graphLabelPolicy(113, 1, false, false, 250 * 250).level, "none")
+  assert.equal(graphLabelPolicy(113, 1, true, false, 390 * 700).level, "sparse")
+})
+
+test("caption sampling is stable across redraws", () => {
+  assert.equal(graphLabelRank("Атомы/Ум"), graphLabelRank("Атомы/Ум"))
+  assert.notEqual(graphLabelRank("Атомы/Ум"), graphLabelRank("Атомы/Реальность"))
 })
