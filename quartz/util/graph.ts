@@ -59,14 +59,16 @@ export function graphLabelPolicy(
   full: boolean,
   area: number,
 ) {
+  const maxLength = Math.floor((expanded && !full ? 48 : 24) * Math.max(0.5, relativeZoom))
   if (relativeZoom >= 3.2 || count <= (expanded && !full ? 36 : 8))
-    return { level: "all", limit: Infinity } as const
+    return { level: "all", limit: Infinity, maxLength } as const
   if ((expanded && !full) || count <= 16 || relativeZoom >= 1.35)
     return {
       level: "sparse",
       limit: Math.min(32, Math.max(5, Math.floor(area / 14000))),
+      maxLength,
     } as const
-  return { level: "none", limit: 0 } as const
+  return { level: "none", limit: 0, maxLength } as const
 }
 
 // Stable sampling spreads captions without changing the selection on every redraw.

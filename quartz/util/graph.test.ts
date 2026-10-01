@@ -83,6 +83,30 @@ test("caption sampling is stable across redraws", () => {
   assert.notEqual(graphLabelRank("Атомы/Ум"), graphLabelRank("Атомы/Реальность"))
 })
 
+test("long captions are hidden in previews until zoom makes room for them", () => {
+  const title = "Самоподдерживающийся внутренний диалог"
+  const initial = graphLabelPolicy(6, 1, false, false, 250 * 250)
+  assert.equal(initial.level, "all")
+  assert.equal(initial.maxLength, 24)
+  assert([...title].length > initial.maxLength)
+  assert([..."Интерпретация"].length <= initial.maxLength)
+  const zoomed = graphLabelPolicy(6, 2, false, false, 250 * 250)
+  assert([...title].length <= zoomed.maxLength)
+})
+
+test("expanded local graphs allow longer captions without changing the label density rules", () => {
+  const expanded = graphLabelPolicy(6, 1, true, false, 390 * 700)
+  assert.equal(expanded.maxLength, 48)
+  assert.equal(expanded.level, "all")
+  assert.equal(graphLabelPolicy(800, 1, true, true, 390 * 700).level, "none")
+  assert.equal(graphLabelPolicy(800, 1.8, true, true, 390 * 700).maxLength, 43)
+})
+
+test("zooming out tightens the caption length budget", () => {
+  assert.equal(graphLabelPolicy(6, 0.75, false, false, 250 * 250).maxLength, 18)
+  assert.equal(graphLabelPolicy(6, 0.1, false, false, 250 * 250).maxLength, 12)
+})
+
 test("focus includes neighbours and the references between them, not an entire component", () => {
   const links = [
     ["Plasticity", "Map"],

@@ -229,7 +229,10 @@ export function renderForceGraph(
     for (const n of candidates) {
       if (
         n.id === slug ||
-        (n.id !== active && (policy.level === "none" || labelled.size >= policy.limit))
+        (n.id !== active &&
+          (policy.level === "none" ||
+            labelled.size >= policy.limit ||
+            [...n.text].length > policy.maxLength))
       )
         continue
       const p = screen(n)
@@ -261,6 +264,7 @@ export function renderForceGraph(
     }
     canvas.dataset.labelCount = String(labelled.size)
     canvas.dataset.labelLevel = policy.level
+    canvas.dataset.labelMaxLength = String(policy.maxLength)
     canvas.dataset.focusNodeCount = String(focus.nodes.size)
     canvas.dataset.focusLinkCount = String(focus.links.size)
     canvas.dataset.scale = String(transform.k)
