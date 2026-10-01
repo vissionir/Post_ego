@@ -116,16 +116,9 @@ export function renderForceGraph(
   open.textContent = fullSlug.startsWith("th/")
     ? "เปิดหน้า"
     : fullSlug.startsWith("en/")
-      ? "Open page"
-      : "Открыть атом"
+      ? "Open"
+      : "Открыть"
   card.append(name, open)
-  const hint = document.createElement("small")
-  hint.textContent = fullSlug.startsWith("th/")
-    ? "แตะโหนดที่เลือกอีกครั้งเพื่อเปิดหน้า · ลูกศรแสดงลิงก์"
-    : fullSlug.startsWith("en/")
-      ? "Click or tap the selected node again to open it · Arrows show references"
-      : "Нажми выбранный узел ещё раз, чтобы открыть · Стрелки показывают ссылки"
-  card.append(hint)
   graph.append(card)
   const ordered = [...nodes].sort((a, b) => b.radius - a.radius)
   const sampled = [...nodes].sort((a, b) => graphLabelRank(a.id) - graphLabelRank(b.id))
@@ -194,24 +187,6 @@ export function renderForceGraph(
       ctx!.moveTo(from.x, from.y)
       ctx!.lineTo(to.x, to.y)
       ctx!.stroke()
-      if (
-        active &&
-        focused &&
-        Math.hypot(to.x - from.x, to.y - from.y) > from.radius + to.radius + 14
-      ) {
-        const angle = Math.atan2(to.y - from.y, to.x - from.x)
-        const dx = Math.cos(angle),
-          dy = Math.sin(angle)
-        const x = to.x - dx * (to.radius + 2),
-          y = to.y - dy * (to.radius + 2)
-        ctx!.fillStyle = colors.secondary
-        ctx!.beginPath()
-        ctx!.moveTo(x, y)
-        ctx!.lineTo(x - dx * 6 + dy * 3, y - dy * 6 - dx * 3)
-        ctx!.lineTo(x - dx * 6 - dy * 3, y - dy * 6 + dx * 3)
-        ctx!.closePath()
-        ctx!.fill()
-      }
     }
     ctx!.globalAlpha = 1
     for (const n of nodes) {

@@ -109,22 +109,27 @@
   position: relative;
 }
 .graph-picked {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
   position: absolute;
   bottom: 0.5rem;
   left: 0.5rem;
   right: 0.5rem;
   border: 1px solid var(--lightgray);
   border-radius: 4px;
-  padding: 0.5rem;
+  padding: 0.35rem 0.5rem;
   background: var(--light);
   font-size: 0.85rem;
   overflow-wrap: anywhere;
-  strong {
-    display: block;
+  &[hidden] {
+    display: none;
   }
-  small {
-    display: block;
-    margin-top: 0.25rem;
-    color: var(--darkgray);
+  strong {
+    min-width: 0;
+  }
+  a {
+    flex-shrink: 0;
+    margin-left: auto;
   }
 }
