@@ -1,7 +1,14 @@
 import { test } from "node:test"
 import assert from "node:assert/strict"
-import { graphData, graphLabelPolicy, graphLabelRank, graphNodeRadius, graphView } from "./graph"
-import type { FullSlug } from "./path"
+import {
+  graphData,
+  graphFocus,
+  graphLabelPolicy,
+  graphLabelRank,
+  graphNodeRadius,
+  graphView,
+} from "./graph"
+import type { FullSlug, SimpleSlug } from "./path"
 
 const index = {
   "Атомы/A": { title: "A", links: ["Атомы/B", "en/Atoms/A", "Атомы/A"] },
@@ -74,4 +81,36 @@ test("expanded neighbourhoods start labelled without overloading dense previews"
 test("caption sampling is stable across redraws", () => {
   assert.equal(graphLabelRank("Атомы/Ум"), graphLabelRank("Атомы/Ум"))
   assert.notEqual(graphLabelRank("Атомы/Ум"), graphLabelRank("Атомы/Реальность"))
+})
+
+test("focus includes neighbours and the references between them, not an entire component", () => {
+  const links = [
+    ["Plasticity", "Map"],
+    ["Plasticity", "Rebuild"],
+    ["Plasticity", "Refine"],
+    ["Rebuild", "Map"],
+    ["Refine", "Map"],
+    ["Map", "Unrelated"],
+  ].map(([source, target]) => ({ source: source as SimpleSlug, target: target as SimpleSlug }))
+  const focus = graphFocus(links, "Plasticity" as SimpleSlug, "Map" as SimpleSlug)
+  assert.deepEqual([...focus.nodes].sort(), ["Map", "Plasticity", "Rebuild", "Refine"])
+  assert.deepEqual([...focus.links], [0, 1, 2, 3, 4])
+})
+
+test("a distant node highlights a real route to the page without unrelated branches", () => {
+  const links = [
+    ["A", "B"],
+    ["B", "C"],
+    ["D", "C"],
+    ["C", "Side"],
+  ].map(([source, target]) => ({ source: source as SimpleSlug, target: target as SimpleSlug }))
+  const focus = graphFocus(links, "A" as SimpleSlug, "D" as SimpleSlug)
+  assert.deepEqual([...focus.nodes].sort(), ["A", "B", "C", "D"])
+  assert.deepEqual([...focus.links].sort(), [0, 1, 2])
+})
+
+test("focus never invents a route between disconnected atoms", () => {
+  const focus = graphFocus([], "A" as SimpleSlug, "B" as SimpleSlug)
+  assert.deepEqual([...focus.nodes], ["A"])
+  assert.equal(focus.links.size, 0)
 })

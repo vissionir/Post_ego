@@ -13,6 +13,7 @@ import {
 } from "d3"
 import type { D3Config } from "../Graph"
 import {
+  graphFocus,
   graphLabelPolicy,
   graphLabelRank,
   graphNodeRadius,
@@ -118,11 +119,18 @@ export function renderForceGraph(
       ? "Open page"
       : "Открыть атом"
   card.append(name, open)
+  const hint = document.createElement("small")
+  hint.textContent = fullSlug.startsWith("th/")
+    ? "แตะโหนดที่เลือกอีกครั้งเพื่อเปิดหน้า · ลูกศรแสดงลิงก์"
+    : fullSlug.startsWith("en/")
+      ? "Click or tap the selected node again to open it · Arrows show references"
+      : "Нажми выбранный узел ещё раз, чтобы открыть · Стрелки показывают ссылки"
+  card.append(hint)
   graph.append(card)
   const ordered = [...nodes].sort((a, b) => b.radius - a.radius)
   const sampled = [...nodes].sort((a, b) => graphLabelRank(a.id) - graphLabelRank(b.id))
-  let lastTap: { id: SimpleSlug; time: number } | undefined
-  let lastTouchTime = 0
+  const focusCache = new Map<SimpleSlug, ReturnType<typeof graphFocus>>()
+  let lastTouchTime = -Infinity
 
   function screen(n: Node) {
     return {
@@ -160,14 +168,8 @@ export function renderForceGraph(
       window.spaNavigate(new URL(resolveRelative(fullSlug, n.id), window.location.href))
   }
   function tap(n: Node | undefined) {
-    const now = performance.now()
-    if (n && lastTap?.id === n.id && now - lastTap.time < 350) {
-      lastTap = undefined
-      navigate(n)
-    } else {
-      lastTap = n ? { id: n.id, time: now } : undefined
-      choose(n)
-    }
+    if (n && selected === n.id && n.id !== slug) navigate(n)
+    else choose(n)
   }
   function requestDraw() {
     if (!disposed && !frame) frame = requestAnimationFrame(draw)
@@ -178,10 +180,13 @@ export function renderForceGraph(
     ctx!.setTransform(dpr, 0, 0, dpr, 0, 0)
     ctx!.clearRect(0, 0, width, height)
     const active = hovered ?? selected
-    for (const l of links) {
+    const focusId = active ?? slug
+    if (!focusCache.has(focusId)) focusCache.set(focusId, graphFocus(data.links, focusId, slug))
+    const focus = focusCache.get(focusId)!
+    for (const [index, l] of links.entries()) {
       const from = screen(l.source),
         to = screen(l.target)
-      const focused = l.source.id === (active ?? slug) || l.target.id === (active ?? slug)
+      const focused = active ? focus.links.has(index) : l.source.id === slug || l.target.id === slug
       ctx!.strokeStyle = focused ? colors.secondary : colors.gray
       ctx!.globalAlpha = focused ? 0.65 : full ? 0.18 : 0.35
       ctx!.lineWidth = focused ? 1 : 0.7
@@ -189,20 +194,40 @@ export function renderForceGraph(
       ctx!.moveTo(from.x, from.y)
       ctx!.lineTo(to.x, to.y)
       ctx!.stroke()
+      if (
+        active &&
+        focused &&
+        Math.hypot(to.x - from.x, to.y - from.y) > from.radius + to.radius + 14
+      ) {
+        const angle = Math.atan2(to.y - from.y, to.x - from.x)
+        const dx = Math.cos(angle),
+          dy = Math.sin(angle)
+        const x = to.x - dx * (to.radius + 2),
+          y = to.y - dy * (to.radius + 2)
+        ctx!.fillStyle = colors.secondary
+        ctx!.beginPath()
+        ctx!.moveTo(x, y)
+        ctx!.lineTo(x - dx * 6 + dy * 3, y - dy * 6 - dx * 3)
+        ctx!.lineTo(x - dx * 6 - dy * 3, y - dy * 6 + dx * 3)
+        ctx!.closePath()
+        ctx!.fill()
+      }
     }
     ctx!.globalAlpha = 1
     for (const n of nodes) {
       const p = screen(n)
       ctx!.fillStyle =
-        n.id === slug || n.id === active
+        n.id === slug || (active && focus.nodes.has(n.id))
           ? colors.secondary
           : visited.has(n.id)
             ? colors.visited
             : colors.gray
       ctx!.beginPath()
+      ctx!.globalAlpha = active && !focus.nodes.has(n.id) && n.id !== slug ? 0.45 : 1
       ctx!.arc(p.x, p.y, p.radius, 0, Math.PI * 2)
       ctx!.fill()
     }
+    ctx!.globalAlpha = 1
     ctx!.font = font
     ctx!.textAlign = "center"
     ctx!.textBaseline = "bottom"
@@ -217,7 +242,13 @@ export function renderForceGraph(
       full,
       width * height,
     )
-    const order = policy.level === "sparse" ? sampled : ordered
+    const baseOrder = policy.level === "sparse" ? sampled : ordered
+    const order = active
+      ? [
+          ...baseOrder.filter((n) => focus.nodes.has(n.id)),
+          ...baseOrder.filter((n) => !focus.nodes.has(n.id)),
+        ]
+      : baseOrder
     const candidates = priority ? [priority, ...order.filter((n) => n !== priority)] : order
     const cardHeight = card.hidden ? 0 : card.offsetHeight + 16
     for (const n of candidates) {
@@ -255,6 +286,8 @@ export function renderForceGraph(
     }
     canvas.dataset.labelCount = String(labelled.size)
     canvas.dataset.labelLevel = policy.level
+    canvas.dataset.focusNodeCount = String(focus.nodes.size)
+    canvas.dataset.focusLinkCount = String(focus.links.size)
     canvas.dataset.scale = String(transform.k)
   }
 
@@ -267,6 +300,7 @@ export function renderForceGraph(
     .scaleExtent([Math.min(0.08, view.k / 3), Math.max(4, view.k * 6)])
     .filter((event: MouseEvent | TouchEvent) => {
       if (!config.zoom || ("button" in event && event.button !== 0)) return false
+      if (event.type === "mousedown" && performance.now() - lastTouchTime < 600) return false
       if (
         (event.type === "mousedown" ||
           (event.type === "touchstart" && "touches" in event && event.touches.length === 1)) &&
@@ -287,7 +321,6 @@ export function renderForceGraph(
   selection.call(zoomer).on("dblclick.zoom", null)
   selection.call(zoomer.transform, transform)
   function startNodeDrag(n: Node) {
-    lastTap = undefined
     n.fx = n.x
     n.fy = n.y
     simulation.alphaTarget(0.25).restart()
@@ -307,6 +340,8 @@ export function renderForceGraph(
       drag<HTMLCanvasElement, unknown, DragSubject | undefined>()
         .container(() => canvas)
         .touchable(() => false)
+        // Touch browsers can emit compatibility mouse events after the same tap.
+        .filter((event: MouseEvent) => !event.button && performance.now() - lastTouchTime >= 600)
         .clickDistance(5)
         .subject((event) => {
           const n = hit(event.sourceEvent)
@@ -339,7 +374,7 @@ export function renderForceGraph(
           if (moved) finishNodeDrag(n)
           dragging = false
           hovered = null
-          if (start && dragDistance < 5) choose(n)
+          if (start && dragDistance < 5) tap(n)
           requestDraw()
         }),
     )
@@ -353,7 +388,6 @@ export function renderForceGraph(
     touches.add(event.pointerId)
     if (touches.size > 1) {
       pinching = true
-      lastTap = undefined
       if (touchDrag?.moved) finishNodeDrag(touchDrag.node)
       touchDrag = undefined
       dragging = false
@@ -398,10 +432,6 @@ export function renderForceGraph(
     }
     if (!touches.size) pinching = false
   }
-  const doubleClick = (event: MouseEvent) => {
-    event.preventDefault()
-    if (performance.now() - lastTouchTime > 500) navigate(hit(event))
-  }
   const move = (event: MouseEvent) => {
     if (dragging) return
     hovered = hit(event)?.id ?? null
@@ -428,7 +458,6 @@ export function renderForceGraph(
   canvas.addEventListener("mousemove", move)
   canvas.addEventListener("mouseleave", leave)
   canvas.addEventListener("keydown", keydown)
-  canvas.addEventListener("dblclick", doubleClick)
   canvas.addEventListener("pointerdown", touchDown)
   canvas.addEventListener("pointermove", touchMove)
   canvas.addEventListener("pointerup", touchUp)
@@ -443,7 +472,6 @@ export function renderForceGraph(
     canvas.removeEventListener("mousemove", move)
     canvas.removeEventListener("mouseleave", leave)
     canvas.removeEventListener("keydown", keydown)
-    canvas.removeEventListener("dblclick", doubleClick)
     canvas.removeEventListener("pointerdown", touchDown)
     canvas.removeEventListener("pointermove", touchMove)
     canvas.removeEventListener("pointerup", touchUp)

@@ -5,6 +5,49 @@ export type GraphEntry = { title: string; links?: string[]; tags?: string[] }
 export type GraphNode = { id: SimpleSlug; text: string }
 export type GraphLink = { source: SimpleSlug; target: SimpleSlug }
 
+export function graphFocus(links: GraphLink[], active: SimpleSlug, center: SimpleSlug) {
+  const neighbours = new Map<SimpleSlug, Set<SimpleSlug>>()
+  for (const { source, target } of links) {
+    if (!neighbours.has(source)) neighbours.set(source, new Set())
+    if (!neighbours.has(target)) neighbours.set(target, new Set())
+    neighbours.get(source)!.add(target)
+    neighbours.get(target)!.add(source)
+  }
+  const nodes = new Set([active, ...(neighbours.get(active) ?? [])])
+  const focusedLinks = new Set<number>()
+  links.forEach(({ source, target }, index) => {
+    if (nodes.has(source) && nodes.has(target)) focusedLinks.add(index)
+  })
+  // A route is a chain of actual references in either direction, not a causal claim.
+  if (!nodes.has(center)) {
+    const parent = new Map<SimpleSlug, SimpleSlug | null>([[active, null]])
+    const queue = [active]
+    for (let i = 0; i < queue.length && !parent.has(center); i++) {
+      for (const neighbour of neighbours.get(queue[i]) ?? []) {
+        if (parent.has(neighbour)) continue
+        parent.set(neighbour, queue[i])
+        queue.push(neighbour)
+      }
+    }
+    if (parent.has(center)) {
+      let child = center
+      for (let ancestor = parent.get(child); ancestor; ancestor = parent.get(child)) {
+        nodes.add(child)
+        nodes.add(ancestor)
+        links.forEach(({ source, target }, index) => {
+          if (
+            (source === child && target === ancestor) ||
+            (target === child && source === ancestor)
+          )
+            focusedLinks.add(index)
+        })
+        child = ancestor
+      }
+    }
+  }
+  return { nodes, links: focusedLinks }
+}
+
 export function graphNodeRadius(degree: number) {
   return 2 + Math.sqrt(degree)
 }

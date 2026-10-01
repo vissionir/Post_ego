@@ -122,4 +122,9 @@
   strong {
     display: block;
   }
+  small {
+    display: block;
+    margin-top: 0.25rem;
+    color: var(--darkgray);
+  }
 }
