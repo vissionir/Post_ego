@@ -127,7 +127,7 @@ export function renderForceGraph(
       : "Открыть"
   open.className = "internal"
   open.textContent = openText
-  card.append(open, name)
+  card.append(name, open)
   graph.append(card)
   const ordered = [...nodes].sort((a, b) => b.radius - a.radius)
   const focusCache = new Map<SimpleSlug, ReturnType<typeof graphFocus>>()
