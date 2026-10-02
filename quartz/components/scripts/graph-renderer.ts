@@ -16,12 +16,19 @@ import {
   graphFocus,
   graphLabelPolicy,
   graphLabelRank,
+  graphLabelRequired,
   graphNodeRadius,
   graphView,
   type GraphLink,
   type GraphNode,
 } from "../../util/graph"
 import { resolveRelative, simplifySlug, type FullSlug, type SimpleSlug } from "../../util/path"
+import {
+  graphFocusLabelPlacement,
+  graphLabelPlacement,
+  graphLabelText,
+  type GraphLabelBox,
+} from "../../util/graph-labels"
 
 type Node = GraphNode & SimulationNodeDatum & { radius: number }
 type Link = { source: Node; target: Node }
@@ -176,13 +183,30 @@ export function renderForceGraph(
     const focusId = active ?? slug
     if (!focusCache.has(focusId)) focusCache.set(focusId, graphFocus(data.links, focusId, slug))
     const focus = focusCache.get(focusId)!
+    const positions = new Map(
+      nodes.map((n) => {
+        const p = screen(n)
+        if (active && focus.nodes.has(n.id)) p.radius = Math.max(3.5, p.radius)
+        return [n.id, p] as const
+      }),
+    )
+    const labelNodes = [...positions.values()].filter(
+      (p) =>
+        p.x + p.radius >= 0 &&
+        p.x - p.radius <= width &&
+        p.y + p.radius >= 0 &&
+        p.y - p.radius <= height,
+    )
+    const labelLines = links.map((l) => ({
+      source: positions.get(l.source.id)!,
+      target: positions.get(l.target.id)!,
+    }))
     for (const [index, l] of links.entries()) {
-      const from = screen(l.source),
-        to = screen(l.target)
+      const { source: from, target: to } = labelLines[index]
       const focused = active ? focus.links.has(index) : l.source.id === slug || l.target.id === slug
       ctx!.strokeStyle = focused ? colors.secondary : colors.gray
-      ctx!.globalAlpha = focused ? 0.65 : full ? 0.18 : 0.35
-      ctx!.lineWidth = focused ? 1 : 0.7
+      ctx!.globalAlpha = focused ? (active ? 0.9 : 0.65) : active ? 0.06 : full ? 0.18 : 0.35
+      ctx!.lineWidth = focused ? (active ? 1.6 : 1) : 0.7
       ctx!.beginPath()
       ctx!.moveTo(from.x, from.y)
       ctx!.lineTo(to.x, to.y)
@@ -190,7 +214,7 @@ export function renderForceGraph(
     }
     ctx!.globalAlpha = 1
     for (const n of nodes) {
-      const p = screen(n)
+      const p = positions.get(n.id)!
       ctx!.fillStyle =
         n.id === slug || (active && focus.nodes.has(n.id))
           ? colors.secondary
@@ -198,16 +222,18 @@ export function renderForceGraph(
             ? colors.visited
             : colors.gray
       ctx!.beginPath()
-      ctx!.globalAlpha = active && !focus.nodes.has(n.id) && n.id !== slug ? 0.45 : 1
+      ctx!.globalAlpha = active && !focus.nodes.has(n.id) ? 0.22 : 1
       ctx!.arc(p.x, p.y, p.radius, 0, Math.PI * 2)
       ctx!.fill()
     }
     ctx!.globalAlpha = 1
     ctx!.font = font
     ctx!.textAlign = "center"
-    ctx!.textBaseline = "bottom"
+    ctx!.textBaseline = "middle"
     ctx!.lineJoin = "round"
-    const boxes: { left: number; right: number; top: number; bottom: number }[] = []
+    const boxes: GraphLabelBox[] = expanded
+      ? []
+      : [{ left: width - 48, right: width, top: 0, bottom: 48 }]
     const labelled = new Set<SimpleSlug>()
     const priority = byId.get(active ?? slug)
     const policy = graphLabelPolicy(
@@ -226,47 +252,90 @@ export function renderForceGraph(
       : baseOrder
     const candidates = priority ? [priority, ...order.filter((n) => n !== priority)] : order
     const cardHeight = card.hidden ? 0 : card.offsetHeight + 16
+    const focusLabelNodes = nodes
+      .filter((n) => focus.nodes.has(n.id))
+      .map((n) => positions.get(n.id)!)
+    const focusLabelLines = labelLines.filter((_, index) => focus.links.has(index))
+    let focusLabelCount = 0
     for (const n of candidates) {
+      const required = graphLabelRequired(n.id, slug, active, focus.nodes, full)
       if (
-        n.id === slug ||
-        (n.id !== active &&
-          (policy.level === "none" ||
-            labelled.size >= policy.limit ||
-            [...n.text].length > policy.maxLength))
+        !required &&
+        (active !== null ||
+          n.id === slug ||
+          policy.level === "none" ||
+          labelled.size >= policy.limit ||
+          [...n.text].length > policy.maxLength)
       )
         continue
-      const p = screen(n)
+      const p = positions.get(n.id)!
       if (p.x < 0 || p.x > width || p.y < 0 || p.y > height) continue
-      const size = ctx!.measureText(n.text).width
-      if (size + 8 > width) continue
-      const x = Math.max(size / 2 + 4, Math.min(width - size / 2 - 4, p.x))
-      for (const offset of [-p.radius - 5, p.radius + 19, -p.radius - 23]) {
-        const y = p.y + offset
-        const box = { left: x - size / 2 - 3, right: x + size / 2 + 3, top: y - 14, bottom: y + 3 }
-        if (
-          box.top < 0 ||
-          box.bottom > height - cardHeight ||
-          boxes.some(
-            (b) =>
-              box.left < b.right && box.right > b.left && box.top < b.bottom && box.bottom > b.top,
-          )
-        )
-          continue
-        boxes.push(box)
-        ctx!.strokeStyle = colors.light
-        ctx!.lineWidth = 3
-        ctx!.strokeText(n.text, x, y)
-        ctx!.fillStyle = colors.text
-        ctx!.fillText(n.text, x, y)
-        labelled.add(n.id)
-        break
+      ctx!.font = required ? `600 ${font}` : font
+      const lines = required
+        ? graphLabelText(n.text, Math.max(1, width - 24), (text) => ctx!.measureText(text).width)
+        : [n.text]
+      const size = {
+        width: Math.max(...lines.map((text) => ctx!.measureText(text).width)),
+        height: lines.length * 16,
       }
+      const origin = positions.get(slug) ?? { x: width / 2, y: height / 2 }
+      const bounds = { width, height: height - cardHeight }
+      const caption = required
+        ? graphFocusLabelPlacement(p, size, origin, bounds, {
+            nodes: focusLabelNodes,
+            lines: focusLabelLines,
+            boxes,
+          })
+        : graphLabelPlacement(p, size, origin, bounds, {
+            nodes: labelNodes,
+            lines: labelLines,
+            boxes,
+          })
+      if (!caption) continue
+      boxes.push(caption.box)
+      const anchorX = Math.max(caption.box.left, Math.min(caption.box.right, p.x))
+      const anchorY = Math.max(caption.box.top, Math.min(caption.box.bottom, p.y))
+      if (required && Math.hypot(anchorX - p.x, anchorY - p.y) > p.radius + 24) {
+        ctx!.strokeStyle = colors.secondary
+        ctx!.lineWidth = 0.8
+        ctx!.globalAlpha = 0.5
+        ctx!.setLineDash([2, 3])
+        ctx!.beginPath()
+        ctx!.moveTo(p.x, p.y)
+        ctx!.lineTo(anchorX, anchorY)
+        ctx!.stroke()
+        ctx!.setLineDash([])
+        ctx!.globalAlpha = 1
+      }
+      ctx!.strokeStyle = colors.light
+      ctx!.lineWidth = required ? 6 : 3
+      ctx!.fillStyle = required ? colors.secondary : colors.text
+      lines.forEach((text, index) => {
+        const y = caption.y + (index - (lines.length - 1) / 2) * 16
+        ctx!.strokeText(text, caption.x, y)
+        ctx!.fillText(text, caption.x, y)
+      })
+      labelled.add(n.id)
+      if (required) focusLabelCount++
     }
     canvas.dataset.labelCount = String(labelled.size)
     canvas.dataset.labelLevel = policy.level
     canvas.dataset.labelMaxLength = String(policy.maxLength)
     canvas.dataset.focusNodeCount = String(focus.nodes.size)
     canvas.dataset.focusLinkCount = String(focus.links.size)
+    canvas.dataset.focusLabelCount = String(focusLabelCount)
+    canvas.dataset.focusVisibleNodeCount = String(
+      nodes.filter((n) => {
+        const p = positions.get(n.id)!
+        return (
+          graphLabelRequired(n.id, slug, active, focus.nodes, full) &&
+          p.x >= 0 &&
+          p.x <= width &&
+          p.y >= 0 &&
+          p.y <= height
+        )
+      }).length,
+    )
     canvas.dataset.scale = String(transform.k)
   }
 

@@ -5,6 +5,7 @@ import {
   graphFocus,
   graphLabelPolicy,
   graphLabelRank,
+  graphLabelRequired,
   graphNodeRadius,
   graphView,
 } from "./graph"
@@ -105,6 +106,32 @@ test("expanded local graphs allow longer captions without changing the label den
 test("zooming out tightens the caption length budget", () => {
   assert.equal(graphLabelPolicy(6, 0.75, false, false, 250 * 250).maxLength, 18)
   assert.equal(graphLabelPolicy(6, 0.1, false, false, 250 * 250).maxLength, 12)
+})
+
+test("every constellation caption bypasses the background zoom and length policy", () => {
+  const focused = new Set(["A", "B", "C"].map((id) => id as SimpleSlug))
+  for (const zoom of [0.1, 1, 1.8, 4]) {
+    assert(graphLabelPolicy(800, zoom, true, true, 390 * 700))
+    for (const id of focused)
+      assert(graphLabelRequired(id, "A" as SimpleSlug, "C" as SimpleSlug, focused, true))
+    assert(
+      !graphLabelRequired(
+        "Unrelated" as SimpleSlug,
+        "A" as SimpleSlug,
+        "C" as SimpleSlug,
+        focused,
+        true,
+      ),
+    )
+  }
+  assert(!graphLabelRequired("A" as SimpleSlug, "A" as SimpleSlug, null, focused, true))
+})
+
+test("the page caption stays hidden in its preview but is labelled on a selected global route", () => {
+  const id = "A" as SimpleSlug
+  const focused = new Set([id])
+  assert(!graphLabelRequired(id, id, id, focused, false))
+  assert(graphLabelRequired(id, id, id, focused, true))
 })
 
 test("focus includes neighbours and the references between them, not an entire component", () => {

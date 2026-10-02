@@ -78,6 +78,16 @@ export function graphLabelRank(id: string) {
   return hash >>> 0
 }
 
+export function graphLabelRequired(
+  id: SimpleSlug,
+  center: SimpleSlug,
+  active: SimpleSlug | null,
+  focused: Set<SimpleSlug>,
+  full: boolean,
+) {
+  return active !== null && focused.has(id) && (full || id !== center)
+}
+
 export function graphView(
   nodes: { x?: number; y?: number }[],
   width: number,
