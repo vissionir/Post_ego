@@ -110,7 +110,7 @@
 }
 .graph-picked {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   gap: 0.5rem;
   position: absolute;
   bottom: 0.5rem;
@@ -130,6 +130,31 @@
   }
   a {
     flex-shrink: 0;
-    margin-left: auto;
+    margin: 0;
+  }
+  &.graph-picked-constellation {
+    display: block;
+  }
+  .graph-picked-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.2rem 0;
+    span,
+    strong {
+      min-width: 0;
+    }
+  }
+}
+
+.global-graph-container .graph-picked {
+  font-size: 1rem;
+  max-height: min(180px, 28%);
+  overflow-y: auto;
+  a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 32px;
+    padding: 0.1rem 0.4rem;
   }
 }

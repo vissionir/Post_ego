@@ -108,34 +108,26 @@ test("zooming out tightens the caption length budget", () => {
   assert.equal(graphLabelPolicy(6, 0.1, false, false, 250 * 250).maxLength, 12)
 })
 
-test("every constellation caption bypasses the background zoom and length policy", () => {
-  const focused = new Set(["A", "B", "C"].map((id) => id as SimpleSlug))
+test("selected global constellations follow the zoom policy; only hovering forces a caption", () => {
+  const center = "A" as SimpleSlug
+  const selected = "C" as SimpleSlug
   for (const zoom of [0.1, 1, 1.8, 4]) {
-    assert(graphLabelPolicy(800, zoom, true, true, 390 * 700))
-    for (const id of focused)
-      assert(graphLabelRequired(id, "A" as SimpleSlug, "C" as SimpleSlug, focused, true))
-    assert(
-      !graphLabelRequired(
-        "Unrelated" as SimpleSlug,
-        "A" as SimpleSlug,
-        "C" as SimpleSlug,
-        focused,
-        true,
-      ),
-    )
+    const policy = graphLabelPolicy(800, zoom, true, true, 390 * 700)
+    assert.equal(policy.level === "none", zoom < 1.35)
+    for (const id of [center, "B" as SimpleSlug, selected])
+      assert(!graphLabelRequired(id, center, null, selected, true, true))
+    assert(graphLabelRequired(selected, center, selected, selected, true, true))
   }
-  assert(!graphLabelRequired("A" as SimpleSlug, "A" as SimpleSlug, null, focused, true))
 })
 
-test("the page caption stays hidden in its preview but is labelled on a selected global route", () => {
+test("the central caption is visible in expanded atom connections, and hidden in its preview", () => {
   const id = "A" as SimpleSlug
-  const focused = new Set([id])
-  assert(!graphLabelRequired(id, id, id, focused, false))
-  assert(graphLabelRequired(id, id, id, focused, true))
+  assert(!graphLabelRequired(id, id, id, id, false, false))
+  assert(graphLabelRequired(id, id, null, null, true, false))
   const neighbour = "B" as SimpleSlug
-  focused.add(neighbour)
-  assert(graphLabelRequired(neighbour, id, neighbour, focused, false))
-  assert(!graphLabelRequired(neighbour, id, id, focused, false))
+  assert(graphLabelRequired(neighbour, id, null, neighbour, false, false))
+  assert(!graphLabelRequired(neighbour, id, null, neighbour, true, false))
+  assert.equal(graphLabelPolicy(87, 0.4, true, false, 1100 * 600).level, "none")
 })
 
 test("focus includes neighbours and the references between them, not an entire component", () => {

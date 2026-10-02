@@ -15,7 +15,6 @@ import type { D3Config } from "../Graph"
 import {
   graphFocus,
   graphLabelPolicy,
-  graphLabelRank,
   graphLabelRequired,
   graphNodeRadius,
   graphView,
@@ -105,7 +104,9 @@ export function renderForceGraph(
     light: css.getPropertyValue("--light").trim(),
     text: css.getPropertyValue("--dark").trim(),
   }
-  const font = `12px ${css.getPropertyValue("--bodyFont").trim() || "sans-serif"}`
+  const fontSize = expanded ? 14 : 12
+  const lineHeight = fontSize + 4
+  const font = `${fontSize}px ${css.getPropertyValue("--bodyFont").trim() || "sans-serif"}`
   const view = graphView(nodes, width, height, expanded, full)
   let transform = zoomIdentity.translate(view.x, view.y).scale(view.k)
   let selected: SimpleSlug | null = null
@@ -119,16 +120,16 @@ export function renderForceGraph(
   card.setAttribute("aria-live", "polite")
   const name = document.createElement("strong"),
     open = document.createElement("a")
-  open.className = "internal"
-  open.textContent = fullSlug.startsWith("th/")
+  const openText = fullSlug.startsWith("th/")
     ? "เปิดหน้า"
     : fullSlug.startsWith("en/")
       ? "Open"
       : "Открыть"
-  card.append(name, open)
+  open.className = "internal"
+  open.textContent = openText
+  card.append(open, name)
   graph.append(card)
   const ordered = [...nodes].sort((a, b) => b.radius - a.radius)
-  const sampled = [...nodes].sort((a, b) => graphLabelRank(a.id) - graphLabelRank(b.id))
   const focusCache = new Map<SimpleSlug, ReturnType<typeof graphFocus>>()
   let lastTouchTime = -Infinity
 
@@ -155,10 +156,31 @@ export function renderForceGraph(
   }
   function choose(n: Node | undefined) {
     selected = n?.id ?? null
-    card.hidden = !n || n.id === slug
+    card.hidden = !n || (n.id === slug && (full || !expanded))
+    card.classList.toggle("graph-picked-constellation", expanded && !full && !!n)
     if (n) {
       name.textContent = n.text
       open.href = resolveRelative(fullSlug, n.id)
+      if (expanded && !full) {
+        const focus = focusFor(n.id)
+        const others = ordered.filter((node) => node !== n && focus.nodes.has(node.id))
+        const rows = [n, ...others].map((node, index) => {
+          const row = document.createElement("div")
+          row.className = "graph-picked-row"
+          row.dataset.slug = node.id
+          const title = index === 0 ? name : document.createElement("span")
+          const link = index === 0 ? open : document.createElement("a")
+          title.textContent = node.text
+          link.className = "internal"
+          link.textContent = openText
+          link.href = resolveRelative(fullSlug, node.id)
+          row.append(title, link)
+          return row
+        })
+        card.replaceChildren(...rows)
+      } else card.replaceChildren(open, name)
+    } else {
+      card.replaceChildren(open, name)
     }
     canvas.dataset.selected = selected ?? ""
     requestDraw()
@@ -174,17 +196,20 @@ export function renderForceGraph(
   function requestDraw() {
     if (!disposed && !frame) frame = requestAnimationFrame(draw)
   }
+  function focusFor(id: SimpleSlug) {
+    if (!focusCache.has(id)) focusCache.set(id, graphFocus(data.links, id, slug))
+    return focusCache.get(id)!
+  }
   function draw() {
     frame = 0
     if (disposed) return
     ctx!.setTransform(dpr, 0, 0, dpr, 0, 0)
     ctx!.clearRect(0, 0, width, height)
     const active = selected ?? hovered
-    const constellation = full && active !== null
-    if (constellation && !focusCache.has(active))
-      focusCache.set(active, graphFocus(data.links, active, slug))
+    const constellationId = expanded ? selected : null
+    const constellation = constellationId !== null
     const focus = constellation
-      ? focusCache.get(active)!
+      ? focusFor(constellationId)
       : { nodes: new Set(active ? [active] : []), links: new Set<number>() }
     const positions = new Map(nodes.map((n) => [n.id, screen(n)] as const))
     const labelNodes = [...positions.values()].filter(
@@ -241,7 +266,7 @@ export function renderForceGraph(
       ? []
       : [{ left: width - 48, right: width, top: 0, bottom: 48 }]
     const labelled = new Set<SimpleSlug>()
-    const priority = byId.get(active ?? slug)
+    const priority = byId.get(hovered ?? selected ?? slug)
     const policy = graphLabelPolicy(
       nodes.length,
       transform.k / view.k,
@@ -249,13 +274,12 @@ export function renderForceGraph(
       full,
       width * height,
     )
-    const baseOrder = policy.level === "sparse" ? sampled : ordered
     const order = constellation
       ? [
-          ...baseOrder.filter((n) => focus.nodes.has(n.id)),
-          ...baseOrder.filter((n) => !focus.nodes.has(n.id)),
+          ...ordered.filter((n) => focus.nodes.has(n.id)),
+          ...ordered.filter((n) => !focus.nodes.has(n.id)),
         ]
-      : baseOrder
+      : ordered
     const candidates = priority ? [priority, ...order.filter((n) => n !== priority)] : order
     const cardHeight = card.hidden ? 0 : card.offsetHeight + 16
     const focusLabelNodes = nodes
@@ -264,11 +288,11 @@ export function renderForceGraph(
     const focusLabelLines = labelLines.filter((_, index) => focus.links.has(index))
     let focusLabelCount = 0
     for (const n of candidates) {
-      const required = graphLabelRequired(n.id, slug, active, focus.nodes, full)
+      const required = graphLabelRequired(n.id, slug, hovered, selected, expanded, full)
       if (
         !required &&
-        (constellation ||
-          n.id === slug ||
+        ((constellation && !focus.nodes.has(n.id)) ||
+          (n.id === slug && !expanded) ||
           policy.level === "none" ||
           labelled.size >= policy.limit ||
           [...n.text].length > policy.maxLength)
@@ -282,21 +306,24 @@ export function renderForceGraph(
         : [n.text]
       const size = {
         width: Math.max(...lines.map((text) => ctx!.measureText(text).width)),
-        height: lines.length * 16,
+        height: lines.length * lineHeight,
       }
       const origin = positions.get(slug) ?? { x: width / 2, y: height / 2 }
       const bounds = { width, height: height - cardHeight }
-      const caption = required
-        ? graphFocusLabelPlacement(p, size, origin, bounds, {
-            nodes: constellation ? focusLabelNodes : labelNodes,
-            lines: constellation ? focusLabelLines : labelLines,
-            boxes,
-          })
-        : graphLabelPlacement(p, size, origin, bounds, {
-            nodes: labelNodes,
-            lines: labelLines,
-            boxes,
-          })
+      const obstacles = {
+        nodes: constellation
+          ? focusLabelNodes
+          : full
+            ? labelNodes.filter((other) => other === p || other.radius >= Math.max(p.radius, 5))
+            : labelNodes,
+        lines: constellation ? focusLabelLines : labelLines,
+        boxes,
+      }
+      // Lines are a soft obstacle: dense hubs need captions too.
+      const caption =
+        graphLabelPlacement(p, size, origin, bounds, obstacles) ??
+        graphLabelPlacement(p, size, origin, bounds, { ...obstacles, lines: [] }) ??
+        (required ? graphFocusLabelPlacement(p, size, origin, bounds, obstacles) : undefined)
       if (!caption) continue
       boxes.push(caption.box)
       const anchorX = Math.max(caption.box.left, Math.min(caption.box.right, p.x))
@@ -317,12 +344,12 @@ export function renderForceGraph(
       ctx!.lineWidth = 3
       ctx!.fillStyle = colors.text
       lines.forEach((text, index) => {
-        const y = caption.y + (index - (lines.length - 1) / 2) * 16
+        const y = caption.y + (index - (lines.length - 1) / 2) * lineHeight
         ctx!.strokeText(text, caption.x, y)
         ctx!.fillText(text, caption.x, y)
       })
       labelled.add(n.id)
-      if (required) focusLabelCount++
+      if (focus.nodes.has(n.id)) focusLabelCount++
     }
     canvas.dataset.labelCount = String(labelled.size)
     canvas.dataset.labelLevel = policy.level
@@ -334,13 +361,7 @@ export function renderForceGraph(
     canvas.dataset.focusVisibleNodeCount = String(
       nodes.filter((n) => {
         const p = positions.get(n.id)!
-        return (
-          graphLabelRequired(n.id, slug, active, focus.nodes, full) &&
-          p.x >= 0 &&
-          p.x <= width &&
-          p.y >= 0 &&
-          p.y <= height
-        )
+        return focus.nodes.has(n.id) && p.x >= 0 && p.x <= width && p.y >= 0 && p.y <= height
       }).length,
     )
     canvas.dataset.scale = String(transform.k)

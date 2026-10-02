@@ -60,6 +60,8 @@ export function graphLabelPolicy(
   area: number,
 ) {
   const maxLength = Math.floor((expanded && !full ? 48 : 24) * Math.max(0.5, relativeZoom))
+  if (relativeZoom < 0.65 || (full && relativeZoom < 1.35))
+    return { level: "none", limit: 0, maxLength } as const
   if (relativeZoom >= 3.2 || count <= (expanded && !full ? 36 : 8))
     return { level: "all", limit: Infinity, maxLength } as const
   if ((expanded && !full) || count <= 16 || relativeZoom >= 1.35)
@@ -81,11 +83,13 @@ export function graphLabelRank(id: string) {
 export function graphLabelRequired(
   id: SimpleSlug,
   center: SimpleSlug,
-  active: SimpleSlug | null,
-  focused: Set<SimpleSlug>,
+  hovered: SimpleSlug | null,
+  selected: SimpleSlug | null,
+  expanded: boolean,
   full: boolean,
 ) {
-  return active !== null && (full ? focused.has(id) : id === active && id !== center)
+  if (id === center && !expanded) return false
+  return id === hovered || (expanded && !full && id === center) || (!expanded && id === selected)
 }
 
 export function graphView(
