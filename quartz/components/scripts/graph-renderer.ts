@@ -157,30 +157,9 @@ export function renderForceGraph(
   function choose(n: Node | undefined) {
     selected = n?.id ?? null
     card.hidden = !n || (n.id === slug && (full || !expanded))
-    card.classList.toggle("graph-picked-constellation", expanded && !full && !!n)
     if (n) {
       name.textContent = n.text
       open.href = resolveRelative(fullSlug, n.id)
-      if (expanded && !full) {
-        const focus = focusFor(n.id)
-        const others = ordered.filter((node) => node !== n && focus.nodes.has(node.id))
-        const rows = [n, ...others].map((node, index) => {
-          const row = document.createElement("div")
-          row.className = "graph-picked-row"
-          row.dataset.slug = node.id
-          const title = index === 0 ? name : document.createElement("span")
-          const link = index === 0 ? open : document.createElement("a")
-          title.textContent = node.text
-          link.className = "internal"
-          link.textContent = openText
-          link.href = resolveRelative(fullSlug, node.id)
-          row.append(title, link)
-          return row
-        })
-        card.replaceChildren(...rows)
-      } else card.replaceChildren(open, name)
-    } else {
-      card.replaceChildren(open, name)
     }
     canvas.dataset.selected = selected ?? ""
     requestDraw()
