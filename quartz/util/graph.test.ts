@@ -132,6 +132,10 @@ test("the page caption stays hidden in its preview but is labelled on a selected
   const focused = new Set([id])
   assert(!graphLabelRequired(id, id, id, focused, false))
   assert(graphLabelRequired(id, id, id, focused, true))
+  const neighbour = "B" as SimpleSlug
+  focused.add(neighbour)
+  assert(graphLabelRequired(neighbour, id, neighbour, focused, false))
+  assert(!graphLabelRequired(neighbour, id, id, focused, false))
 })
 
 test("focus includes neighbours and the references between them, not an entire component", () => {

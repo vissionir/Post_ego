@@ -85,7 +85,7 @@ export function graphLabelRequired(
   focused: Set<SimpleSlug>,
   full: boolean,
 ) {
-  return active !== null && focused.has(id) && (full || id !== center)
+  return active !== null && (full ? focused.has(id) : id === active && id !== center)
 }
 
 export function graphView(

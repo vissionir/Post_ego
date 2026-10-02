@@ -179,17 +179,14 @@ export function renderForceGraph(
     if (disposed) return
     ctx!.setTransform(dpr, 0, 0, dpr, 0, 0)
     ctx!.clearRect(0, 0, width, height)
-    const active = hovered ?? selected
-    const focusId = active ?? slug
-    if (!focusCache.has(focusId)) focusCache.set(focusId, graphFocus(data.links, focusId, slug))
-    const focus = focusCache.get(focusId)!
-    const positions = new Map(
-      nodes.map((n) => {
-        const p = screen(n)
-        if (active && focus.nodes.has(n.id)) p.radius = Math.max(3.5, p.radius)
-        return [n.id, p] as const
-      }),
-    )
+    const active = selected ?? hovered
+    const constellation = full && active !== null
+    if (constellation && !focusCache.has(active))
+      focusCache.set(active, graphFocus(data.links, active, slug))
+    const focus = constellation
+      ? focusCache.get(active)!
+      : { nodes: new Set(active ? [active] : []), links: new Set<number>() }
+    const positions = new Map(nodes.map((n) => [n.id, screen(n)] as const))
     const labelNodes = [...positions.values()].filter(
       (p) =>
         p.x + p.radius >= 0 &&
@@ -203,10 +200,19 @@ export function renderForceGraph(
     }))
     for (const [index, l] of links.entries()) {
       const { source: from, target: to } = labelLines[index]
-      const focused = active ? focus.links.has(index) : l.source.id === slug || l.target.id === slug
-      ctx!.strokeStyle = focused ? colors.secondary : colors.gray
-      ctx!.globalAlpha = focused ? (active ? 0.9 : 0.65) : active ? 0.06 : full ? 0.18 : 0.35
-      ctx!.lineWidth = focused ? (active ? 1.6 : 1) : 0.7
+      const central = !full && (l.source.id === slug || l.target.id === slug)
+      const focused = constellation && focus.links.has(index)
+      ctx!.strokeStyle = central ? colors.secondary : colors.gray
+      ctx!.globalAlpha = constellation
+        ? focused
+          ? 0.85
+          : 0.035
+        : central
+          ? 0.65
+          : full
+            ? 0.18
+            : 0.35
+      ctx!.lineWidth = central || focused ? 1 : 0.7
       ctx!.beginPath()
       ctx!.moveTo(from.x, from.y)
       ctx!.lineTo(to.x, to.y)
@@ -216,13 +222,13 @@ export function renderForceGraph(
     for (const n of nodes) {
       const p = positions.get(n.id)!
       ctx!.fillStyle =
-        n.id === slug || (active && focus.nodes.has(n.id))
+        n.id === slug || n.id === active
           ? colors.secondary
           : visited.has(n.id)
             ? colors.visited
             : colors.gray
       ctx!.beginPath()
-      ctx!.globalAlpha = active && !focus.nodes.has(n.id) ? 0.22 : 1
+      ctx!.globalAlpha = constellation && !focus.nodes.has(n.id) ? 0.18 : 1
       ctx!.arc(p.x, p.y, p.radius, 0, Math.PI * 2)
       ctx!.fill()
     }
@@ -244,7 +250,7 @@ export function renderForceGraph(
       width * height,
     )
     const baseOrder = policy.level === "sparse" ? sampled : ordered
-    const order = active
+    const order = constellation
       ? [
           ...baseOrder.filter((n) => focus.nodes.has(n.id)),
           ...baseOrder.filter((n) => !focus.nodes.has(n.id)),
@@ -261,7 +267,7 @@ export function renderForceGraph(
       const required = graphLabelRequired(n.id, slug, active, focus.nodes, full)
       if (
         !required &&
-        (active !== null ||
+        (constellation ||
           n.id === slug ||
           policy.level === "none" ||
           labelled.size >= policy.limit ||
@@ -270,7 +276,7 @@ export function renderForceGraph(
         continue
       const p = positions.get(n.id)!
       if (p.x < 0 || p.x > width || p.y < 0 || p.y > height) continue
-      ctx!.font = required ? `600 ${font}` : font
+      ctx!.font = font
       const lines = required
         ? graphLabelText(n.text, Math.max(1, width - 24), (text) => ctx!.measureText(text).width)
         : [n.text]
@@ -282,8 +288,8 @@ export function renderForceGraph(
       const bounds = { width, height: height - cardHeight }
       const caption = required
         ? graphFocusLabelPlacement(p, size, origin, bounds, {
-            nodes: focusLabelNodes,
-            lines: focusLabelLines,
+            nodes: constellation ? focusLabelNodes : labelNodes,
+            lines: constellation ? focusLabelLines : labelLines,
             boxes,
           })
         : graphLabelPlacement(p, size, origin, bounds, {
@@ -295,9 +301,9 @@ export function renderForceGraph(
       boxes.push(caption.box)
       const anchorX = Math.max(caption.box.left, Math.min(caption.box.right, p.x))
       const anchorY = Math.max(caption.box.top, Math.min(caption.box.bottom, p.y))
-      if (required && Math.hypot(anchorX - p.x, anchorY - p.y) > p.radius + 24) {
-        ctx!.strokeStyle = colors.secondary
-        ctx!.lineWidth = 0.8
+      if (constellation && required && Math.hypot(anchorX - p.x, anchorY - p.y) > p.radius + 24) {
+        ctx!.strokeStyle = colors.gray
+        ctx!.lineWidth = 0.6
         ctx!.globalAlpha = 0.5
         ctx!.setLineDash([2, 3])
         ctx!.beginPath()
@@ -308,8 +314,8 @@ export function renderForceGraph(
         ctx!.globalAlpha = 1
       }
       ctx!.strokeStyle = colors.light
-      ctx!.lineWidth = required ? 6 : 3
-      ctx!.fillStyle = required ? colors.secondary : colors.text
+      ctx!.lineWidth = 3
+      ctx!.fillStyle = colors.text
       lines.forEach((text, index) => {
         const y = caption.y + (index - (lines.length - 1) / 2) * 16
         ctx!.strokeText(text, caption.x, y)
@@ -323,6 +329,7 @@ export function renderForceGraph(
     canvas.dataset.labelMaxLength = String(policy.maxLength)
     canvas.dataset.focusNodeCount = String(focus.nodes.size)
     canvas.dataset.focusLinkCount = String(focus.links.size)
+    canvas.dataset.focusMode = constellation ? "constellation" : active ? "node" : "none"
     canvas.dataset.focusLabelCount = String(focusLabelCount)
     canvas.dataset.focusVisibleNodeCount = String(
       nodes.filter((n) => {
@@ -429,6 +436,31 @@ export function renderForceGraph(
   }
   const touches = new Set<number>()
   let pinching = false
+  let backgroundPress: { id: number; x: number; y: number } | undefined
+  const backgroundDown = (event: PointerEvent) => {
+    backgroundPress =
+      event.isPrimary && event.button === 0 && !hit(event)
+        ? { id: event.pointerId, x: event.clientX, y: event.clientY }
+        : undefined
+  }
+  const backgroundMove = (event: PointerEvent) => {
+    if (
+      backgroundPress?.id === event.pointerId &&
+      Math.hypot(event.clientX - backgroundPress.x, event.clientY - backgroundPress.y) >= 5
+    )
+      backgroundPress = undefined
+  }
+  const backgroundUp = (event: PointerEvent) => {
+    if (backgroundPress?.id !== event.pointerId) return
+    const stationary =
+      Math.hypot(event.clientX - backgroundPress.x, event.clientY - backgroundPress.y) < 5
+    backgroundPress = undefined
+    // A background tap clears the selection; panning, pinching and cancellation do not.
+    if (event.type === "pointerup" && stationary && !pinching && !hit(event)) {
+      hovered = null
+      choose(undefined)
+    }
+  }
   let touchDrag: { id: number; node: Node; x: number; y: number; moved: boolean } | undefined
   const touchDown = (event: PointerEvent) => {
     if (event.pointerType !== "touch") return
@@ -506,6 +538,10 @@ export function renderForceGraph(
   canvas.addEventListener("mousemove", move)
   canvas.addEventListener("mouseleave", leave)
   canvas.addEventListener("keydown", keydown)
+  canvas.addEventListener("pointerdown", backgroundDown)
+  canvas.addEventListener("pointermove", backgroundMove)
+  canvas.addEventListener("pointerup", backgroundUp)
+  canvas.addEventListener("pointercancel", backgroundUp)
   canvas.addEventListener("pointerdown", touchDown)
   canvas.addEventListener("pointermove", touchMove)
   canvas.addEventListener("pointerup", touchUp)
@@ -520,6 +556,10 @@ export function renderForceGraph(
     canvas.removeEventListener("mousemove", move)
     canvas.removeEventListener("mouseleave", leave)
     canvas.removeEventListener("keydown", keydown)
+    canvas.removeEventListener("pointerdown", backgroundDown)
+    canvas.removeEventListener("pointermove", backgroundMove)
+    canvas.removeEventListener("pointerup", backgroundUp)
+    canvas.removeEventListener("pointercancel", backgroundUp)
     canvas.removeEventListener("pointerdown", touchDown)
     canvas.removeEventListener("pointermove", touchMove)
     canvas.removeEventListener("pointerup", touchUp)
