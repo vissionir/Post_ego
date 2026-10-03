@@ -89,7 +89,11 @@ export function graphLabelRequired(
   full: boolean,
 ) {
   if (id === center && !expanded) return false
-  return id === hovered || (expanded && !full && id === center) || (!expanded && id === selected)
+  return (
+    id === hovered ||
+    (expanded && id === center && (!full || selected === null || selected === center)) ||
+    (!expanded && id === selected)
+  )
 }
 
 export function graphView(

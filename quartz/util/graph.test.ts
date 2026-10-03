@@ -130,6 +130,16 @@ test("the central caption is visible in expanded atom connections, and hidden in
   assert.equal(graphLabelPolicy(87, 0.4, true, false, 1100 * 600).level, "none")
 })
 
+test("the full graph starts with only the page caption required, without selecting a constellation", () => {
+  const center = "A" as SimpleSlug
+  const neighbour = "B" as SimpleSlug
+  assert(graphLabelRequired(center, center, null, null, true, true))
+  assert(!graphLabelRequired(neighbour, center, null, null, true, true))
+  assert(graphLabelRequired(center, center, null, center, true, true))
+  assert(!graphLabelRequired(neighbour, center, null, center, true, true))
+  assert.equal(graphLabelPolicy(800, 1, true, true, 390 * 700).level, "none")
+})
+
 test("focus includes neighbours and the references between them, not an entire component", () => {
   const links = [
     ["Plasticity", "Map"],

@@ -137,7 +137,7 @@ export function renderForceGraph(
     return {
       x: transform.applyX(n.x ?? 0),
       y: transform.applyY(n.y ?? 0),
-      radius: Math.max(full ? 1.25 : 2, n.radius * transform.k),
+      radius: Math.max(full ? (n.id === slug ? 5 : 1.25) : 2, n.radius * transform.k),
     }
   }
   function hit(event: MouseEvent | TouchEvent) {
