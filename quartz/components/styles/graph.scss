@@ -139,9 +139,7 @@
 }
 
 .global-graph-container .graph-picked {
-  left: 50%;
   right: auto;
-  transform: translateX(-50%);
   width: max-content;
   max-width: calc(100% - 1rem);
   box-sizing: border-box;
