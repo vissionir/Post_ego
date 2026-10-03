@@ -134,6 +134,10 @@
   }
 }
 
+.graph-container > .graph-picked > a {
+  margin-left: auto;
+}
+
 .global-graph-container .graph-picked {
   font-size: 1rem;
   max-height: min(180px, 28%);
