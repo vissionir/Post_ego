@@ -69,23 +69,23 @@ export default ((opts?: Partial<GraphOptions>) => {
       locale === "ru-RU"
         ? {
             expand: "Развернуть граф",
-            nearby: "Связи атома",
-            paths: "Пути от атома",
+            nearby: "Ближайшие связи",
+            paths: "Связи атома",
             all: "Весь граф · RU",
             close: "Закрыть граф",
           }
         : locale === "th-TH"
           ? {
               expand: "ขยายกราฟ",
-              nearby: "การเชื่อมโยงของหน้านี้",
-              paths: "เส้นทางจากหน้านี้",
+              nearby: "การเชื่อมโยงใกล้เคียง",
+              paths: "การเชื่อมโยงของอะตอม",
               all: "กราฟทั้งหมด · TH",
               close: "ปิดกราฟ",
             }
           : {
               expand: "Expand graph",
-              nearby: "Page connections",
-              paths: "Paths from page",
+              nearby: "Nearby connections",
+              paths: "Atom connections",
               all: "Full graph · EN",
               close: "Close graph",
             }
