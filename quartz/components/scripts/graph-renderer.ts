@@ -45,6 +45,7 @@ export function renderForceGraph(
     height = Math.max(1, graph.clientHeight)
   const full = config.depth < 0
   const expanded = graph.classList.contains("global-graph-container")
+  const pageContext = !full || config.showPageContext !== false
   const degree = new Map<SimpleSlug, number>()
   data.links.forEach(({ source, target }) => {
     degree.set(source, (degree.get(source) ?? 0) + 1)
@@ -60,7 +61,7 @@ export function renderForceGraph(
     target: byId.get(l.target)!,
   }))
   const current = byId.get(slug)
-  if (current) {
+  if (current && !full) {
     current.fx = 0
     current.fy = 0
   }
@@ -85,6 +86,7 @@ export function renderForceGraph(
         : "Интерактивный граф связей",
   )
   canvas.dataset.nodeCount = String(nodes.length)
+  canvas.dataset.viewMode = !full ? "connections" : pageContext ? "paths" : "all"
   const dpr = Math.min(window.devicePixelRatio || 1, 2)
   canvas.width = Math.round(width * dpr)
   canvas.height = Math.round(height * dpr)
@@ -137,7 +139,7 @@ export function renderForceGraph(
     return {
       x: transform.applyX(n.x ?? 0),
       y: transform.applyY(n.y ?? 0),
-      radius: Math.max(full ? (n.id === slug ? 5 : 1.25) : 2, n.radius * transform.k),
+      radius: Math.max(full ? 1.25 : 2, n.radius * transform.k),
     }
   }
   function hit(event: MouseEvent | TouchEvent) {
@@ -156,7 +158,7 @@ export function renderForceGraph(
   }
   function choose(n: Node | undefined) {
     selected = n?.id ?? null
-    card.hidden = !n || (n.id === slug && (full || !expanded))
+    card.hidden = !n || (pageContext && n.id === slug && (full || !expanded))
     if (n) {
       name.textContent = n.text
       open.href = resolveRelative(fullSlug, n.id)
@@ -165,18 +167,19 @@ export function renderForceGraph(
     requestDraw()
   }
   function navigate(n: Node | undefined) {
-    if (n && n.id !== slug)
+    if (n && (n.id !== slug || !pageContext))
       window.spaNavigate(new URL(resolveRelative(fullSlug, n.id), window.location.href))
   }
   function tap(n: Node | undefined) {
-    if (n && selected === n.id && n.id !== slug) navigate(n)
+    if (n && selected === n.id && (n.id !== slug || !pageContext)) navigate(n)
     else choose(n)
   }
   function requestDraw() {
     if (!disposed && !frame) frame = requestAnimationFrame(draw)
   }
   function focusFor(id: SimpleSlug) {
-    if (!focusCache.has(id)) focusCache.set(id, graphFocus(data.links, id, slug))
+    if (!focusCache.has(id))
+      focusCache.set(id, graphFocus(data.links, id, pageContext ? slug : undefined))
     return focusCache.get(id)!
   }
   function draw() {
@@ -226,9 +229,9 @@ export function renderForceGraph(
     for (const n of nodes) {
       const p = positions.get(n.id)!
       ctx!.fillStyle =
-        n.id === slug || n.id === active
+        (pageContext && n.id === slug) || n.id === active
           ? colors.secondary
-          : visited.has(n.id)
+          : pageContext && visited.has(n.id)
             ? colors.visited
             : colors.gray
       ctx!.beginPath()
@@ -245,7 +248,8 @@ export function renderForceGraph(
       ? []
       : [{ left: width - 48, right: width, top: 0, bottom: 48 }]
     const labelled = new Set<SimpleSlug>()
-    const priority = byId.get(hovered ?? selected ?? slug)
+    const priorityId = hovered ?? selected ?? (pageContext ? slug : null)
+    const priority = priorityId === null ? undefined : byId.get(priorityId)
     const policy = graphLabelPolicy(
       nodes.length,
       transform.k / view.k,
@@ -267,7 +271,15 @@ export function renderForceGraph(
     const focusLabelLines = labelLines.filter((_, index) => focus.links.has(index))
     let focusLabelCount = 0
     for (const n of candidates) {
-      const required = graphLabelRequired(n.id, slug, hovered, selected, expanded, full)
+      const required = graphLabelRequired(
+        n.id,
+        slug,
+        hovered,
+        selected,
+        expanded,
+        full,
+        pageContext,
+      )
       if (
         !required &&
         ((constellation && !focus.nodes.has(n.id)) ||
@@ -287,7 +299,10 @@ export function renderForceGraph(
         width: Math.max(...lines.map((text) => ctx!.measureText(text).width)),
         height: lines.length * lineHeight,
       }
-      const origin = positions.get(slug) ?? { x: width / 2, y: height / 2 }
+      const origin = (pageContext ? positions.get(slug) : undefined) ?? {
+        x: width / 2,
+        y: height / 2,
+      }
       const bounds = { width, height: height - cardHeight }
       const obstacles = {
         nodes: constellation
@@ -382,7 +397,7 @@ export function renderForceGraph(
   }
   function finishNodeDrag(n: Node) {
     simulation.alphaTarget(0)
-    if (n.id !== slug) {
+    if (n.id !== slug || full) {
       n.fx = null
       n.fy = null
     }
@@ -528,7 +543,7 @@ export function renderForceGraph(
     if (!event.key.startsWith("Arrow") && event.key !== "Enter") return
     event.preventDefault()
     if (event.key === "Enter") {
-      if (selected && selected !== slug) window.spaNavigate(new URL(open.href))
+      if (selected && (selected !== slug || !pageContext)) window.spaNavigate(new URL(open.href))
       return
     }
     const index = ordered.findIndex((n) => n.id === selected)
@@ -546,7 +561,8 @@ export function renderForceGraph(
   canvas.addEventListener("pointermove", touchMove)
   canvas.addEventListener("pointerup", touchUp)
   canvas.addEventListener("pointercancel", touchUp)
-  simulation.on("tick", requestDraw).restart()
+  simulation.on("tick", requestDraw)
+  if (!full) simulation.restart()
   draw()
   const cleanup = () => {
     disposed = true

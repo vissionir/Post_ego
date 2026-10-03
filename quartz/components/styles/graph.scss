@@ -78,6 +78,13 @@
     gap: 0.35rem;
     padding: 0.5rem;
     border-bottom: 1px solid var(--lightgray);
+    .graph-modes {
+      display: flex;
+      flex: 1;
+      flex-wrap: wrap;
+      min-width: 0;
+      gap: 0.35rem;
+    }
     button {
       font: inherit;
       font-size: 0.85rem;
@@ -94,6 +101,8 @@
       }
     }
     .graph-close {
+      flex-shrink: 0;
+      align-self: flex-start;
       margin-left: auto;
       font-size: 1.5rem;
       padding: 0 0.7rem;

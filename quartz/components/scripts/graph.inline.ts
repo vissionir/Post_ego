@@ -91,13 +91,19 @@ document.addEventListener("nav", async (e: CustomEventMap["nav"]) => {
       if (disposed || attempt !== localGeneration) cleanup()
       else localCleanup = cleanup
     }
-    async function renderMode(depth: number) {
+    async function renderMode(depth: number, showPageContext = true) {
       const attempt = ++generation
       globalCleanup?.()
       const config = JSON.parse(graph.dataset.cfg!)
-      graph.dataset.cfg = JSON.stringify({ ...config, depth })
+      graph.dataset.cfg = JSON.stringify({ ...config, depth, showPageContext })
       modes.forEach((button) =>
-        button.setAttribute("aria-pressed", String(Number(button.dataset.graphDepth) === depth)),
+        button.setAttribute(
+          "aria-pressed",
+          String(
+            Number(button.dataset.graphDepth) === depth &&
+              (button.dataset.graphContext !== "none") === showPageContext,
+          ),
+        ),
       )
       await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()))
       if (disposed || !opened || attempt !== generation) return
@@ -161,7 +167,10 @@ document.addEventListener("nav", async (e: CustomEventMap["nav"]) => {
     })
     modes.forEach((button) =>
       button.addEventListener("click", () => {
-        void renderMode(Number(button.dataset.graphDepth)).catch(() => {
+        void renderMode(
+          Number(button.dataset.graphDepth),
+          button.dataset.graphContext !== "none",
+        ).catch(() => {
           graph.textContent = copy.error
         })
       }),
@@ -172,7 +181,8 @@ document.addEventListener("nav", async (e: CustomEventMap["nav"]) => {
         local.textContent = copy.error
       })
       if (opened) {
-        void renderMode(JSON.parse(graph.dataset.cfg!).depth).catch(() => {
+        const config = JSON.parse(graph.dataset.cfg!)
+        void renderMode(config.depth, config.showPageContext).catch(() => {
           graph.textContent = copy.error
         })
       }

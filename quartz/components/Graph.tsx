@@ -19,6 +19,7 @@ export interface D3Config {
   showTags: boolean
   focusOnHover?: boolean
   enableRadial?: boolean
+  showPageContext?: boolean
 }
 
 interface GraphOptions {
@@ -69,6 +70,7 @@ export default ((opts?: Partial<GraphOptions>) => {
         ? {
             expand: "Развернуть граф",
             nearby: "Связи атома",
+            paths: "Пути от атома",
             all: "Весь граф · RU",
             close: "Закрыть граф",
           }
@@ -76,12 +78,14 @@ export default ((opts?: Partial<GraphOptions>) => {
           ? {
               expand: "ขยายกราฟ",
               nearby: "การเชื่อมโยงของหน้านี้",
+              paths: "เส้นทางจากหน้านี้",
               all: "กราฟทั้งหมด · TH",
               close: "ปิดกราฟ",
             }
           : {
               expand: "Expand graph",
               nearby: "Page connections",
+              paths: "Paths from page",
               all: "Full graph · EN",
               close: "Close graph",
             }
@@ -131,12 +135,22 @@ export default ((opts?: Partial<GraphOptions>) => {
         >
           <div class="graph-dialog">
             <div class="graph-toolbar">
-              <button type="button" data-graph-depth="1" aria-pressed="true">
-                {copy.nearby}
-              </button>
-              <button type="button" data-graph-depth="-1" aria-pressed="false">
-                {copy.all}
-              </button>
+              <div class="graph-modes">
+                <button type="button" data-graph-depth="1" aria-pressed="true">
+                  {copy.nearby}
+                </button>
+                <button type="button" data-graph-depth="-1" aria-pressed="false">
+                  {copy.paths}
+                </button>
+                <button
+                  type="button"
+                  data-graph-depth="-1"
+                  data-graph-context="none"
+                  aria-pressed="false"
+                >
+                  {copy.all}
+                </button>
+              </div>
               <button type="button" class="graph-close" aria-label={copy.close}>
                 ×
               </button>

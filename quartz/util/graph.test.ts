@@ -32,6 +32,17 @@ test("full graph stays in the current language", () => {
   ] as const)
     assert.equal(graphData(index, current as FullSlug, -1).nodes.length, count)
 })
+test("the whole map has the same node order regardless of the entry atom", () => {
+  const first = graphData(index, "Атомы/A" as FullSlug, -1)
+  const second = graphData(index, "Атомы/C" as FullSlug, -1)
+  const isolated = graphData(index, "Атомы/Isolated" as FullSlug, -1)
+  assert.deepEqual(first, second)
+  assert.deepEqual(first, isolated)
+  assert.deepEqual(
+    first.nodes.map((node) => node.id),
+    ["Атомы/A", "Атомы/B", "Атомы/C", "Атомы/Isolated"],
+  )
+})
 test("an isolated atom remains visible", () => {
   const result = graphData(index, "Атомы/Isolated" as FullSlug, 1)
   assert.equal(result.nodes[0].text, "Isolated")
@@ -140,6 +151,17 @@ test("the full graph starts with only the page caption required, without selecti
   assert.equal(graphLabelPolicy(800, 1, true, true, 390 * 700).level, "none")
 })
 
+test("the neutral whole map does not force a caption for the page atom", () => {
+  const page = "A" as SimpleSlug
+  const neighbour = "B" as SimpleSlug
+  for (const selected of [null, page, neighbour]) {
+    assert(!graphLabelRequired(page, page, null, selected, true, true, false))
+    assert(!graphLabelRequired(neighbour, page, null, selected, true, true, false))
+  }
+  assert(graphLabelRequired(page, page, page, null, true, true, false))
+  assert(graphLabelRequired(neighbour, page, neighbour, null, true, true, false))
+})
+
 test("focus includes neighbours and the references between them, not an entire component", () => {
   const links = [
     ["Plasticity", "Map"],
@@ -166,8 +188,43 @@ test("a distant node highlights a real route to the page without unrelated branc
   assert.deepEqual([...focus.links].sort(), [0, 1, 2])
 })
 
+test("free exploration shows the chosen neighbourhood without a route to the entry atom", () => {
+  const links = [
+    ["A", "B"],
+    ["B", "C"],
+    ["D", "C"],
+    ["C", "Side"],
+  ].map(([source, target]) => ({ source: source as SimpleSlug, target: target as SimpleSlug }))
+  const focus = graphFocus(links, "A" as SimpleSlug)
+  assert.deepEqual([...focus.nodes].sort(), ["A", "B"])
+  assert.deepEqual([...focus.links], [0])
+  const other = graphFocus(links, "C" as SimpleSlug)
+  assert.deepEqual([...other.nodes].sort(), ["B", "C", "D", "Side"])
+  assert.deepEqual([...other.links], [1, 2, 3])
+})
+
 test("focus never invents a route between disconnected atoms", () => {
   const focus = graphFocus([], "A" as SimpleSlug, "B" as SimpleSlug)
   assert.deepEqual([...focus.nodes], ["A"])
   assert.equal(focus.links.size, 0)
+})
+
+test("contextual routes support the home page's empty simplified slug", () => {
+  const links = [
+    ["A", "B"],
+    ["B", "C"],
+    ["C", ""],
+  ].map(([source, target]) => ({ source: source as SimpleSlug, target: target as SimpleSlug }))
+  assert.deepEqual([...graphFocus(links, "A" as SimpleSlug, "" as SimpleSlug).nodes].sort(), [
+    "",
+    "A",
+    "B",
+    "C",
+  ])
+  assert.deepEqual([...graphFocus(links, "" as SimpleSlug, "A" as SimpleSlug).nodes].sort(), [
+    "",
+    "A",
+    "B",
+    "C",
+  ])
 })
