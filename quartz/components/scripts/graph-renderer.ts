@@ -15,6 +15,7 @@ import type { D3Config } from "../Graph"
 import { addToVisited, graphVisitEvent } from "./graph-visits"
 import {
   graphFocus,
+  graphDisplayRadius,
   graphLabelPolicy,
   graphLabelRequired,
   graphNodeRadius,
@@ -62,7 +63,7 @@ export function renderForceGraph(
   })
   const nodes: Node[] = data.nodes.map((n) => ({
     ...n,
-    radius: graphNodeRadius(degree.get(n.id) ?? 0),
+    radius: graphNodeRadius(n.degree ?? degree.get(n.id) ?? 0),
   }))
   const byId = new Map(nodes.map((n) => [n.id, n]))
   const links: Link[] = data.links.map((l) => ({
@@ -160,15 +161,51 @@ export function renderForceGraph(
   const openAtom = document.createElement("button")
   openAtom.type = "button"
   openAtom.className = "graph-article-open"
-  openAtom.textContent = fullSlug.startsWith("th/") ? "เปิด" : openText
+  const actionText = document.createElement("span")
+  actionText.textContent = fullSlug.startsWith("th/") ? "เปิด" : openText
+  openAtom.append(actionText)
+  const actionIcon = document.createElementNS("http://www.w3.org/2000/svg", "svg")
+  actionIcon.setAttribute("viewBox", "0 0 24 24")
+  actionIcon.setAttribute("aria-hidden", "true")
+  actionIcon.setAttribute("fill", "none")
+  actionIcon.setAttribute("stroke", "currentColor")
+  actionIcon.setAttribute("stroke-width", "1.5")
+  const edges = document.createElementNS("http://www.w3.org/2000/svg", "path")
+  edges.setAttribute("d", "M10 10 6 6M14 10l4-4M10 14l-4 4M14 14l4 4")
+  actionIcon.append(edges)
+  for (const [cx, cy, r] of [
+    [12, 12, 3],
+    [4, 4, 2],
+    [20, 4, 2],
+    [4, 20, 2],
+    [20, 20, 2],
+  ]) {
+    const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle")
+    circle.setAttribute("cx", String(cx))
+    circle.setAttribute("cy", String(cy))
+    circle.setAttribute("r", String(r))
+    actionIcon.append(circle)
+  }
+  openAtom.append(actionIcon)
+  openAtom.setAttribute(
+    "aria-label",
+    fullSlug.startsWith("th/")
+      ? "เปิดการเชื่อมโยงของอะตอมนี้"
+      : fullSlug.startsWith("en/")
+        ? "Open this atom's connections"
+        : "Открыть связи этого атома",
+  )
   const openSelected = () => {
-    if (selected) articleOptions?.openAtom(selected)
+    if (selected !== null) articleOptions?.openAtom(selected)
   }
   if (expanded) {
     const header = document.createElement("div")
     header.className = "graph-article-header"
-    header.append(name, openAtom)
-    card.append(header, articleBody)
+    header.append(name)
+    const footer = document.createElement("div")
+    footer.className = "graph-article-actions"
+    footer.append(openAtom)
+    card.append(header, articleBody, footer)
     openAtom.addEventListener("click", openSelected)
   } else card.append(name, open)
   graph.append(card)
@@ -180,7 +217,7 @@ export function renderForceGraph(
     return {
       x: transform.applyX(n.x ?? 0),
       y: transform.applyY(n.y ?? 0),
-      radius: Math.max(full ? 1.25 : 2, n.radius * transform.k),
+      radius: graphDisplayRadius(n.radius, transform.k, full, view.k),
     }
   }
   function hit(event: MouseEvent | TouchEvent) {
@@ -200,6 +237,7 @@ export function renderForceGraph(
   function choose(n: Node | undefined) {
     previewed = null
     selected = n?.id ?? null
+    openAtom.disabled = selected === null || (pageContext && selected === slug)
     const attempt = ++articleGeneration
     card.hidden = !n || (!expanded && pageContext && n.id === slug)
     if (n) {
@@ -710,6 +748,7 @@ export function renderForceGraph(
       // Rebase paths without touching node coordinates or the user's zoom and pan.
       slug = id
       canvas.dataset.origin = id
+      openAtom.disabled = pageContext && selected === id
       focusCache.clear()
       requestDraw()
     },

@@ -287,8 +287,6 @@
   .graph-article-header {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 0.75rem;
     flex-shrink: 0;
     strong {
       min-width: 0;
@@ -297,23 +295,40 @@
       line-height: 1.4;
     }
   }
-  .graph-article-open {
+  .graph-article-actions {
     flex-shrink: 0;
-    min-height: 40px;
-    padding: 0.1rem 0.5rem;
+    margin: 0 -1rem -0.8rem;
+    border-top: 1px solid var(--lightgray);
+  }
+  .graph-article-open {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    width: 100%;
+    min-height: 44px;
+    padding: 0.5rem 1rem;
     border: none;
-    border-radius: 5px;
-    background: var(--highlight);
+    border-radius: 0 0 7px 7px;
+    background: transparent;
     color: var(--secondary);
     font: inherit;
     font-weight: 600;
     cursor: pointer;
-    &:hover {
-      background: var(--lightgray);
+    svg {
+      width: 18px;
+      height: 18px;
+    }
+    &:hover:not(:disabled) {
+      background: var(--highlight);
+    }
+    &:disabled {
+      color: var(--gray);
+      cursor: default;
     }
     &:focus-visible {
       outline: 2px solid var(--secondary);
-      outline-offset: 2px;
+      outline-offset: -3px;
     }
   }
   .graph-article-body {
@@ -355,5 +370,8 @@
   @media (max-width: 600px) {
     padding: 0.65rem 0.75rem;
     font-size: 0.9rem;
+    .graph-article-actions {
+      margin: 0 -0.75rem -0.65rem;
+    }
   }
 }

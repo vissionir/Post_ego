@@ -2,7 +2,7 @@ import { languageForSlug } from "./lang"
 import { FullSlug, SimpleSlug, simplifySlug } from "./path"
 
 export type GraphEntry = { title: string; links?: string[]; tags?: string[] }
-export type GraphNode = { id: SimpleSlug; text: string }
+export type GraphNode = { id: SimpleSlug; text: string; degree?: number }
 export type GraphLink = { source: SimpleSlug; target: SimpleSlug }
 
 export function graphFocus(links: GraphLink[], active: SimpleSlug, center?: SimpleSlug) {
@@ -54,6 +54,11 @@ export function graphFocus(links: GraphLink[], active: SimpleSlug, center?: Simp
 
 export function graphNodeRadius(degree: number) {
   return 2 + Math.sqrt(degree)
+}
+
+export function graphDisplayRadius(radius: number, zoom: number, full: boolean, fitZoom = 1) {
+  // Fitting a small neighbourhood must not inflate its nodes; user zoom still scales them.
+  return Math.max(full ? 1.25 : 2, radius * (zoom / (full ? 1 : Math.max(1, fitZoom))))
 }
 
 export function graphLabelPolicy(
@@ -143,11 +148,14 @@ export function graphData(index: Record<string, GraphEntry>, current: FullSlug, 
   )
   const center = simplifySlug(current)
   const links: GraphLink[] = []
+  const degree = new Map<SimpleSlug, number>()
   const neighbours = new Map<SimpleSlug, Set<SimpleSlug>>()
   for (const [source, entry] of entries) {
     for (const target of new Set((entry.links ?? []).map((id) => simplifySlug(id as FullSlug)))) {
       if (!entries.has(target) || source === target) continue
       links.push({ source, target })
+      degree.set(source, (degree.get(source) ?? 0) + 1)
+      degree.set(target, (degree.get(target) ?? 0) + 1)
       if (!neighbours.has(source)) neighbours.set(source, new Set())
       if (!neighbours.has(target)) neighbours.set(target, new Set())
       neighbours.get(source)!.add(target)
@@ -174,7 +182,7 @@ export function graphData(index: Record<string, GraphEntry>, current: FullSlug, 
   // The whole map must start from the same layout regardless of the entry page.
   if (depth < 0) nodeIds.sort()
   return {
-    nodes: nodeIds.map((id) => ({ id, text: entries.get(id)!.title })),
+    nodes: nodeIds.map((id) => ({ id, text: entries.get(id)!.title, degree: degree.get(id) ?? 0 })),
     links: links.filter(({ source, target }) => included.has(source) && included.has(target)),
   }
 }
