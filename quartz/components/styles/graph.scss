@@ -166,3 +166,66 @@
     padding: 0.1rem 0.4rem;
   }
 }
+
+.global-graph-container .graph-article {
+  &[hidden] {
+    display: none;
+  }
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.55rem;
+  width: min(720px, calc(100% - 1rem));
+  max-height: min(340px, 40%);
+  overflow: hidden;
+  padding: 0.8rem 1rem;
+  border: 1px solid var(--lightgray);
+  border-radius: 8px;
+  background: var(--light);
+  box-shadow: 0 2px 12px #00000008;
+  & > strong {
+    flex-shrink: 0;
+    font-size: 1rem;
+    line-height: 1.4;
+  }
+  .graph-article-body {
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    line-height: 1.6;
+    article {
+      padding: 0;
+    }
+    article > :first-child {
+      margin-top: 0;
+    }
+    article > :last-child {
+      margin-bottom: 0;
+    }
+    p {
+      margin: 0 0 0.65rem;
+    }
+    a {
+      display: inline;
+      min-height: 0;
+      padding: 0;
+      border-radius: 2px;
+    }
+    img,
+    video {
+      max-width: 100%;
+      height: auto;
+    }
+    pre {
+      overflow-x: auto;
+    }
+    table {
+      display: block;
+      overflow-x: auto;
+    }
+  }
+  @media (max-width: 600px) {
+    padding: 0.65rem 0.75rem;
+    font-size: 0.9rem;
+  }
+}

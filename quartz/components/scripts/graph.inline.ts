@@ -23,11 +23,32 @@ function addToVisited(slug: SimpleSlug) {
   }
 }
 
-async function renderGraph(graph: HTMLElement, fullSlug: FullSlug) {
+async function renderGraph(
+  graph: HTMLElement,
+  fullSlug: FullSlug,
+  selected?: SimpleSlug,
+  selectOutside?: (id: SimpleSlug) => void,
+) {
   const config = JSON.parse(graph.dataset.cfg!) as D3Config
-  const data = graphData(await fetchData, fullSlug, config.depth)
+  const index = await fetchData
+  const center = config.depth >= 0 && selected ? selected : undefined
+  const data = graphData(index, (center ?? fullSlug) as FullSlug, config.depth)
   graph.replaceChildren()
-  return renderForceGraph(graph, fullSlug, data, config, getVisited())
+  return renderForceGraph(
+    graph,
+    fullSlug,
+    data,
+    config,
+    getVisited(),
+    selectOutside
+      ? {
+          nodes: config.depth < 0 ? data.nodes : graphData(index, fullSlug, -1).nodes,
+          selected,
+          center,
+          selectOutside,
+        }
+      : undefined,
+  )
 }
 
 document.addEventListener("nav", async (e: CustomEventMap["nav"]) => {
@@ -91,7 +112,7 @@ document.addEventListener("nav", async (e: CustomEventMap["nav"]) => {
       if (disposed || attempt !== localGeneration) cleanup()
       else localCleanup = cleanup
     }
-    async function renderMode(depth: number, showPageContext = true) {
+    async function renderMode(depth: number, showPageContext = true, selected?: SimpleSlug) {
       const attempt = ++generation
       globalCleanup?.()
       const config = JSON.parse(graph.dataset.cfg!)
@@ -107,7 +128,11 @@ document.addEventListener("nav", async (e: CustomEventMap["nav"]) => {
       )
       await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()))
       if (disposed || !opened || attempt !== generation) return
-      const cleanup = await renderGraph(graph, slug)
+      const cleanup = await renderGraph(graph, slug, selected, (id) => {
+        void renderMode(depth, showPageContext, id).catch(() => {
+          graph.textContent = copy.error
+        })
+      })
       if (disposed || !opened || attempt !== generation) cleanup()
       else globalCleanup = cleanup
     }

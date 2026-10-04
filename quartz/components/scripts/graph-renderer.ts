@@ -22,6 +22,8 @@ import {
   type GraphNode,
 } from "../../util/graph"
 import { resolveRelative, simplifySlug, type FullSlug, type SimpleSlug } from "../../util/path"
+import { graphArticleTarget } from "../../util/graph-article"
+import { loadGraphArticle } from "./graph-article"
 import {
   graphFocusLabelPlacement,
   graphLabelPlacement,
@@ -39,8 +41,14 @@ export function renderForceGraph(
   data: { nodes: GraphNode[]; links: GraphLink[] },
   config: D3Config,
   visited: Set<SimpleSlug>,
+  articleOptions?: {
+    nodes: GraphNode[]
+    selected?: SimpleSlug
+    center?: SimpleSlug
+    selectOutside: (id: SimpleSlug) => void
+  },
 ) {
-  const slug = simplifySlug(fullSlug)
+  const slug = articleOptions?.center ?? simplifySlug(fullSlug)
   let width = Math.max(1, graph.clientWidth),
     height = Math.max(1, graph.clientHeight)
   const full = config.depth < 0
@@ -120,6 +128,7 @@ export function renderForceGraph(
   card.className = "graph-picked"
   card.hidden = true
   card.setAttribute("aria-live", "polite")
+  if (expanded) card.classList.add("graph-article")
   const name = document.createElement("strong"),
     open = document.createElement("a")
   const openText = fullSlug.startsWith("th/")
@@ -129,7 +138,22 @@ export function renderForceGraph(
       : "Открыть"
   open.className = "internal"
   open.textContent = openText
-  card.append(name, open)
+  const articleBody = document.createElement("div")
+  articleBody.className = "graph-article-body"
+  const articleCopy = fullSlug.startsWith("th/")
+    ? { loading: "กำลังโหลดข้อความ…", error: "โหลดข้อความไม่สำเร็จ โปรดลองเลือกอะตอมอีกครั้ง" }
+    : fullSlug.startsWith("en/")
+      ? {
+          loading: "Loading text…",
+          error: "Could not load the text. Select the atom again to retry.",
+        }
+      : {
+          loading: "Загружаю текст…",
+          error: "Не удалось загрузить текст. Нажмите на атом ещё раз.",
+        }
+  const knownArticles = new Set((articleOptions?.nodes ?? data.nodes).map((n) => n.id))
+  let articleGeneration = 0
+  card.append(name, expanded ? articleBody : open)
   graph.append(card)
   const ordered = [...nodes].sort((a, b) => b.radius - a.radius)
   const focusCache = new Map<SimpleSlug, ReturnType<typeof graphFocus>>()
@@ -158,10 +182,41 @@ export function renderForceGraph(
   }
   function choose(n: Node | undefined) {
     selected = n?.id ?? null
-    card.hidden = !n || (pageContext && n.id === slug && (full || !expanded))
+    const attempt = ++articleGeneration
+    card.hidden = !n || (!expanded && pageContext && n.id === slug)
     if (n) {
       name.textContent = n.text
       open.href = resolveRelative(fullSlug, n.id)
+      if (expanded) {
+        card.setAttribute("aria-busy", "true")
+        articleBody.textContent = articleCopy.loading
+        articleBody.scrollTop = 0
+        void loadGraphArticle(new URL(open.href))
+          .then((article) => {
+            if (disposed || attempt !== articleGeneration) return
+            article.querySelectorAll<HTMLAnchorElement>("a[href]").forEach((link) => {
+              if (
+                graphArticleTarget(
+                  link.href,
+                  window.location.href,
+                  knownArticles,
+                  link.dataset.slug,
+                )
+              )
+                link.dataset.routerIgnore = ""
+            })
+            articleBody.replaceChildren(article)
+          })
+          .catch(() => {
+            if (!disposed && attempt === articleGeneration)
+              articleBody.textContent = articleCopy.error
+          })
+          .finally(() => {
+            if (disposed || attempt !== articleGeneration) return
+            card.setAttribute("aria-busy", "false")
+            requestDraw()
+          })
+      }
     }
     canvas.dataset.selected = selected ?? ""
     requestDraw()
@@ -171,9 +226,38 @@ export function renderForceGraph(
       window.spaNavigate(new URL(resolveRelative(fullSlug, n.id), window.location.href))
   }
   function tap(n: Node | undefined) {
-    if (n && selected === n.id && (n.id !== slug || !pageContext)) navigate(n)
+    if (!expanded && n && selected === n.id && (n.id !== slug || !pageContext)) navigate(n)
     else choose(n)
   }
+  const articleClick = (event: MouseEvent) => {
+    const link = (event.target as Element)?.closest<HTMLAnchorElement>("a[href]")
+    if (
+      !link ||
+      !card.contains(link) ||
+      event.button !== 0 ||
+      event.ctrlKey ||
+      event.metaKey ||
+      event.shiftKey ||
+      event.altKey
+    )
+      return
+    if (link.dataset.graphFragment) {
+      event.preventDefault()
+      event.stopPropagation()
+      articleBody
+        .querySelector(`#${CSS.escape(link.dataset.graphFragment)}`)
+        ?.scrollIntoView({ block: "nearest" })
+      return
+    }
+    const id = graphArticleTarget(link.href, window.location.href, knownArticles, link.dataset.slug)
+    if (id === undefined) return
+    event.preventDefault()
+    event.stopPropagation()
+    const target = byId.get(id)
+    if (target) choose(target)
+    else articleOptions?.selectOutside(id)
+  }
+  if (expanded) card.addEventListener("click", articleClick)
   function requestDraw() {
     if (!disposed && !frame) frame = requestAnimationFrame(draw)
   }
@@ -543,7 +627,9 @@ export function renderForceGraph(
     if (!event.key.startsWith("Arrow") && event.key !== "Enter") return
     event.preventDefault()
     if (event.key === "Enter") {
-      if (selected && (selected !== slug || !pageContext)) window.spaNavigate(new URL(open.href))
+      if (expanded && selected) choose(byId.get(selected))
+      else if (selected && (selected !== slug || !pageContext))
+        window.spaNavigate(new URL(open.href))
       return
     }
     const index = ordered.findIndex((n) => n.id === selected)
@@ -564,8 +650,11 @@ export function renderForceGraph(
   simulation.on("tick", requestDraw)
   if (!full) simulation.restart()
   draw()
+  if (articleOptions?.selected) choose(byId.get(articleOptions.selected))
   const cleanup = () => {
     disposed = true
+    articleGeneration++
+    card.removeEventListener("click", articleClick)
     cancelAnimationFrame(frame)
     simulation.stop().on("tick", null)
     selection.on(".zoom", null).on(".drag", null)
