@@ -23,11 +23,13 @@ export interface D3Config {
 }
 
 interface GraphOptions {
+  standalone: boolean
   localGraph: Partial<D3Config> | undefined
   globalGraph: Partial<D3Config> | undefined
 }
 
 const defaultOptions: GraphOptions = {
+  standalone: false,
   localGraph: {
     drag: true,
     zoom: true,
@@ -65,10 +67,21 @@ export default ((opts?: Partial<GraphOptions>) => {
     const localGraph = { ...defaultOptions.localGraph, ...opts?.localGraph }
     const globalGraph = { ...defaultOptions.globalGraph, ...opts?.globalGraph }
     const locale = localeForSlug(fileData.slug)
+    if (opts?.standalone) {
+      return (
+        <section class="graph-page" aria-label={i18n(locale).components.graph.title}>
+          <div class="graph-search" hidden></div>
+          <div
+            class="global-graph-container"
+            data-cfg={JSON.stringify({ ...globalGraph, depth: -1, showPageContext: false })}
+          ></div>
+        </section>
+      )
+    }
     const copy =
       locale === "ru-RU"
         ? {
-            expand: "Развернуть граф",
+            expand: "Открыть граф",
             nearby: "Ближайшие связи",
             paths: "Связи атома",
             all: "Весь граф · RU",
@@ -76,14 +89,14 @@ export default ((opts?: Partial<GraphOptions>) => {
           }
         : locale === "th-TH"
           ? {
-              expand: "ขยายกราฟ",
+              expand: "เปิดกราฟ",
               nearby: "การเชื่อมโยงใกล้เคียง",
               paths: "การเชื่อมโยงของอะตอม",
               all: "กราฟทั้งหมด · TH",
               close: "ปิดกราฟ",
             }
           : {
-              expand: "Expand graph",
+              expand: "Open graph",
               nearby: "Nearby connections",
               paths: "Atom connections",
               all: "Full graph · EN",
@@ -101,6 +114,7 @@ export default ((opts?: Partial<GraphOptions>) => {
             aria-expanded="false"
           >
             <svg
+              aria-hidden="true"
               version="1.1"
               xmlns="http://www.w3.org/2000/svg"
               xmlnsXlink="http://www.w3.org/1999/xlink"
@@ -124,6 +138,7 @@ export default ((opts?: Partial<GraphOptions>) => {
                 s-2-0.897-2-2s0.897-2,2-2S47,39.897,47,41z M49,10c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S51.206,10,49,10z"
               />
             </svg>
+            <span>{copy.expand}</span>
           </button>
         </div>
         <div

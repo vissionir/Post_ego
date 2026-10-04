@@ -9,6 +9,9 @@ describe("language pairs", () => {
     { slug: "index", frontmatter: { title: "Post-Ego" }, links: [] },
     { slug: "en/index", frontmatter: { title: "Post-Ego" }, links: [] },
     { slug: "th/index", frontmatter: { title: "Post-Ego" }, links: [] },
+    { slug: "Граф", frontmatter: { title: "Граф" }, links: [] },
+    { slug: "en/Graph", frontmatter: { title: "Graph" }, links: [] },
+    { slug: "th/Graph", frontmatter: { title: "กราฟ" }, links: [] },
     { slug: "Атомы/Ум", frontmatter: { title: "Ум" }, links: [] },
     { slug: "en/Атомы/Mind", frontmatter: { title: "Mind" }, links: [] },
     { slug: "th/Atoms/Mind", frontmatter: { title: "จิต" }, links: [] },
@@ -47,6 +50,13 @@ describe("language pairs", () => {
       en: "en/Атомы/Derived",
       th: "th/Atoms/Derived",
     })
+  })
+
+  test("switches graph pages between all three languages without returning home", () => {
+    const pair = { ru: "Граф", en: "en/Graph", th: "th/Graph" }
+    for (const slug of Object.values(pair)) {
+      assert.deepEqual(getLanguagePair(slug as FullSlug, files), pair)
+    }
   })
 
   test("resolves an anchored atom with an ambiguous graph position", () => {

@@ -92,6 +92,58 @@ document.addEventListener("nav", async (e: CustomEventMap["nav"]) => {
     return
   }
   if (disposed) return
+  for (const page of document.querySelectorAll<HTMLElement>(".graph-page")) {
+    const graph = page.querySelector<HTMLElement>(".global-graph-container")!
+    let renderer: ReturnType<typeof renderForceGraph> | undefined
+    let generation = 0
+    const search = mountGraphSearch(
+      page.querySelector<HTMLElement>(".graph-search")!,
+      graphData(await fetchData, slug, -1).nodes,
+      language,
+      (id) => {
+        if (!renderer?.select(id)) return false
+        graph.querySelector<HTMLCanvasElement>("canvas")?.focus({ preventScroll: true })
+        return true
+      },
+      (id) => renderer?.preview(id),
+    )
+    async function render() {
+      const attempt = ++generation
+      const selected = graph.querySelector<HTMLCanvasElement>("canvas")?.dataset.selected as
+        | SimpleSlug
+        | undefined
+      renderer?.()
+      renderer = undefined
+      search.setEnabled(true)
+      await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()))
+      if (disposed || attempt !== generation) return
+      const cleanup = await renderGraph(graph, slug, selected || undefined, () => {})
+      if (disposed || attempt !== generation) cleanup()
+      else {
+        renderer = cleanup
+        search.setEnabled(true, true)
+      }
+    }
+    const observer = new ResizeObserver(() => renderer?.resize())
+    observer.observe(graph)
+    const theme = () => {
+      void render().catch(() => {
+        graph.textContent = copy.error
+      })
+    }
+    document.addEventListener("themechange", theme)
+    cleanups.push(() => {
+      generation++
+      observer.disconnect()
+      document.removeEventListener("themechange", theme)
+      search.cleanup()
+      renderer?.()
+    })
+    await render().catch(() => {
+      graph.textContent = copy.error
+    })
+  }
+  if (disposed) return
   for (const component of document.querySelectorAll<HTMLElement>(".graph")) {
     const local = component.querySelector<HTMLElement>(".graph-container")!
     const overlay = component.querySelector<HTMLElement>(".global-graph-outer")!

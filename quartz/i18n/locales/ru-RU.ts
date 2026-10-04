@@ -39,7 +39,7 @@ export default {
       createdWith: "Создано с помощью",
     },
     graph: {
-      title: "Вид графа",
+      title: "Граф",
     },
     recentNotes: {
       title: "Недавние заметки",

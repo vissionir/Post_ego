@@ -1,11 +1,19 @@
 import { PageLayout, SharedLayout } from "./quartz/cfg"
 import * as Component from "./quartz/components"
+import type { QuartzComponentProps } from "./quartz/components/types"
+
+const isGraphPage = (page: QuartzComponentProps) => page.fileData.frontmatter?.graphPage === true
 
 // components shared across all pages
 export const sharedPageComponents: SharedLayout = {
   head: Component.Head(),
   header: [],
-  afterBody: [],
+  afterBody: [
+    Component.ConditionalRender({
+      component: Component.Graph({ standalone: true }),
+      condition: isGraphPage,
+    }),
+  ],
   footer: Component.Footer(),
 }
 
@@ -31,6 +39,7 @@ const explorerSort = (a: any, b: any) => {
   const explorerOrder: Record<"ru" | "en" | "th", readonly string[]> = {
     ru: [
       "Атомы",
+      "Граф",
       "Нейронавигатор",
       "Как-устроено-исследование",
       "Область-исследования",
@@ -39,6 +48,7 @@ const explorerSort = (a: any, b: any) => {
     ],
     en: [
       "Атомы",
+      "Graph",
       "Нейронавигатор",
       "How-the-research-is-structured",
       "Scope-of-the-research",
@@ -47,6 +57,7 @@ const explorerSort = (a: any, b: any) => {
     ],
     th: [
       "Atoms",
+      "Graph",
       "Нейронавигатор",
       "How-the-research-is-structured",
       "Scope-of-the-research",
@@ -136,9 +147,18 @@ export const defaultContentPageLayout: PageLayout = {
     }),
   ],
   right: [
-    Component.Graph(),
-    Component.DesktopOnly(Component.TableOfContents()),
-    Component.Backlinks(),
+    Component.ConditionalRender({
+      component: Component.Graph(),
+      condition: (page) => !isGraphPage(page),
+    }),
+    Component.ConditionalRender({
+      component: Component.DesktopOnly(Component.TableOfContents()),
+      condition: (page) => !isGraphPage(page),
+    }),
+    Component.ConditionalRender({
+      component: Component.Backlinks(),
+      condition: (page) => !isGraphPage(page),
+    }),
   ],
 }
 

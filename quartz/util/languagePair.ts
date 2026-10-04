@@ -16,6 +16,7 @@ type AtomGraph = {
 const fixedPagePairs: [FullSlug, FullSlug, FullSlug][] = [
   ["index" as FullSlug, "en/index" as FullSlug, "th/index" as FullSlug],
   ["Атомы/index" as FullSlug, "en/Атомы/index" as FullSlug, "th/Atoms/index" as FullSlug],
+  ["Граф" as FullSlug, "en/Graph" as FullSlug, "th/Graph" as FullSlug],
   [
     "Как-устроено-исследование" as FullSlug,
     "en/How-the-research-is-structured" as FullSlug,

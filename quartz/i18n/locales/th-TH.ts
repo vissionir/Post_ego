@@ -39,7 +39,7 @@ export default {
       createdWith: "สร้างด้วย",
     },
     graph: {
-      title: "มุมมองกราฟ",
+      title: "กราฟ",
     },
     recentNotes: {
       title: "บันทึกล่าสุด",

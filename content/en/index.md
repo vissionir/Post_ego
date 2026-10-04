@@ -10,6 +10,7 @@ This site is the public corpus of the Post-Ego project. It gathers materials on 
 ## Sections
 
 - [[Atoms|Atoms]]
+- [[en/Graph|Atom graph]]
 - [[Нейронавигатор|Neuronavigator]]
 - [[How the research is structured|How the research is structured]]
 - [[Scope of the research|Scope of the research]]

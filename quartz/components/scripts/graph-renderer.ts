@@ -53,6 +53,9 @@ export function renderForceGraph(
     height = Math.max(1, graph.clientHeight)
   const full = config.depth < 0
   const expanded = graph.classList.contains("global-graph-container")
+  const expandButton = expanded
+    ? null
+    : graph.parentElement?.querySelector<HTMLElement>(".global-graph-icon")
   const pageContext = !full || config.showPageContext !== false
   const degree = new Map<SimpleSlug, number>()
   data.links.forEach(({ source, target }) => {
@@ -332,7 +335,14 @@ export function renderForceGraph(
     ctx!.lineJoin = "round"
     const boxes: GraphLabelBox[] = expanded
       ? []
-      : [{ left: width - 48, right: width, top: 0, bottom: 48 }]
+      : [
+          {
+            left: width - (expandButton?.offsetWidth ?? 36) - 12,
+            right: width,
+            top: 0,
+            bottom: (expandButton?.offsetHeight ?? 36) + 12,
+          },
+        ]
     const labelled = new Set<SimpleSlug>()
     const priorityId = previewed ?? hovered ?? selected ?? (pageContext ? slug : null)
     const priority = priorityId === null ? undefined : byId.get(priorityId)
