@@ -9,6 +9,7 @@ export function mountGraphSearch(
   nodes: GraphNode[],
   language: "ru" | "en" | "th",
   select: (id: SimpleSlug) => boolean,
+  preview: (id?: SimpleSlug) => void,
 ) {
   const copy =
     language === "ru"
@@ -44,22 +45,31 @@ export function mountGraphSearch(
   root.replaceChildren(input, dropdown)
   let results: GraphNode[] = []
   let active = -1
+  let pointerPreview = false
 
+  function clearPreview() {
+    input.removeAttribute("aria-activedescendant")
+    active = -1
+    pointerPreview = false
+    Array.from(list.children).forEach((item) => item.setAttribute("aria-selected", "false"))
+    preview()
+  }
   function dismiss() {
     dropdown.hidden = true
     input.setAttribute("aria-expanded", "false")
-    input.removeAttribute("aria-activedescendant")
-    active = -1
+    clearPreview()
   }
-  function activate(position: number) {
+  function activate(position: number, scroll = true) {
     active = position
+    pointerPreview = !scroll
     Array.from(list.children).forEach((item, i) => {
       item.setAttribute("aria-selected", String(i === active))
     })
     const item = list.children[active] as HTMLElement | undefined
     if (item) {
       input.setAttribute("aria-activedescendant", item.id)
-      item.scrollIntoView({ block: "nearest" })
+      if (scroll) item.scrollIntoView({ block: "nearest" })
+      preview(results[active]?.id)
     }
   }
   function choose(position: number) {
@@ -94,6 +104,26 @@ export function mountGraphSearch(
   input.addEventListener("input", showResults, options)
   // Safari may blur the input without focusing the option; keep it until the click.
   list.addEventListener("mousedown", (event) => event.preventDefault(), options)
+  list.addEventListener(
+    "pointermove",
+    (event) => {
+      if (event.pointerType === "touch") return
+      const button = (event.target as Element).closest<HTMLButtonElement>(
+        "button[data-result-index]",
+      )
+      if (!button || !list.contains(button)) return
+      const position = Number(button.dataset.resultIndex)
+      if (active !== position || !pointerPreview) activate(position, false)
+    },
+    options,
+  )
+  dropdown.addEventListener(
+    "pointerleave",
+    () => {
+      if (pointerPreview) clearPreview()
+    },
+    options,
+  )
   list.addEventListener(
     "click",
     (event) => {
@@ -158,6 +188,7 @@ export function mountGraphSearch(
       dismiss()
     },
     cleanup() {
+      clearPreview()
       controller.abort()
       root.replaceChildren()
     },

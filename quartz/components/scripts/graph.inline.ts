@@ -115,6 +115,7 @@ document.addEventListener("nav", async (e: CustomEventMap["nav"]) => {
         graph.querySelector<HTMLCanvasElement>("canvas")?.focus({ preventScroll: true })
         return true
       },
+      (id) => globalCleanup?.preview(id),
     )
     async function renderLocal() {
       const attempt = ++localGeneration

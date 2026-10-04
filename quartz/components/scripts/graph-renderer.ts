@@ -121,6 +121,7 @@ export function renderForceGraph(
   let transform = zoomIdentity.translate(view.x, view.y).scale(view.k)
   let selected: SimpleSlug | null = null
   let hovered: SimpleSlug | null = null
+  let previewed: SimpleSlug | null = null
   let dragging = false
   let disposed = false
   let frame = 0
@@ -181,6 +182,7 @@ export function renderForceGraph(
     return closest
   }
   function choose(n: Node | undefined) {
+    previewed = null
     selected = n?.id ?? null
     const attempt = ++articleGeneration
     card.hidden = !n || (!expanded && pageContext && n.id === slug)
@@ -271,7 +273,7 @@ export function renderForceGraph(
     if (disposed) return
     ctx!.setTransform(dpr, 0, 0, dpr, 0, 0)
     ctx!.clearRect(0, 0, width, height)
-    const active = selected ?? hovered
+    const active = previewed ?? selected ?? hovered
     const constellationId = expanded ? selected : null
     const constellation = constellationId !== null
     const focus = constellation
@@ -313,17 +315,25 @@ export function renderForceGraph(
     for (const n of nodes) {
       const p = positions.get(n.id)!
       ctx!.fillStyle =
-        (pageContext && n.id === slug) || n.id === active
+        (pageContext && n.id === slug) || n.id === active || n.id === selected
           ? colors.secondary
           : pageContext && visited.has(n.id)
             ? colors.visited
             : colors.gray
       ctx!.beginPath()
-      ctx!.globalAlpha = constellation && !focus.nodes.has(n.id) ? 0.18 : 1
+      ctx!.globalAlpha = constellation && !focus.nodes.has(n.id) && n.id !== previewed ? 0.18 : 1
       ctx!.arc(p.x, p.y, p.radius, 0, Math.PI * 2)
       ctx!.fill()
     }
     ctx!.globalAlpha = 1
+    if (previewed !== null) {
+      const p = positions.get(previewed)!
+      ctx!.strokeStyle = colors.secondary
+      ctx!.lineWidth = 1.5
+      ctx!.beginPath()
+      ctx!.arc(p.x, p.y, p.radius + 3, 0, Math.PI * 2)
+      ctx!.stroke()
+    }
     ctx!.font = font
     ctx!.textAlign = "center"
     ctx!.textBaseline = "middle"
@@ -332,7 +342,7 @@ export function renderForceGraph(
       ? []
       : [{ left: width - 48, right: width, top: 0, bottom: 48 }]
     const labelled = new Set<SimpleSlug>()
-    const priorityId = hovered ?? selected ?? (pageContext ? slug : null)
+    const priorityId = previewed ?? hovered ?? selected ?? (pageContext ? slug : null)
     const priority = priorityId === null ? undefined : byId.get(priorityId)
     const policy = graphLabelPolicy(
       nodes.length,
@@ -358,7 +368,7 @@ export function renderForceGraph(
       const required = graphLabelRequired(
         n.id,
         slug,
-        hovered,
+        previewed ?? hovered,
         selected,
         expanded,
         full,
@@ -443,6 +453,7 @@ export function renderForceGraph(
       }).length,
     )
     canvas.dataset.scale = String(transform.k)
+    canvas.dataset.previewed = previewed ?? ""
   }
 
   const selection = select(canvas)
@@ -673,6 +684,13 @@ export function renderForceGraph(
     card.remove()
   }
   return Object.assign(cleanup, {
+    preview(id?: SimpleSlug) {
+      if (disposed) return
+      const next = id !== undefined && byId.has(id) ? id : null
+      if (previewed === next) return
+      previewed = next
+      requestDraw()
+    },
     select(id: SimpleSlug) {
       const node = byId.get(id)
       if (disposed || !node) return false

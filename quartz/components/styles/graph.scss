@@ -120,7 +120,8 @@
     input {
       box-sizing: border-box;
       display: block;
-      width: min(100%, 360px);
+      width: min(100%, 480px);
+      margin-inline: auto;
       min-height: 40px;
       padding: 0.4rem 0.7rem;
       border: 1px solid var(--lightgray);
@@ -146,8 +147,9 @@
       }
       position: absolute;
       top: calc(100% - 0.25rem);
-      left: 0.75rem;
-      width: min(360px, calc(100% - 1.5rem));
+      left: 50%;
+      transform: translateX(-50%);
+      width: min(480px, calc(100% - 1.5rem));
       box-sizing: border-box;
       max-height: min(320px, 35dvh);
       overflow-y: auto;
