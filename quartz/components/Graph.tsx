@@ -67,17 +67,6 @@ export default ((opts?: Partial<GraphOptions>) => {
     const localGraph = { ...defaultOptions.localGraph, ...opts?.localGraph }
     const globalGraph = { ...defaultOptions.globalGraph, ...opts?.globalGraph }
     const locale = localeForSlug(fileData.slug)
-    if (opts?.standalone) {
-      return (
-        <section class="graph-page" aria-label={i18n(locale).components.graph.title}>
-          <div class="graph-search" hidden></div>
-          <div
-            class="global-graph-container"
-            data-cfg={JSON.stringify({ ...globalGraph, depth: -1, showPageContext: false })}
-          ></div>
-        </section>
-      )
-    }
     const copy =
       locale === "ru-RU"
         ? {
@@ -103,29 +92,32 @@ export default ((opts?: Partial<GraphOptions>) => {
               close: "Close graph",
             }
     return (
-      <div class={classNames(displayClass, "graph")}>
-        <h3>{i18n(locale).components.graph.title}</h3>
+      <div
+        class={classNames(displayClass, "graph", opts?.standalone ? "graph-launcher" : "")}
+        data-auto-open={opts?.standalone ? "all" : undefined}
+      >
+        {!opts?.standalone && <h3>{i18n(locale).components.graph.title}</h3>}
         <div class="graph-outer">
-          <div class="graph-container" data-cfg={JSON.stringify(localGraph)}></div>
-          <button
-            class="global-graph-icon"
-            type="button"
-            aria-label={copy.expand}
-            aria-expanded="false"
-          >
-            <svg
-              aria-hidden="true"
-              version="1.1"
-              xmlns="http://www.w3.org/2000/svg"
-              xmlnsXlink="http://www.w3.org/1999/xlink"
-              x="0px"
-              y="0px"
-              viewBox="0 0 55 55"
-              fill="currentColor"
-              xmlSpace="preserve"
+          <div class="graph-preview-toolbar">
+            <button
+              class="global-graph-icon"
+              type="button"
+              aria-label={copy.expand}
+              aria-expanded="false"
             >
-              <path
-                d="M49,0c-3.309,0-6,2.691-6,6c0,1.035,0.263,2.009,0.726,2.86l-9.829,9.829C32.542,17.634,30.846,17,29,17
+              <svg
+                aria-hidden="true"
+                version="1.1"
+                xmlns="http://www.w3.org/2000/svg"
+                xmlnsXlink="http://www.w3.org/1999/xlink"
+                x="0px"
+                y="0px"
+                viewBox="0 0 55 55"
+                fill="currentColor"
+                xmlSpace="preserve"
+              >
+                <path
+                  d="M49,0c-3.309,0-6,2.691-6,6c0,1.035,0.263,2.009,0.726,2.86l-9.829,9.829C32.542,17.634,30.846,17,29,17
                 s-3.542,0.634-4.898,1.688l-7.669-7.669C16.785,10.424,17,9.74,17,9c0-2.206-1.794-4-4-4S9,6.794,9,9s1.794,4,4,4
                 c0.74,0,1.424-0.215,2.019-0.567l7.669,7.669C21.634,21.458,21,23.154,21,25s0.634,3.542,1.688,4.897L10.024,42.562
                 C8.958,41.595,7.549,41,6,41c-3.309,0-6,2.691-6,6s2.691,6,6,6s6-2.691,6-6c0-1.035-0.263-2.009-0.726-2.86l12.829-12.829
@@ -136,10 +128,12 @@ export default ((opts?: Partial<GraphOptions>) => {
                 S11,10.103,11,9z M6,51c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S8.206,51,6,51z M33,49c0,2.206-1.794,4-4,4s-4-1.794-4-4
                 s1.794-4,4-4S33,46.794,33,49z M29,31c-3.309,0-6-2.691-6-6s2.691-6,6-6s6,2.691,6,6S32.309,31,29,31z M47,41c0,1.103-0.897,2-2,2
                 s-2-0.897-2-2s0.897-2,2-2S47,39.897,47,41z M49,10c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S51.206,10,49,10z"
-              />
-            </svg>
-            <span>{copy.expand}</span>
-          </button>
+                />
+              </svg>
+              <span>{copy.expand}</span>
+            </button>
+          </div>
+          <div class="graph-container" data-cfg={JSON.stringify(localGraph)}></div>
         </div>
         <div
           class="global-graph-outer"

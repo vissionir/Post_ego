@@ -12,6 +12,7 @@ import {
   type SimulationNodeDatum,
 } from "d3"
 import type { D3Config } from "../Graph"
+import { addToVisited, graphVisitEvent } from "./graph-visits"
 import {
   graphFocus,
   graphLabelPolicy,
@@ -53,9 +54,6 @@ export function renderForceGraph(
     height = Math.max(1, graph.clientHeight)
   const full = config.depth < 0
   const expanded = graph.classList.contains("global-graph-container")
-  const expandButton = expanded
-    ? null
-    : graph.parentElement?.querySelector<HTMLElement>(".global-graph-icon")
   const pageContext = !full || config.showPageContext !== false
   const degree = new Map<SimpleSlug, number>()
   data.links.forEach(({ source, target }) => {
@@ -190,6 +188,8 @@ export function renderForceGraph(
     const attempt = ++articleGeneration
     card.hidden = !n || (!expanded && pageContext && n.id === slug)
     if (n) {
+      visited.add(n.id)
+      addToVisited(n.id)
       name.textContent = n.text
       open.href = resolveRelative(fullSlug, n.id)
       if (expanded) {
@@ -320,7 +320,7 @@ export function renderForceGraph(
       ctx!.fillStyle =
         (pageContext && n.id === slug) || n.id === active || n.id === selected
           ? colors.secondary
-          : pageContext && visited.has(n.id)
+          : visited.has(n.id)
             ? colors.visited
             : colors.gray
       ctx!.beginPath()
@@ -333,16 +333,7 @@ export function renderForceGraph(
     ctx!.textAlign = "center"
     ctx!.textBaseline = "middle"
     ctx!.lineJoin = "round"
-    const boxes: GraphLabelBox[] = expanded
-      ? []
-      : [
-          {
-            left: width - (expandButton?.offsetWidth ?? 36) - 12,
-            right: width,
-            top: 0,
-            bottom: (expandButton?.offsetHeight ?? 36) + 12,
-          },
-        ]
+    const boxes: GraphLabelBox[] = []
     const labelled = new Set<SimpleSlug>()
     const priorityId = previewed ?? hovered ?? selected ?? (pageContext ? slug : null)
     const priority = priorityId === null ? undefined : byId.get(priorityId)
@@ -661,11 +652,19 @@ export function renderForceGraph(
   canvas.addEventListener("pointerup", touchUp)
   canvas.addEventListener("pointercancel", touchUp)
   simulation.on("tick", requestDraw)
+  const onVisit = (event: Event) => {
+    const id = (event as CustomEvent<SimpleSlug>).detail
+    if (!byId.has(id)) return
+    visited.add(id)
+    requestDraw()
+  }
+  document.addEventListener(graphVisitEvent, onVisit)
   if (!full) simulation.restart()
   draw()
   if (articleOptions?.selected) choose(byId.get(articleOptions.selected))
   const cleanup = () => {
     disposed = true
+    document.removeEventListener(graphVisitEvent, onVisit)
     articleGeneration++
     card.removeEventListener("click", articleClick)
     cancelAnimationFrame(frame)

@@ -3,26 +3,7 @@ import type { D3Config } from "../Graph"
 import { graphData } from "../../util/graph"
 import { renderForceGraph } from "./graph-renderer"
 import { mountGraphSearch } from "./graph-search"
-
-const localStorageKey = "graph-visited"
-function getVisited(): Set<SimpleSlug> {
-  try {
-    const value = JSON.parse(localStorage.getItem(localStorageKey) ?? "[]")
-    return new Set(Array.isArray(value) ? value : [])
-  } catch {
-    return new Set()
-  }
-}
-
-function addToVisited(slug: SimpleSlug) {
-  const visited = getVisited()
-  visited.add(slug)
-  try {
-    localStorage.setItem(localStorageKey, JSON.stringify([...visited]))
-  } catch {
-    /* Private browsing may disable storage. */
-  }
-}
+import { addToVisited, getVisited } from "./graph-visits"
 
 async function renderGraph(
   graph: HTMLElement,
@@ -92,59 +73,8 @@ document.addEventListener("nav", async (e: CustomEventMap["nav"]) => {
     return
   }
   if (disposed) return
-  for (const page of document.querySelectorAll<HTMLElement>(".graph-page")) {
-    const graph = page.querySelector<HTMLElement>(".global-graph-container")!
-    let renderer: ReturnType<typeof renderForceGraph> | undefined
-    let generation = 0
-    const search = mountGraphSearch(
-      page.querySelector<HTMLElement>(".graph-search")!,
-      graphData(await fetchData, slug, -1).nodes,
-      language,
-      (id) => {
-        if (!renderer?.select(id)) return false
-        graph.querySelector<HTMLCanvasElement>("canvas")?.focus({ preventScroll: true })
-        return true
-      },
-      (id) => renderer?.preview(id),
-    )
-    async function render() {
-      const attempt = ++generation
-      const selected = graph.querySelector<HTMLCanvasElement>("canvas")?.dataset.selected as
-        | SimpleSlug
-        | undefined
-      renderer?.()
-      renderer = undefined
-      search.setEnabled(true)
-      await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()))
-      if (disposed || attempt !== generation) return
-      const cleanup = await renderGraph(graph, slug, selected || undefined, () => {})
-      if (disposed || attempt !== generation) cleanup()
-      else {
-        renderer = cleanup
-        search.setEnabled(true, true)
-      }
-    }
-    const observer = new ResizeObserver(() => renderer?.resize())
-    observer.observe(graph)
-    const theme = () => {
-      void render().catch(() => {
-        graph.textContent = copy.error
-      })
-    }
-    document.addEventListener("themechange", theme)
-    cleanups.push(() => {
-      generation++
-      observer.disconnect()
-      document.removeEventListener("themechange", theme)
-      search.cleanup()
-      renderer?.()
-    })
-    await render().catch(() => {
-      graph.textContent = copy.error
-    })
-  }
-  if (disposed) return
   for (const component of document.querySelectorAll<HTMLElement>(".graph")) {
+    const standalone = component.dataset.autoOpen === "all"
     const local = component.querySelector<HTMLElement>(".graph-container")!
     const overlay = component.querySelector<HTMLElement>(".global-graph-outer")!
     const graph = overlay.querySelector<HTMLElement>(".global-graph-container")!
@@ -157,6 +87,7 @@ document.addEventListener("nav", async (e: CustomEventMap["nav"]) => {
     let generation = 0
     let localGeneration = 0
     let opened = false
+    let returnFocus: HTMLElement = trigger
     let previousOverflow = ""
     const search = mountGraphSearch(
       overlay.querySelector<HTMLElement>(".graph-search")!,
@@ -216,25 +147,53 @@ document.addEventListener("nav", async (e: CustomEventMap["nav"]) => {
       overlay.hidden = true
       document.body.style.overflow = previousOverflow
       trigger.setAttribute("aria-expanded", "false")
-      if (restoreFocus) trigger.focus()
+      if (restoreFocus) returnFocus.focus({ preventScroll: true })
     }
-    function show() {
-      if (opened) return
+    function show(depth = 1, showPageContext = true) {
+      if (opened) {
+        void renderMode(depth, showPageContext).catch(() => {
+          graph.textContent = copy.error
+        })
+        return
+      }
       opened = true
       previousOverflow = document.body.style.overflow
       document.body.style.overflow = "hidden"
       overlay.hidden = false
       overlay.classList.add("active")
       trigger.setAttribute("aria-expanded", "true")
-      void renderMode(1).catch(() => {
+      void renderMode(depth, showPageContext).catch(() => {
         graph.textContent = copy.error
       })
       close.focus()
     }
+    const open = () => {
+      returnFocus = trigger
+      show(standalone ? -1 : 1, !standalone)
+    }
+    const graphLink = (event: MouseEvent) => {
+      if (event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey)
+        return
+      const link = (event.target as Element)?.closest<HTMLAnchorElement>("a[href]")
+      if (!link || link.target === "_blank" || link.hasAttribute("download")) return
+      const url = new URL(link.href, window.location.href)
+      const graphSlug = language === "ru" ? "Граф" : `${language}/Graph`
+      let targetSlug: string
+      try {
+        targetSlug = decodeURIComponent(url.pathname).replace(/^\/+|\/+$/g, "")
+      } catch {
+        return
+      }
+      if (url.origin !== window.location.origin || targetSlug !== graphSlug) return
+      event.preventDefault()
+      event.stopPropagation()
+      returnFocus = link
+      show(-1, false)
+    }
     function keydown(event: KeyboardEvent) {
       if (event.key === "g" && (event.ctrlKey || event.metaKey) && !event.shiftKey) {
         event.preventDefault()
-        opened ? hide() : show()
+        opened ? hide() : open()
       }
       if (opened && event.key === "Escape") {
         event.preventDefault()
@@ -255,7 +214,8 @@ document.addEventListener("nav", async (e: CustomEventMap["nav"]) => {
         }
       }
     }
-    trigger.addEventListener("click", show)
+    trigger.addEventListener("click", open)
+    document.addEventListener("click", graphLink, true)
     close.addEventListener("click", () => hide())
     overlay.addEventListener("click", (event) => {
       if (event.target === overlay) hide()
@@ -272,9 +232,11 @@ document.addEventListener("nav", async (e: CustomEventMap["nav"]) => {
     )
     document.addEventListener("keydown", keydown)
     const theme = () => {
-      void renderLocal().catch(() => {
-        local.textContent = copy.error
-      })
+      if (!standalone) {
+        void renderLocal().catch(() => {
+          local.textContent = copy.error
+        })
+      }
       if (opened) {
         const config = JSON.parse(graph.dataset.cfg!)
         void renderMode(config.depth, config.showPageContext).catch(() => {
@@ -298,14 +260,18 @@ document.addEventListener("nav", async (e: CustomEventMap["nav"]) => {
       localCleanup?.()
       search.cleanup()
       overlay.remove()
-      trigger.removeEventListener("click", show)
+      trigger.removeEventListener("click", open)
+      document.removeEventListener("click", graphLink, true)
       document.removeEventListener("keydown", keydown)
       document.removeEventListener("themechange", theme)
       window.removeEventListener("resize", resize)
       clearTimeout(resizeTimer)
     })
-    await renderLocal().catch(() => {
-      local.textContent = copy.error
-    })
+    if (standalone) open()
+    else {
+      await renderLocal().catch(() => {
+        local.textContent = copy.error
+      })
+    }
   }
 })
