@@ -119,12 +119,19 @@ export function graphView(
     right = xs[xs.length - 1 - trim] ?? 0,
     top = ys[trim] ?? 0,
     bottom = ys[ys.length - 1 - trim] ?? 0
+  // Center the full map on its main cloud, not on an asymmetric outer boundary.
+  const lowerMiddle = Math.floor((nodes.length - 1) / 2),
+    upperMiddle = Math.floor(nodes.length / 2)
+  const centerX = full ? ((xs[lowerMiddle] ?? 0) + (xs[upperMiddle] ?? 0)) / 2 : (left + right) / 2,
+    centerY = full ? ((ys[lowerMiddle] ?? 0) + (ys[upperMiddle] ?? 0)) / 2 : (top + bottom) / 2
   const k = Math.min(
     expanded ? 2.5 : 1.4,
     (width * 0.78) / Math.max(60, right - left),
     (height * 0.78) / Math.max(60, bottom - top),
+    full ? (width * 0.9) / Math.max(60, 2 * Math.max(centerX - left, right - centerX)) : Infinity,
+    full ? (height * 0.9) / Math.max(60, 2 * Math.max(centerY - top, bottom - centerY)) : Infinity,
   )
-  return { x: width / 2 - ((left + right) / 2) * k, y: height / 2 - ((top + bottom) / 2) * k, k }
+  return { x: width / 2 - centerX * k, y: height / 2 - centerY * k, k }
 }
 
 export function graphData(index: Record<string, GraphEntry>, current: FullSlug, depth: number) {

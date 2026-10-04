@@ -1,11 +1,6 @@
 @use "../../styles/variables.scss" as *;
 
 .graph {
-  & > h3 {
-    font-size: 1rem;
-    margin: 0;
-    text-align: center;
-  }
   & > .graph-outer {
     border-radius: 5px;
     border: 1px solid var(--lightgray);
@@ -31,7 +26,8 @@
       gap: 0.4rem;
       min-height: 40px;
       font: inherit;
-      font-size: 0.8rem;
+      font-size: 0.85rem;
+      font-weight: 600;
       white-space: nowrap;
       padding: 0.4rem 0.55rem;
       background: var(--light);

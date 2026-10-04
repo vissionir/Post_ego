@@ -75,6 +75,37 @@ test("isolated and small graphs have a finite bounded initial zoom", () => {
   }
 })
 
+test("full graph centers an asymmetric main cloud without clipping its core", () => {
+  const nodes = Array.from({ length: 100 }, (_, i) => ({
+    x: i < 80 ? i - 40 : 300 + (i - 80) * 10,
+    y: i < 80 ? (i % 10) - 5 : 600 + (i - 80) * 30,
+  }))
+  const xs = nodes.map((n) => n.x).sort((a, b) => a - b),
+    ys = nodes.map((n) => n.y).sort((a, b) => a - b)
+  for (const [width, height] of [
+    [1042, 531],
+    [374, 660],
+  ]) {
+    const view = graphView(nodes, width, height, true, true)
+    assert(Math.abs(view.x + ((xs[49] + xs[50]) / 2) * view.k - width / 2) < 0.001)
+    assert(Math.abs(view.y + ((ys[49] + ys[50]) / 2) * view.k - height / 2) < 0.001)
+    assert(view.x + xs[2] * view.k >= width * 0.05 - 0.001)
+    assert(view.x + xs[97] * view.k <= width * 0.95 + 0.001)
+    assert(view.y + ys[2] * view.k >= height * 0.05 - 0.001)
+    assert(view.y + ys[97] * view.k <= height * 0.95 + 0.001)
+    const shifted = graphView(
+      nodes.map((n) => ({ x: n.x + 1000, y: n.y - 600 })),
+      width,
+      height,
+      true,
+      true,
+    )
+    assert.equal(shifted.k, view.k)
+    assert(Math.abs(shifted.x + 1000 * shifted.k - view.x) < 0.001)
+    assert(Math.abs(shifted.y - 600 * shifted.k - view.y) < 0.001)
+  }
+})
+
 test("dense graphs reveal captions in three zoom levels", () => {
   const policy = (zoom: number) => graphLabelPolicy(800, zoom, true, true, 390 * 700)
   assert.equal(policy(1).level, "none")

@@ -2,7 +2,6 @@ import { QuartzComponent, QuartzComponentConstructor, QuartzComponentProps } fro
 // @ts-ignore
 import script from "./scripts/graph.inline"
 import style from "./styles/graph.scss"
-import { i18n } from "../i18n"
 import { classNames, localeForSlug } from "../util/lang"
 
 export interface D3Config {
@@ -96,7 +95,6 @@ export default ((opts?: Partial<GraphOptions>) => {
         class={classNames(displayClass, "graph", opts?.standalone ? "graph-launcher" : "")}
         data-auto-open={opts?.standalone ? "all" : undefined}
       >
-        {!opts?.standalone && <h3>{i18n(locale).components.graph.title}</h3>}
         <div class="graph-outer">
           <div class="graph-preview-toolbar">
             <button
