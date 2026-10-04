@@ -155,6 +155,7 @@ export default ((opts?: Partial<GraphOptions>) => {
                 ×
               </button>
             </div>
+            <div class="graph-search" hidden></div>
             <div class="global-graph-container" data-cfg={JSON.stringify(globalGraph)}></div>
           </div>
         </div>

@@ -673,6 +673,12 @@ export function renderForceGraph(
     card.remove()
   }
   return Object.assign(cleanup, {
+    select(id: SimpleSlug) {
+      const node = byId.get(id)
+      if (disposed || !node) return false
+      choose(node)
+      return true
+    },
     resize() {
       const nextWidth = Math.max(1, graph.clientWidth),
         nextHeight = Math.max(1, graph.clientHeight)

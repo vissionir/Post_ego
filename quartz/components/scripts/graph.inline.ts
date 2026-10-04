@@ -2,6 +2,7 @@ import { FullSlug, SimpleSlug, simplifySlug } from "../../util/path"
 import type { D3Config } from "../Graph"
 import { graphData } from "../../util/graph"
 import { renderForceGraph } from "./graph-renderer"
+import { mountGraphSearch } from "./graph-search"
 
 const localStorageKey = "graph-visited"
 function getVisited(): Set<SimpleSlug> {
@@ -105,6 +106,16 @@ document.addEventListener("nav", async (e: CustomEventMap["nav"]) => {
     let localGeneration = 0
     let opened = false
     let previousOverflow = ""
+    const search = mountGraphSearch(
+      overlay.querySelector<HTMLElement>(".graph-search")!,
+      graphData(await fetchData, slug, -1).nodes,
+      language,
+      (id) => {
+        if (!opened || !globalCleanup?.select(id)) return false
+        graph.querySelector<HTMLCanvasElement>("canvas")?.focus({ preventScroll: true })
+        return true
+      },
+    )
     async function renderLocal() {
       const attempt = ++localGeneration
       localCleanup?.()
@@ -115,6 +126,8 @@ document.addEventListener("nav", async (e: CustomEventMap["nav"]) => {
     async function renderMode(depth: number, showPageContext = true, selected?: SimpleSlug) {
       const attempt = ++generation
       globalCleanup?.()
+      globalCleanup = undefined
+      search.setEnabled(depth < 0)
       const config = JSON.parse(graph.dataset.cfg!)
       graph.dataset.cfg = JSON.stringify({ ...config, depth, showPageContext })
       modes.forEach((button) =>
@@ -134,7 +147,10 @@ document.addEventListener("nav", async (e: CustomEventMap["nav"]) => {
         })
       })
       if (disposed || !opened || attempt !== generation) cleanup()
-      else globalCleanup = cleanup
+      else {
+        globalCleanup = cleanup
+        search.setEnabled(depth < 0, true)
+      }
     }
     function hide(restoreFocus = true) {
       if (!opened) return
@@ -142,6 +158,7 @@ document.addEventListener("nav", async (e: CustomEventMap["nav"]) => {
       generation++
       globalCleanup?.()
       globalCleanup = undefined
+      search.setEnabled(false)
       overlay.classList.remove("active")
       overlay.hidden = true
       document.body.style.overflow = previousOverflow
@@ -171,9 +188,9 @@ document.addEventListener("nav", async (e: CustomEventMap["nav"]) => {
         hide()
       }
       if (opened && event.key === "Tab") {
-        const items = [...overlay.querySelectorAll<HTMLElement>("button, a[href], canvas")].filter(
-          (el) => el.getClientRects().length,
-        )
+        const items = [
+          ...overlay.querySelectorAll<HTMLElement>("button, input, a[href], canvas"),
+        ].filter((el) => el.getClientRects().length && el.tabIndex >= 0 && !el.matches(":disabled"))
         const first = items[0],
           last = items.at(-1)
         if (event.shiftKey && document.activeElement === first) {
@@ -226,6 +243,7 @@ document.addEventListener("nav", async (e: CustomEventMap["nav"]) => {
       hide(false)
       localGeneration++
       localCleanup?.()
+      search.cleanup()
       overlay.remove()
       trigger.removeEventListener("click", show)
       document.removeEventListener("keydown", keydown)
