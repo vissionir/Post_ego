@@ -326,14 +326,6 @@ export function renderForceGraph(
       ctx!.fill()
     }
     ctx!.globalAlpha = 1
-    if (previewed !== null) {
-      const p = positions.get(previewed)!
-      ctx!.strokeStyle = colors.secondary
-      ctx!.lineWidth = 1.5
-      ctx!.beginPath()
-      ctx!.arc(p.x, p.y, p.radius + 3, 0, Math.PI * 2)
-      ctx!.stroke()
-    }
     ctx!.font = font
     ctx!.textAlign = "center"
     ctx!.textBaseline = "middle"
