@@ -2,7 +2,6 @@ import { test } from "node:test"
 import assert from "node:assert/strict"
 import {
   graphData,
-  graphDisplayRadius,
   graphFocus,
   graphLabelPolicy,
   graphLabelRank,
@@ -53,39 +52,6 @@ test("an isolated atom remains visible", () => {
 test("node sizes reflect their connections", () => {
   assert(graphNodeRadius(100) > graphNodeRadius(4))
   assert.equal(graphNodeRadius(0), 2)
-})
-
-test("local nodes retain their full-graph degree even when external links are hidden", () => {
-  const corpus = {
-    "Атомы/A": { title: "A", links: ["Атомы/B"] },
-    "Атомы/B": { title: "B", links: ["Атомы/C", "Атомы/D", "en/Atoms/A", "Атомы/B"] },
-    "Атомы/C": { title: "C", links: [] },
-    "Атомы/D": { title: "D", links: [] },
-    "en/Atoms/A": { title: "English", links: [] },
-  }
-  const whole = graphData(corpus, "Атомы/A" as FullSlug, -1)
-  for (const origin of ["Атомы/A", "Атомы/B", "Атомы/C"]) {
-    const local = graphData(corpus, origin as FullSlug, 1)
-    for (const node of local.nodes) {
-      const canonical = whole.nodes.find((n) => n.id === node.id)!
-      assert.equal(node.degree, canonical.degree)
-      assert.equal(graphNodeRadius(node.degree), graphNodeRadius(canonical.degree))
-    }
-  }
-  const local = graphData(corpus, "Атомы/A" as FullSlug, 1)
-  assert.equal(local.nodes.find((n) => n.id === "Атомы/B")!.degree, 3)
-  assert.equal(local.nodes.find((n) => n.id === "Атомы/A")!.degree, 1)
-  assert.equal(local.links.length, 1)
-})
-
-test("local auto-fit does not enlarge circles, while manual zoom and full-map sizing remain", () => {
-  const radius = graphNodeRadius(1)
-  for (const fit of [1, 1.4, 2.5]) {
-    assert.equal(graphDisplayRadius(radius, fit, false, fit), radius)
-    assert.equal(graphDisplayRadius(radius, fit * 2, false, fit), radius * 2)
-  }
-  assert.equal(graphDisplayRadius(radius, 0.5, true, 2.5), 1.5)
-  assert.equal(graphDisplayRadius(radius, 0.1, true), 1.25)
 })
 
 test("full graph fits the main cloud instead of distant isolated nodes", () => {

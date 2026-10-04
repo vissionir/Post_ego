@@ -110,10 +110,11 @@ document.addEventListener("nav", async (e: CustomEventMap["nav"]) => {
     }
     async function renderMode(depth: number, showPageContext = true, selected?: SimpleSlug) {
       const attempt = ++generation
+      const config = JSON.parse(graph.dataset.cfg!)
+      const view = config.depth < 0 && depth < 0 ? globalCleanup?.getView() : undefined
       globalCleanup?.()
       globalCleanup = undefined
       search.setEnabled(depth < 0)
-      const config = JSON.parse(graph.dataset.cfg!)
       graph.dataset.cfg = JSON.stringify({ ...config, depth, showPageContext })
       modes.forEach((button) =>
         button.setAttribute(
@@ -130,9 +131,17 @@ document.addEventListener("nav", async (e: CustomEventMap["nav"]) => {
         origin,
         selected,
         openAtom: (id) => {
-          if (!opened || disposed || origin === id) return
+          if (!opened || disposed || (origin === id && showPageContext)) return
           origin = id
-          if (depth < 0) globalCleanup?.setOrigin(id)
+          if (depth < 0 && !showPageContext) {
+            void renderMode(-1, true, id)
+              .then(() =>
+                graph.querySelector<HTMLCanvasElement>("canvas")?.focus({ preventScroll: true }),
+              )
+              .catch(() => {
+                graph.textContent = copy.error
+              })
+          } else if (depth < 0) globalCleanup?.setOrigin(id)
           else {
             void renderMode(depth, showPageContext, id).catch(() => {
               graph.textContent = copy.error
@@ -142,6 +151,7 @@ document.addEventListener("nav", async (e: CustomEventMap["nav"]) => {
       })
       if (disposed || !opened || attempt !== generation) cleanup()
       else {
+        if (view) cleanup.setView(view)
         globalCleanup = cleanup
         search.setEnabled(depth < 0, true)
       }

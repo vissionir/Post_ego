@@ -15,7 +15,6 @@ import type { D3Config } from "../Graph"
 import { addToVisited, graphVisitEvent } from "./graph-visits"
 import {
   graphFocus,
-  graphDisplayRadius,
   graphLabelPolicy,
   graphLabelRequired,
   graphNodeRadius,
@@ -63,7 +62,7 @@ export function renderForceGraph(
   })
   const nodes: Node[] = data.nodes.map((n) => ({
     ...n,
-    radius: graphNodeRadius(n.degree ?? degree.get(n.id) ?? 0),
+    radius: graphNodeRadius(degree.get(n.id) ?? 0),
   }))
   const byId = new Map(nodes.map((n) => [n.id, n]))
   const links: Link[] = data.links.map((l) => ({
@@ -217,7 +216,7 @@ export function renderForceGraph(
     return {
       x: transform.applyX(n.x ?? 0),
       y: transform.applyY(n.y ?? 0),
-      radius: graphDisplayRadius(n.radius, transform.k, full, view.k),
+      radius: Math.max(full ? 1.25 : 2, n.radius * transform.k),
     }
   }
   function hit(event: MouseEvent | TouchEvent) {
@@ -743,6 +742,13 @@ export function renderForceGraph(
     card.remove()
   }
   return Object.assign(cleanup, {
+    getView() {
+      return { x: transform.x, y: transform.y, k: transform.k }
+    },
+    setView(view: { x: number; y: number; k: number }) {
+      if (disposed) return
+      selection.call(zoomer.transform, zoomIdentity.translate(view.x, view.y).scale(view.k))
+    },
     setOrigin(id: SimpleSlug) {
       if (disposed || !full || !byId.has(id) || slug === id) return
       // Rebase paths without touching node coordinates or the user's zoom and pan.
