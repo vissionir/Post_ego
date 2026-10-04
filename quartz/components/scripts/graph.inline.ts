@@ -8,13 +8,15 @@ import { addToVisited, getVisited } from "./graph-visits"
 async function renderGraph(
   graph: HTMLElement,
   fullSlug: FullSlug,
-  selected?: SimpleSlug,
-  selectOutside?: (id: SimpleSlug) => void,
+  exploration?: {
+    origin: SimpleSlug
+    selected?: SimpleSlug
+    openAtom: (id: SimpleSlug) => void
+  },
 ) {
   const config = JSON.parse(graph.dataset.cfg!) as D3Config
   const index = await fetchData
-  const center = config.depth >= 0 && selected ? selected : undefined
-  const data = graphData(index, (center ?? fullSlug) as FullSlug, config.depth)
+  const data = graphData(index, (exploration?.origin ?? fullSlug) as FullSlug, config.depth)
   graph.replaceChildren()
   return renderForceGraph(
     graph,
@@ -22,12 +24,10 @@ async function renderGraph(
     data,
     config,
     getVisited(),
-    selectOutside
+    exploration
       ? {
           nodes: config.depth < 0 ? data.nodes : graphData(index, fullSlug, -1).nodes,
-          selected,
-          center,
-          selectOutside,
+          ...exploration,
         }
       : undefined,
   )
@@ -87,6 +87,7 @@ document.addEventListener("nav", async (e: CustomEventMap["nav"]) => {
     let generation = 0
     let localGeneration = 0
     let opened = false
+    let origin = simplifySlug(slug)
     let returnFocus: HTMLElement = trigger
     let previousOverflow = ""
     const search = mountGraphSearch(
@@ -125,10 +126,19 @@ document.addEventListener("nav", async (e: CustomEventMap["nav"]) => {
       )
       await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()))
       if (disposed || !opened || attempt !== generation) return
-      const cleanup = await renderGraph(graph, slug, selected, (id) => {
-        void renderMode(depth, showPageContext, id).catch(() => {
-          graph.textContent = copy.error
-        })
+      const cleanup = await renderGraph(graph, slug, {
+        origin,
+        selected,
+        openAtom: (id) => {
+          if (!opened || disposed || origin === id) return
+          origin = id
+          if (depth < 0) globalCleanup?.setOrigin(id)
+          else {
+            void renderMode(depth, showPageContext, id).catch(() => {
+              graph.textContent = copy.error
+            })
+          }
+        },
       })
       if (disposed || !opened || attempt !== generation) cleanup()
       else {
@@ -157,6 +167,7 @@ document.addEventListener("nav", async (e: CustomEventMap["nav"]) => {
         return
       }
       opened = true
+      origin = simplifySlug(slug)
       previousOverflow = document.body.style.overflow
       document.body.style.overflow = "hidden"
       overlay.hidden = false
@@ -239,7 +250,12 @@ document.addEventListener("nav", async (e: CustomEventMap["nav"]) => {
       }
       if (opened) {
         const config = JSON.parse(graph.dataset.cfg!)
-        void renderMode(config.depth, config.showPageContext).catch(() => {
+        const selected = graph.querySelector<HTMLCanvasElement>("canvas")?.dataset.selected
+        void renderMode(
+          config.depth,
+          config.showPageContext,
+          selected ? (selected as SimpleSlug) : undefined,
+        ).catch(() => {
           graph.textContent = copy.error
         })
       }

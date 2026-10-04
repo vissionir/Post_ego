@@ -45,11 +45,11 @@ export function renderForceGraph(
   articleOptions?: {
     nodes: GraphNode[]
     selected?: SimpleSlug
-    center?: SimpleSlug
-    selectOutside: (id: SimpleSlug) => void
+    origin: SimpleSlug
+    openAtom: (id: SimpleSlug) => void
   },
 ) {
-  const slug = articleOptions?.center ?? simplifySlug(fullSlug)
+  let slug = articleOptions?.origin ?? simplifySlug(fullSlug)
   let width = Math.max(1, graph.clientWidth),
     height = Math.max(1, graph.clientHeight)
   const full = config.depth < 0
@@ -96,6 +96,7 @@ export function renderForceGraph(
   )
   canvas.dataset.nodeCount = String(nodes.length)
   canvas.dataset.viewMode = !full ? "connections" : pageContext ? "paths" : "all"
+  canvas.dataset.origin = slug
   const dpr = Math.min(window.devicePixelRatio || 1, 2)
   canvas.width = Math.round(width * dpr)
   canvas.height = Math.round(height * dpr)
@@ -153,9 +154,23 @@ export function renderForceGraph(
           loading: "Загружаю текст…",
           error: "Не удалось загрузить текст. Нажмите на атом ещё раз.",
         }
-  const knownArticles = new Set((articleOptions?.nodes ?? data.nodes).map((n) => n.id))
+  const articleNodes = new Map((articleOptions?.nodes ?? data.nodes).map((n) => [n.id, n]))
+  const knownArticles = new Set(articleNodes.keys())
   let articleGeneration = 0
-  card.append(name, expanded ? articleBody : open)
+  const openAtom = document.createElement("button")
+  openAtom.type = "button"
+  openAtom.className = "graph-article-open"
+  openAtom.textContent = fullSlug.startsWith("th/") ? "เปิด" : openText
+  const openSelected = () => {
+    if (selected) articleOptions?.openAtom(selected)
+  }
+  if (expanded) {
+    const header = document.createElement("div")
+    header.className = "graph-article-header"
+    header.append(name, openAtom)
+    card.append(header, articleBody)
+    openAtom.addEventListener("click", openSelected)
+  } else card.append(name, open)
   graph.append(card)
   const ordered = [...nodes].sort((a, b) => b.radius - a.radius)
   const focusCache = new Map<SimpleSlug, ReturnType<typeof graphFocus>>()
@@ -258,11 +273,15 @@ export function renderForceGraph(
     if (id === undefined) return
     event.preventDefault()
     event.stopPropagation()
-    const target = byId.get(id)
+    // Reading a linked atom outside the local map does not change the exploration origin.
+    const target = articleNode(id)
     if (target) choose(target)
-    else articleOptions?.selectOutside(id)
   }
   if (expanded) card.addEventListener("click", articleClick)
+  function articleNode(id: SimpleSlug): Node | undefined {
+    const node = byId.get(id) ?? articleNodes.get(id)
+    return node ? { ...node, radius: byId.get(id)?.radius ?? 0 } : undefined
+  }
   function requestDraw() {
     if (!disposed && !frame) frame = requestAnimationFrame(draw)
   }
@@ -631,7 +650,7 @@ export function renderForceGraph(
     if (!event.key.startsWith("Arrow") && event.key !== "Enter") return
     event.preventDefault()
     if (event.key === "Enter") {
-      if (expanded && selected) choose(byId.get(selected))
+      if (expanded && selected) choose(articleNode(selected))
       else if (selected && (selected !== slug || !pageContext))
         window.spaNavigate(new URL(open.href))
       return
@@ -661,12 +680,13 @@ export function renderForceGraph(
   document.addEventListener(graphVisitEvent, onVisit)
   if (!full) simulation.restart()
   draw()
-  if (articleOptions?.selected) choose(byId.get(articleOptions.selected))
+  if (articleOptions?.selected) choose(articleNode(articleOptions.selected))
   const cleanup = () => {
     disposed = true
     document.removeEventListener(graphVisitEvent, onVisit)
     articleGeneration++
     card.removeEventListener("click", articleClick)
+    openAtom.removeEventListener("click", openSelected)
     cancelAnimationFrame(frame)
     simulation.stop().on("tick", null)
     selection.on(".zoom", null).on(".drag", null)
@@ -685,6 +705,14 @@ export function renderForceGraph(
     card.remove()
   }
   return Object.assign(cleanup, {
+    setOrigin(id: SimpleSlug) {
+      if (disposed || !full || !byId.has(id) || slug === id) return
+      // Rebase paths without touching node coordinates or the user's zoom and pan.
+      slug = id
+      canvas.dataset.origin = id
+      focusCache.clear()
+      requestDraw()
+    },
     preview(id?: SimpleSlug) {
       if (disposed) return
       const next = id !== undefined && byId.has(id) ? id : null
@@ -693,7 +721,7 @@ export function renderForceGraph(
       requestDraw()
     },
     select(id: SimpleSlug) {
-      const node = byId.get(id)
+      const node = articleNode(id)
       if (disposed || !node) return false
       choose(node)
       return true
