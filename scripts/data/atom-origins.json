@@ -1266,9 +1266,9 @@
       "renames": []
     },
     {
-      "title": "Все едино",
+      "title": "Всё едино",
       "paths": [
-        "content/Атомы/Все едино.md",
+        "content/Атомы/Всё едино.md",
         "content/en/Атомы/Everything Is One.md",
         "content/th/Atoms/Everything Is One.md"
       ],
@@ -1284,9 +1284,9 @@
       ]
     },
     {
-      "title": "Все меняется",
+      "title": "Всё меняется",
       "paths": [
-        "content/Атомы/Все меняется.md",
+        "content/Атомы/Всё меняется.md",
         "content/en/Атомы/Everything changes.md",
         "content/th/Atoms/Everything changes.md"
       ],
@@ -1296,9 +1296,9 @@
       "renames": []
     },
     {
-      "title": "Все просто",
+      "title": "Всё просто",
       "paths": [
-        "content/Атомы/Все просто.md",
+        "content/Атомы/Всё просто.md",
         "content/en/Атомы/Everything is Simple.md",
         "content/th/Atoms/Everything is Simple.md"
       ],
@@ -1314,11 +1314,11 @@
       ]
     },
     {
-      "title": "Всегда что-то происходит",
+      "title": "Непрерывность происходящего",
       "paths": [
-        "content/Атомы/Всегда что-то происходит.md",
-        "content/en/Атомы/Something Is Always Happening.md",
-        "content/th/Atoms/Something Is Always Happening.md"
+        "content/Атомы/Непрерывность происходящего.md",
+        "content/en/Атомы/Continuity of Happenings.md",
+        "content/th/Atoms/Continuity of Happenings.md"
       ],
       "created": "2026-09-27T00:34:23+07:00",
       "originCommit": "4a442281128b8dd7e65eadfd100d7ba19a93f1a0",
@@ -2586,9 +2586,9 @@
       "renames": []
     },
     {
-      "title": "Защищенность",
+      "title": "Защищённость",
       "paths": [
-        "content/Атомы/Защищенность.md",
+        "content/Атомы/Защищённость.md",
         "content/en/Атомы/Protectedness.md",
         "content/th/Atoms/Protectedness.md"
       ],
@@ -5104,9 +5104,9 @@
       ]
     },
     {
-      "title": "Одаренность",
+      "title": "Одарённость",
       "paths": [
-        "content/Атомы/Одаренность.md",
+        "content/Атомы/Одарённость.md",
         "content/en/Атомы/Giftedness.md",
         "content/th/Atoms/Giftedness.md"
       ],

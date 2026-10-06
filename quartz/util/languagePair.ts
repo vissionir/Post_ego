@@ -52,7 +52,7 @@ const atomAnchors: [string, string][] = [
   ["Иллюзия контроля", "Illusion of Control"],
   ["Безусловность существования", "Unconditionality of existence"],
   ["Воображение", "Imagination"],
-  ["Все просто", "Everything is Simple"],
+  ["Всё просто", "Everything is Simple"],
   ["Выгода", "Benefit"],
   ["Делегирование", "Delegation"],
   ["Децентрация", "Decentering"],

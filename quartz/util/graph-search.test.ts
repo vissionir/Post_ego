@@ -4,7 +4,7 @@ import { graphSearchIndex, searchGraphAtoms } from "./graph-search"
 import type { GraphNode } from "./graph"
 
 const nodes = [
-  { id: "Атомы/Все-меняется", text: "Всё меняется" },
+  { id: "Атомы/Всё-меняется", text: "Всё меняется" },
   { id: "Атомы/Внутренняя-свобода", text: "Внутренняя свобода" },
   { id: "Атомы/Свобода", text: "Свобода" },
   { id: "Атомы/Социальная-свобода", text: "Социальная свобода" },
@@ -39,6 +39,7 @@ test("exact matches rank first, partial matches remain alphabetical and results 
 test("Russian ё/е, case and word order work without changing displayed titles", () => {
   const index = graphSearchIndex(nodes, "ru")
   assert.equal(searchGraphAtoms(index, " ВСЕ   МЕНЯЕТСЯ ")[0].text, "Всё меняется")
+  assert.equal(searchGraphAtoms(index, "все меняется")[0].id, "Атомы/Всё-меняется")
   assert.equal(searchGraphAtoms(index, "свобода внутр")[0].text, "Внутренняя свобода")
   assert.equal(searchGraphAtoms(graphSearchIndex(nodes, "en"), "FREE")[0].text, "Freedom")
 })
