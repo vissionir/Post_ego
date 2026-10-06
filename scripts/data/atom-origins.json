@@ -2732,11 +2732,11 @@
       "renames": []
     },
     {
-      "title": "Иллюзия безопасности знания",
+      "title": "Недостаточность знания",
       "paths": [
-        "content/Атомы/Иллюзия безопасности знания.md",
-        "content/en/Атомы/Illusion of Safety Through Knowledge.md",
-        "content/th/Atoms/Illusion of Safety Through Knowledge.md"
+        "content/Атомы/Недостаточность знания.md",
+        "content/en/Атомы/Insufficiency of Knowledge.md",
+        "content/th/Atoms/Insufficiency of Knowledge.md"
       ],
       "created": "2026-09-25T07:24:47+07:00",
       "originCommit": "af8c9c0daf93335b7bfc643cbb8e308426b9daaf",
