@@ -264,8 +264,11 @@ a {
           min-width: 0;
           max-height: 24rem;
         }
-        & > .graph > .graph-outer {
-          margin: 0;
+        & > .graph {
+          order: 1;
+          & > .graph-outer {
+            margin: 0;
+          }
         }
         & > .backlinks {
           & a {
