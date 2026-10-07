@@ -38,6 +38,19 @@ function coerceDate(fp: string, d: any): Date {
 }
 
 type MaybeDate = undefined | string | number
+
+export function resolvePublishedDate(
+  slug: string,
+  published: MaybeDate,
+  created: MaybeDate,
+  modified: MaybeDate,
+): MaybeDate {
+  if (/^(?:Атомы|en\/Атомы|th\/Atoms)\/(?!index$).+/.test(slug)) {
+    return published ?? created
+  }
+  return published ?? modified ?? created
+}
+
 export const CreatedModifiedDate: QuartzTransformerPlugin<Partial<Options>> = (userOpts) => {
   const opts = { ...defaultOptions, ...userOpts }
   return {
@@ -80,11 +93,7 @@ export const CreatedModifiedDate: QuartzTransformerPlugin<Partial<Options>> = (u
               } else if (source === "git" && repo) {
                 try {
                   const relativePath = path.relative(repositoryWorkdir, fullFp)
-                  const gitDate = await repo.getFileLatestModifiedDateAsync(relativePath)
-                  modified ||= gitDate
-                  if (/^(?:Атомы|en\/Атомы|th\/Atoms)\/(?!index$).+/.test(file.data.slug ?? "")) {
-                    published = gitDate
-                  }
+                  modified ||= await repo.getFileLatestModifiedDateAsync(relativePath)
                 } catch {
                   console.log(
                     styleText(
@@ -99,7 +108,10 @@ export const CreatedModifiedDate: QuartzTransformerPlugin<Partial<Options>> = (u
             file.data.dates = {
               created: coerceDate(fp, created),
               modified: coerceDate(fp, modified),
-              published: coerceDate(fp, published ?? modified ?? created),
+              published: coerceDate(
+                fp,
+                resolvePublishedDate(file.data.slug ?? "", published, created, modified),
+              ),
             }
           }
         },

@@ -1,7 +1,8 @@
 ---
 title: ความเงียบ
 created: 2026-10-06T00:00:00+07:00
-publicationOrder: 1
+published: 2026-10-07T17:49:15+07:00
+publicationOrder: 2
 ---
 
 ความเงียบคือพื้นหลังของการสัมผัส[[Reality|ความเป็นจริง]] ที่ไม่มี[[Inner Dialogue|บทสนทนาภายใน]] และสิ่งที่เกิดขึ้นถูกสัมผัสว่า[[Self-Unfolding of Reality|เกิดขึ้นด้วยตัวมันเอง]]

@@ -1,0 +1,81 @@
+{
+  "note": "First publication is immutable. Later edits and publication commits do not change it. Existing atoms retain their preserved created chronology.",
+  "sourceCommit": "6a2936f68d132ba59989cc59939f5f898f4fcbbe",
+  "atoms": [
+    {
+      "title": "Постижение Дао",
+      "paths": [
+        "content/Атомы/Постижение Дао.md",
+        "content/en/Атомы/Realization of the Dao.md",
+        "content/th/Atoms/Realization of the Dao.md"
+      ],
+      "published": "2026-10-07T17:49:15+07:00",
+      "publicationOrder": 0
+    },
+    {
+      "title": "Переход к тишине",
+      "paths": [
+        "content/Атомы/Переход к тишине.md",
+        "content/en/Атомы/Transition to Silence.md",
+        "content/th/Atoms/Transition to Silence.md"
+      ],
+      "published": "2026-10-07T17:49:15+07:00",
+      "publicationOrder": 1
+    },
+    {
+      "title": "Тишина",
+      "paths": [
+        "content/Атомы/Тишина.md",
+        "content/en/Атомы/Silence.md",
+        "content/th/Atoms/Silence.md"
+      ],
+      "published": "2026-10-07T17:49:15+07:00",
+      "publicationOrder": 2
+    },
+    {
+      "title": "Страх изменений",
+      "paths": [
+        "content/Атомы/Страх изменений.md",
+        "content/en/Атомы/Fear of Change.md",
+        "content/th/Atoms/Fear of Change.md"
+      ],
+      "published": "2026-10-07T17:49:15+07:00"
+    },
+    {
+      "title": "Устойчивость реальности",
+      "paths": [
+        "content/Атомы/Устойчивость реальности.md",
+        "content/en/Атомы/Stability of Reality.md",
+        "content/th/Atoms/Stability of Reality.md"
+      ],
+      "published": "2026-10-07T17:49:15+07:00"
+    },
+    {
+      "title": "Иллюзия неизменности",
+      "paths": [
+        "content/Атомы/Иллюзия неизменности.md",
+        "content/en/Атомы/Illusion of Unchangingness.md",
+        "content/th/Atoms/Illusion of Unchangingness.md"
+      ],
+      "published": "2026-10-07T17:49:15+07:00"
+    },
+    {
+      "title": "Цепляние за постоянство",
+      "paths": [
+        "content/Атомы/Цепляние за постоянство.md",
+        "content/en/Атомы/Clinging to Permanence.md",
+        "content/th/Atoms/Clinging to Permanence.md"
+      ],
+      "published": "2026-10-07T17:49:15+07:00"
+    },
+    {
+      "title": "Прекращение сопротивления",
+      "paths": [
+        "content/Атомы/Прекращение сопротивления.md",
+        "content/en/Атомы/Cessation of Resistance.md",
+        "content/th/Atoms/Cessation of Resistance.md"
+      ],
+      "published": "2026-10-07T17:49:15+07:00"
+    }
+  ]
+}

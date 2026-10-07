@@ -27,15 +27,34 @@ describe("atom chronology", () => {
   const created = new Date("2026-02-15T13:30:31+07:00")
   const modified = new Date("2026-09-29T12:00:00+07:00")
   const published = new Date("2026-10-07T17:49:15+07:00")
-  const page = (slug: string) => ({ slug, dates: { created, modified, published } }) as QuartzPluginData
+  const page = (slug: string) =>
+    ({ slug, dates: { created, modified, published } }) as QuartzPluginData
 
-  test("all atom mirrors display publication dates without changing their origin", () => {
+  test("existing atom mirrors keep their original dates despite later edits or bulk commits", () => {
     for (const slug of ["Атомы/Конгруэнтность", "en/Атомы/Congruence", "th/Atoms/Congruence"]) {
-      assert.equal(getDate(cfg, page(slug)), published)
+      assert.equal(getDate(cfg, page(slug)), created)
       const edited = page(slug)
       edited.dates!.modified = new Date("2027-01-01")
-      assert.equal(getDate(cfg, edited), published)
+      edited.dates!.published = new Date("2027-01-01")
+      assert.equal(getDate(cfg, edited), created)
       assert.equal(edited.dates!.created, created)
+    }
+  })
+
+  test("new atoms can use a fixed first-publication date without losing the draft origin", () => {
+    for (const slug of [
+      "Атомы/Постижение-Дао",
+      "en/Атомы/Realization-of-the-Dao",
+      "th/Atoms/Realization-of-the-Dao",
+    ]) {
+      const atom = {
+        ...page(slug),
+        frontmatter: { title: "Dao", published: published.toISOString() },
+      }
+      assert.equal(getDate(cfg, atom), published)
+      atom.dates!.modified = new Date("2027-01-01")
+      assert.equal(getDate(cfg, atom), published)
+      assert.equal(atom.dates!.created, created)
     }
   })
 

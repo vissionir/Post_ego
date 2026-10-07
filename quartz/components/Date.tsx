@@ -10,9 +10,9 @@ interface Props {
 export type ValidDateType = keyof Required<QuartzPluginData>["dates"]
 
 export function getDate(cfg: GlobalConfiguration, data: QuartzPluginData): Date | undefined {
-  // Public atom listings use publication dates; created remains the origin record.
+  // Only an explicit first-publication date can override the preserved atom chronology.
   if (/^(?:Атомы|en\/Атомы|th\/Atoms)\/(?!index$).+/.test(data.slug ?? "")) {
-    return data.dates?.published
+    return data.frontmatter?.published ? data.dates?.published : data.dates?.created
   }
   if (!cfg.defaultDateType) {
     throw new Error(

@@ -3,8 +3,21 @@ import { test } from "node:test"
 import { comparePageListItems } from "./page-list-order"
 
 const collator = new Intl.Collator("ru")
-const transition = { title: "Переход к тишине", date: 100, releaseRank: -1, publicationOrder: 0 }
-const silence = { title: "Тишина", date: 100, releaseRank: -1, publicationOrder: 1 }
+const dao = { title: "Постижение Дао", date: 100, releaseRank: -1, publicationOrder: 0 }
+const transition = { title: "Переход к тишине", date: 100, releaseRank: -1, publicationOrder: 1 }
+const silence = { title: "Тишина", date: 100, releaseRank: -1, publicationOrder: 2 }
+
+test("Dao heads the new publication without disturbing the transition-silence order", () => {
+  for (const mode of ["newest", "oldest"] as const) {
+    const sorted = [silence, transition, dao].sort((a, b) =>
+      comparePageListItems(a, b, mode, collator),
+    )
+    assert.deepEqual(
+      sorted.map((item) => item.title),
+      [dao.title, transition.title, silence.title],
+    )
+  }
+})
 
 test("the transition precedes silence for both date sorts within one publication", () => {
   for (const mode of ["newest", "oldest"] as const) {
