@@ -148,7 +148,7 @@ export const defaultContentPageLayout: PageLayout = {
   ],
   right: [
     Component.ConditionalRender({
-      component: Component.Graph(),
+      component: Component.Backlinks(),
       condition: (page) => !isGraphPage(page),
     }),
     Component.ConditionalRender({
@@ -156,7 +156,7 @@ export const defaultContentPageLayout: PageLayout = {
       condition: (page) => !isGraphPage(page),
     }),
     Component.ConditionalRender({
-      component: Component.Backlinks(),
+      component: Component.Graph(),
       condition: (page) => !isGraphPage(page),
     }),
   ],

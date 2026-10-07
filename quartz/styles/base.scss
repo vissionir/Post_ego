@@ -257,10 +257,20 @@ a {
         height: unset;
         width: 100%;
         flex-direction: row;
+        align-items: flex-start;
         padding: 0;
         & > * {
-          flex: 1;
+          flex: 1 1 0;
+          min-width: 0;
           max-height: 24rem;
+        }
+        & > .graph > .graph-outer {
+          margin: 0;
+        }
+        & > .backlinks {
+          & a {
+            overflow-wrap: anywhere;
+          }
         }
         & > .toc {
           display: none;
