@@ -89,7 +89,7 @@ li.section-li {
     }
 
     @media all and ($mobile) {
-      grid-template-columns: fit-content(8em) 3fr 1fr;
+      grid-template-columns: 7.5rem minmax(0, 1fr);
 
       & > .tags {
         display: none;
@@ -104,7 +104,7 @@ li.section-li {
 
 // modifications in popover context
 .popover .section {
-  grid-template-columns: fit-content(8em) 1fr !important;
+  grid-template-columns: 7.5rem minmax(0, 1fr) !important;
 
   & > .tags {
     display: none;
