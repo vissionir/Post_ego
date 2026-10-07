@@ -6,6 +6,13 @@
     border: 1px solid var(--lightgray);
     box-sizing: border-box;
     margin: 0.5em 0;
+    @media all and ($desktop) {
+      // Align the frame with the visible top of the breadcrumb letters.
+      margin-top: 0.35em;
+      &:lang(th) {
+        margin-top: 0.22em;
+      }
+    }
     position: relative;
     overflow: hidden;
     & > .graph-container {
