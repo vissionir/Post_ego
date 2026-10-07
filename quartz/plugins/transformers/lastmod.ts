@@ -80,7 +80,11 @@ export const CreatedModifiedDate: QuartzTransformerPlugin<Partial<Options>> = (u
               } else if (source === "git" && repo) {
                 try {
                   const relativePath = path.relative(repositoryWorkdir, fullFp)
-                  modified ||= await repo.getFileLatestModifiedDateAsync(relativePath)
+                  const gitDate = await repo.getFileLatestModifiedDateAsync(relativePath)
+                  modified ||= gitDate
+                  if (/^(?:Атомы|en\/Атомы|th\/Atoms)\/(?!index$).+/.test(file.data.slug ?? "")) {
+                    published = gitDate
+                  }
                 } catch {
                   console.log(
                     styleText(
@@ -95,7 +99,7 @@ export const CreatedModifiedDate: QuartzTransformerPlugin<Partial<Options>> = (u
             file.data.dates = {
               created: coerceDate(fp, created),
               modified: coerceDate(fp, modified),
-              published: coerceDate(fp, published),
+              published: coerceDate(fp, published ?? modified ?? created),
             }
           }
         },

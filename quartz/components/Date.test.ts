@@ -26,14 +26,16 @@ describe("atom chronology", () => {
   const cfg = { defaultDateType: "modified" } as GlobalConfiguration
   const created = new Date("2026-02-15T13:30:31+07:00")
   const modified = new Date("2026-09-29T12:00:00+07:00")
-  const page = (slug: string) => ({ slug, dates: { created, modified, published: created } }) as QuartzPluginData
+  const published = new Date("2026-10-07T17:49:15+07:00")
+  const page = (slug: string) => ({ slug, dates: { created, modified, published } }) as QuartzPluginData
 
-  test("all atom mirrors keep their origin date after edits", () => {
+  test("all atom mirrors display publication dates without changing their origin", () => {
     for (const slug of ["Атомы/Конгруэнтность", "en/Атомы/Congruence", "th/Atoms/Congruence"]) {
-      assert.equal(getDate(cfg, page(slug)), created)
+      assert.equal(getDate(cfg, page(slug)), published)
       const edited = page(slug)
       edited.dates!.modified = new Date("2027-01-01")
-      assert.equal(getDate(cfg, edited), created)
+      assert.equal(getDate(cfg, edited), published)
+      assert.equal(edited.dates!.created, created)
     }
   })
 

@@ -1,4 +1,4 @@
-type PageListSortMode = "alphabetical" | "newest" | "oldest"
+import { comparePageListItems, type PageListSortMode } from "./page-list-order"
 
 const atomSortStorageKey = "postego-atom-sort"
 
@@ -38,18 +38,13 @@ document.addEventListener("nav", () => {
           item instanceof HTMLElement && item.classList.contains("section-li"),
       )
 
-      items.sort((a, b) => {
-        const titleOrder = collator.compare(a.dataset.pageTitle ?? "", b.dataset.pageTitle ?? "")
-        if (mode === "alphabetical") return titleOrder
-
-        const aDate = Number(a.dataset.pageDate ?? 0)
-        const bDate = Number(b.dataset.pageDate ?? 0)
-        const dateOrder = mode === "newest" ? bDate - aDate : aDate - bDate
-        const aRank = Number(a.dataset.pageReleaseRank ?? -1)
-        const bRank = Number(b.dataset.pageReleaseRank ?? -1)
-        const releaseOrder = mode === "newest" ? bRank - aRank : aRank - bRank
-        return dateOrder || releaseOrder || titleOrder
+      const orderData = (item: HTMLElement) => ({
+        title: item.dataset.pageTitle ?? "",
+        date: Number(item.dataset.pageDate ?? 0),
+        releaseRank: Number(item.dataset.pageReleaseRank ?? -1),
+        publicationOrder: Number(item.dataset.pagePublicationOrder ?? NaN),
       })
+      items.sort((a, b) => comparePageListItems(orderData(a), orderData(b), mode, collator))
 
       list.append(...items)
       buttons.forEach((button) => {
