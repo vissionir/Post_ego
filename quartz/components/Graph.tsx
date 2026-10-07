@@ -72,7 +72,7 @@ export default ((opts?: Partial<GraphOptions>) => {
             expand: "Открыть граф",
             nearby: "Ближайшие связи",
             paths: "Связи атома",
-            all: "Весь граф · RU",
+            all: "Весь граф",
             close: "Закрыть граф",
           }
         : locale === "th-TH"
@@ -80,14 +80,14 @@ export default ((opts?: Partial<GraphOptions>) => {
               expand: "เปิดกราฟ",
               nearby: "การเชื่อมโยงใกล้เคียง",
               paths: "การเชื่อมโยงของอะตอม",
-              all: "กราฟทั้งหมด · TH",
+              all: "กราฟทั้งหมด",
               close: "ปิดกราฟ",
             }
           : {
               expand: "Open graph",
               nearby: "Nearby connections",
               paths: "Atom connections",
-              all: "Full graph · EN",
+              all: "Full graph",
               close: "Close graph",
             }
     return (
