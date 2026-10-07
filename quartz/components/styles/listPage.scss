@@ -89,14 +89,20 @@ li.section-li {
     }
 
     @media all and ($mobile) {
-      grid-template-columns: 7.5rem minmax(0, 1fr);
+      grid-template-columns: 5.5rem minmax(0, 1fr);
+
+      &:lang(th) {
+        grid-template-columns: 6rem minmax(0, 1fr);
+      }
 
       & > .tags {
         display: none;
       }
 
       & > .meta {
-        margin-right: 1em;
+        margin-right: 0.5em;
+        font-size: 0.875rem;
+        white-space: nowrap;
       }
     }
   }
@@ -104,7 +110,11 @@ li.section-li {
 
 // modifications in popover context
 .popover .section {
-  grid-template-columns: 7.5rem minmax(0, 1fr) !important;
+  grid-template-columns: 5.5rem minmax(0, 1fr) !important;
+
+  &:lang(th) {
+    grid-template-columns: 6rem minmax(0, 1fr) !important;
+  }
 
   & > .tags {
     display: none;
@@ -112,5 +122,7 @@ li.section-li {
 }
 
 .popover li.section-li > .section > .meta {
-  margin-right: 1em;
+  margin-right: 0.5em;
+  font-size: 0.875rem;
+  white-space: nowrap;
 }
