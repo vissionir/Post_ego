@@ -1506,16 +1506,23 @@
       "renames": []
     },
     {
-      "title": "Выход из режима выживания",
+      "title": "Обретение безопасности",
       "paths": [
-        "content/Атомы/Выход из режима выживания.md",
-        "content/en/Атомы/Leaving Survival Mode.md",
-        "content/th/Atoms/Leaving Survival Mode.md"
+        "content/Атомы/Обретение безопасности.md",
+        "content/en/Атомы/Gaining Safety.md",
+        "content/th/Atoms/Gaining Safety.md"
       ],
       "created": "2026-09-25T07:24:47+07:00",
       "originCommit": "af8c9c0daf93335b7bfc643cbb8e308426b9daaf",
       "originalPath": "content/Атомы/Выход из режима выживания.md",
-      "renames": []
+      "renames": [
+        {
+          "date": "2026-10-08",
+          "from": "Выход из режима выживания",
+          "to": "Обретение безопасности",
+          "reason": "Author-approved merge: remove the newer duplicate and rename the older atom while preserving its chronology."
+        }
+      ]
     },
     {
       "title": "Галлюцинация ума",
