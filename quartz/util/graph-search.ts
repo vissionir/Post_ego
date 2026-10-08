@@ -8,7 +8,14 @@ export function graphSearchIndex(nodes: GraphNode[], language: "ru" | "en" | "th
   const prefix = language === "ru" ? "Атомы/" : language === "en" ? "en/Атомы/" : "th/Atoms/"
   const collator = new Intl.Collator(language)
   return nodes
-    .filter((node) => node.id.startsWith(prefix) && node.id.slice(prefix.length).length > 0)
+    .filter((node) =>
+      [prefix, `${language}/atoms/`].some(
+        (p) =>
+          node.id.startsWith(p) &&
+          node.id.slice(p.length).length > 0 &&
+          node.id.slice(p.length) !== "index",
+      ),
+    )
     .map((node) => ({ ...node, searchable: normalize(node.text) }))
     .sort((a, b) => collator.compare(a.text, b.text) || a.id.localeCompare(b.id))
 }

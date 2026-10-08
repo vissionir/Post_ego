@@ -198,7 +198,7 @@ document.addEventListener("nav", async (e: CustomEventMap["nav"]) => {
       const link = (event.target as Element)?.closest<HTMLAnchorElement>("a[href]")
       if (!link || link.target === "_blank" || link.hasAttribute("download")) return
       const url = new URL(link.href, window.location.href)
-      const graphSlug = language === "ru" ? "Граф" : `${language}/Graph`
+      const graphSlug = `${language}/graph`
       let targetSlug: string
       try {
         targetSlug = decodeURIComponent(url.pathname).replace(/^\/+|\/+$/g, "")

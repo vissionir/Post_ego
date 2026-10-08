@@ -38,6 +38,7 @@ jobs:
         run: |
           node scripts/atom-chronology.mjs --check
           npx quartz build
+          npx tsx scripts/check-public-routes.ts
 
       - name: Build AI context
         run: npm run build:ai

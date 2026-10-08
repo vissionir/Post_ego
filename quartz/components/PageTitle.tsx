@@ -7,7 +7,7 @@ const PageTitle: QuartzComponent = ({ fileData, cfg, displayClass }: QuartzCompo
   const title = cfg?.pageTitle ?? i18n(cfg.locale).propertyDefaults.title
   const language = languageForSlug(fileData.slug)
   const homeSlug = (
-    language === "en" ? "en/index" : language === "th" ? "th/index" : "index"
+    language === "en" ? "en/index" : language === "th" ? "th/index" : "ru/index"
   ) as FullSlug
   const homeHref = resolveRelative(fileData.slug!, homeSlug)
   return (

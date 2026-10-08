@@ -7,7 +7,7 @@ import { languageForSlug } from "../util/lang"
  * Global RU/EN/TH switcher.
  *
  * Spec:
- * - RU lives at / (root)
+ * - RU lives at /ru/
  * - EN lives at /en/
  * - TH lives at /th/
  * File names and slugs are translated, so the switcher resolves the semantic page group.
@@ -18,7 +18,7 @@ const LanguageSwitcher: QuartzComponent = ({ fileData, allFiles }: QuartzCompone
   const pair = getLanguagePair(slug, allFiles)
 
   // Service pages without a translated counterpart fall back to the language home page.
-  const ruSlug = pair?.ru ?? ("index" as FullSlug)
+  const ruSlug = pair?.ru ?? ("ru/index" as FullSlug)
   const enSlug = pair?.en ?? ("en/index" as FullSlug)
   const thSlug = pair?.th ?? ("th/index" as FullSlug)
 

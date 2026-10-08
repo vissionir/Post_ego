@@ -7,6 +7,7 @@ import { QuartzEmitterPlugin } from "../types"
 import { toHtml } from "hast-util-to-html"
 import { write } from "./helpers"
 import { i18n } from "../../i18n"
+import { languages } from "../../util/canonicalRoutes"
 
 export type ContentIndexMap = Map<FullSlug, ContentDetails>
 export type ContentDetails = {
@@ -18,6 +19,7 @@ export type ContentDetails = {
   content: string
   richContent?: string
   date?: Date
+  modified?: Date
   description?: string
 }
 
@@ -43,7 +45,15 @@ function generateSiteMap(cfg: GlobalConfiguration, idx: ContentIndexMap): string
   const base = cfg.baseUrl ?? ""
   const createURLEntry = (slug: SimpleSlug, content: ContentDetails): string => `<url>
     <loc>https://${joinSegments(base, encodeURI(slug))}</loc>
-    ${content.date && `<lastmod>${content.date.toISOString()}</lastmod>`}
+    ${(content.modified ?? content.date) ? `<lastmod>${(content.modified ?? content.date)!.toISOString()}</lastmod>` : ""}
+    ${languages
+      .map((lang) => {
+        const alternate = content.slug.replace(/^(ru|en|th)\//, `${lang}/`) as FullSlug
+        return idx.has(alternate)
+          ? `<xhtml:link rel="alternate" hreflang="${lang}" href="https://${joinSegments(base, encodeURI(simplifySlug(alternate)))}"/>`
+          : ""
+      })
+      .join("")}
   </url>`
   const urls = Array.from(idx)
     .map(([slug, content]) => createURLEntry(simplifySlug(slug), content))
@@ -114,6 +124,7 @@ export const ContentIndex: QuartzEmitterPlugin<Partial<Options>> = (opts) => {
               ? escapeHTML(toHtml(tree as Root, { allowDangerousHtml: true }))
               : undefined,
             date: date,
+            modified: file.data.dates?.modified,
             description: file.data.description ?? "",
           })
         }
@@ -145,6 +156,7 @@ export const ContentIndex: QuartzEmitterPlugin<Partial<Options>> = (opts) => {
           // for the RSS feed
           delete content.description
           delete content.date
+          delete content.modified
           return [slug, content]
         }),
       )

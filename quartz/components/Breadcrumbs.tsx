@@ -52,7 +52,8 @@ export default ((opts?: Partial<BreadcrumbOptions>) => {
   }: QuartzComponentProps) => {
     const trie = (ctx.trie ??= trieFromAllFiles(allFiles))
     const slugParts = fileData.slug!.split("/")
-    const pathNodes = trie.ancestryChain(slugParts)
+    const ancestry = trie.ancestryChain(slugParts)
+    const pathNodes = /^(ru|en|th)$/.test(slugParts[0]) ? ancestry?.slice(1) : ancestry
     const locale = localeForSlug(fileData.slug)
     const rootName =
       options.rootName !== defaultOptions.rootName

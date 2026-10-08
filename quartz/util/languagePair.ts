@@ -240,6 +240,16 @@ export function getLanguagePair(
   allFiles: QuartzPluginData[],
 ): LanguagePair | undefined {
   if (!slug) return undefined
+  if (/^(ru|en|th)\//.test(slug)) {
+    const suffix = slug.replace(/^(ru|en|th)\//, "")
+    const pair = {
+      ru: `ru/${suffix}` as FullSlug,
+      en: `en/${suffix}` as FullSlug,
+      th: `th/${suffix}` as FullSlug,
+    }
+    if (Object.values(pair).every((candidate) => allFiles.some((file) => file.slug === candidate)))
+      return pair
+  }
   let pairs = pairCache.get(allFiles)
   if (!pairs) {
     pairs = buildLanguagePairs(allFiles)

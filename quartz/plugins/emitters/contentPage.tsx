@@ -79,13 +79,16 @@ export const ContentPage: QuartzEmitterPlugin<Partial<FullPageLayout>> = (userOp
 
       for (const [tree, file] of content) {
         const slug = file.data.slug!
-        if (slug === "index") {
+        if (slug === "ru/index") {
           containsIndex = true
         }
 
         // only process home page, language home pages, non-tag pages, and non-index pages
         if (
-          (slug.endsWith("/index") && slug !== "en/index" && slug !== "th/index") ||
+          (slug.endsWith("/index") &&
+            slug !== "ru/index" &&
+            slug !== "en/index" &&
+            slug !== "th/index") ||
           slug.startsWith("tags/")
         )
           continue
@@ -117,7 +120,10 @@ export const ContentPage: QuartzEmitterPlugin<Partial<FullPageLayout>> = (userOp
         const slug = file.data.slug!
         if (!changedSlugs.has(slug)) continue
         if (
-          (slug.endsWith("/index") && slug !== "en/index" && slug !== "th/index") ||
+          (slug.endsWith("/index") &&
+            slug !== "ru/index" &&
+            slug !== "en/index" &&
+            slug !== "th/index") ||
           slug.startsWith("tags/")
         )
           continue

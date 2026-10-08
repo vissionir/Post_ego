@@ -11,7 +11,7 @@ export type ValidDateType = keyof Required<QuartzPluginData>["dates"]
 
 export function getDate(cfg: GlobalConfiguration, data: QuartzPluginData): Date | undefined {
   // Only an explicit first-publication date can override the preserved atom chronology.
-  if (/^(?:Атомы|en\/Атомы|th\/Atoms)\/(?!index$).+/.test(data.slug ?? "")) {
+  if (/^(?:Атомы|en\/Атомы|th\/Atoms|(?:ru|en|th)\/atoms)\/(?!index$).+/.test(data.slug ?? "")) {
     return data.frontmatter?.published ? data.dates?.published : data.dates?.created
   }
   if (!cfg.defaultDateType) {

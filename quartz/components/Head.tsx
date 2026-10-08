@@ -81,7 +81,7 @@ export default (() => {
       const rel = pathname.slice(basePath.length)
       const parts = rel.split("/").filter(Boolean)
       const depth = parts.length
-      const shouldNormalize = parts[0] === "en" || parts[0] === "th" ? depth >= 3 : depth >= 2
+      const shouldNormalize = ["ru", "en", "th"].includes(parts[0]) && depth >= 3
       if (shouldNormalize) {
         window.location.replace(pathname.replace(/\\/+$/, "") + window.location.search + window.location.hash)
         return

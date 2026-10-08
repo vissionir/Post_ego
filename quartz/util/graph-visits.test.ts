@@ -16,13 +16,13 @@ test("graph visits preserve existing history, notify once, and tolerate unavaila
     value: { getItem: () => value, setItem: (_key: string, next: string) => (value = next) },
   })
   try {
-    assert.deepEqual([...getVisited()], ["Атомы/Реальность"])
-    addToVisited("Атомы/Свобода" as SimpleSlug)
-    assert.deepEqual(JSON.parse(value), ["Атомы/Реальность", "Атомы/Свобода"])
-    addToVisited("Атомы/Свобода" as SimpleSlug)
+    assert.deepEqual([...getVisited()], ["ru/atoms/reality"])
+    addToVisited("Атомы/Ум" as SimpleSlug)
+    assert.deepEqual(JSON.parse(value), ["ru/atoms/reality", "ru/atoms/mind"])
+    addToVisited("ru/atoms/mind" as SimpleSlug)
     assert.equal(notifications, 1)
     value = "invalid JSON"
-    assert(getVisited().has("Атомы/Свобода" as SimpleSlug))
+    assert(getVisited().has("ru/atoms/mind" as SimpleSlug))
     Object.defineProperty(globalThis, "localStorage", {
       configurable: true,
       get: () => {
@@ -30,7 +30,7 @@ test("graph visits preserve existing history, notify once, and tolerate unavaila
       },
     })
     addToVisited("Атомы/Присутствие" as SimpleSlug)
-    assert(getVisited().has("Атомы/Присутствие" as SimpleSlug))
+    assert(getVisited().has("ru/atoms/presence" as SimpleSlug))
     assert.equal(notifications, 2)
   } finally {
     if (storageDescriptor) Object.defineProperty(globalThis, "localStorage", storageDescriptor)

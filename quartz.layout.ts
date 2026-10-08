@@ -38,31 +38,28 @@ const explorerFilter = (node: any) => {
 const explorerSort = (a: any, b: any) => {
   const explorerOrder: Record<"ru" | "en" | "th", readonly string[]> = {
     ru: [
-      "Атомы",
-      "Граф",
-      "Нейронавигатор",
-      "Как-устроено-исследование",
-      "Область-исследования",
-      "Миссия-проекта",
-      "Как-я-сюда-пришёл",
+      "atoms",
+      "graph",
+      "neuronavigator",
+      "how-the-research-is-structured",
+      "scope-of-the-research",
+      "project-mission",
     ],
     en: [
-      "Атомы",
-      "Graph",
-      "Нейронавигатор",
-      "How-the-research-is-structured",
-      "Scope-of-the-research",
-      "Project-Mission",
-      "How-I-got-here",
+      "atoms",
+      "graph",
+      "neuronavigator",
+      "how-the-research-is-structured",
+      "scope-of-the-research",
+      "project-mission",
     ],
     th: [
-      "Atoms",
-      "Graph",
-      "Нейронавигатор",
-      "How-the-research-is-structured",
-      "Scope-of-the-research",
-      "Project-Mission",
-      "How-I-got-here",
+      "atoms",
+      "graph",
+      "neuronavigator",
+      "how-the-research-is-structured",
+      "scope-of-the-research",
+      "project-mission",
     ],
   }
 
@@ -76,12 +73,8 @@ const explorerSort = (a: any, b: any) => {
     .filter(Boolean)
   const aLanguage = aParts[0] === "en" ? "en" : aParts[0] === "th" ? "th" : "ru"
   const bLanguage = bParts[0] === "en" ? "en" : bParts[0] === "th" ? "th" : "ru"
-  const aIndex = explorerOrder[aLanguage].indexOf(
-    (aLanguage === "ru" ? aParts : aParts.slice(1)).join("/"),
-  )
-  const bIndex = explorerOrder[bLanguage].indexOf(
-    (bLanguage === "ru" ? bParts : bParts.slice(1)).join("/"),
-  )
+  const aIndex = explorerOrder[aLanguage].indexOf(aParts.slice(1).join("/"))
+  const bIndex = explorerOrder[bLanguage].indexOf(bParts.slice(1).join("/"))
 
   if (aLanguage === bLanguage) {
     if (aIndex !== -1 && bIndex !== -1 && aIndex !== bIndex) {
@@ -103,11 +96,12 @@ const explorerSort = (a: any, b: any) => {
 }
 
 const explorerMap = (node: any) => {
-  if ((node.slugSegment === "en" || node.slugSegment === "th") && node.isFolder) {
+  if (["ru", "en", "th"].includes(node.slugSegment) && node.isFolder) {
     node.displayName = ""
   }
-  if (node.slug === "en/Атомы/index" && node.isFolder) node.displayName = "Atoms"
-  if (node.slug === "th/Atoms/index" && node.isFolder) node.displayName = "อะตอม"
+  if (node.slug === "ru/atoms/index" && node.isFolder) node.displayName = "Атомы"
+  if (node.slug === "en/atoms/index" && node.isFolder) node.displayName = "Atoms"
+  if (node.slug === "th/atoms/index" && node.isFolder) node.displayName = "อะตอม"
   return node
 }
 
@@ -118,6 +112,7 @@ export const defaultContentPageLayout: PageLayout = {
       component: Component.Breadcrumbs(),
       condition: (page) =>
         page.fileData.slug !== "index" &&
+        page.fileData.slug !== "ru/index" &&
         page.fileData.slug !== "en" &&
         page.fileData.slug !== "en/index" &&
         page.fileData.slug !== "th" &&
@@ -169,6 +164,7 @@ export const defaultListPageLayout: PageLayout = {
       component: Component.Breadcrumbs(),
       condition: (page) =>
         page.fileData.slug !== "index" &&
+        page.fileData.slug !== "ru/index" &&
         page.fileData.slug !== "en" &&
         page.fileData.slug !== "en/index" &&
         page.fileData.slug !== "th" &&

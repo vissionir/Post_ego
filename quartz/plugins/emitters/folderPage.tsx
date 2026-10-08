@@ -139,6 +139,7 @@ export const FolderPage: QuartzEmitterPlugin<Partial<FolderPageOptions>> = (user
                 (folderName) =>
                   folderName !== "." &&
                   folderName !== "tags" &&
+                  folderName !== "ru" &&
                   folderName !== "en" &&
                   folderName !== "th",
               )
@@ -162,6 +163,7 @@ export const FolderPage: QuartzEmitterPlugin<Partial<FolderPageOptions>> = (user
           (folderName) =>
             folderName !== "." &&
             folderName !== "tags" &&
+            folderName !== "ru" &&
             folderName !== "en" &&
             folderName !== "th",
         )

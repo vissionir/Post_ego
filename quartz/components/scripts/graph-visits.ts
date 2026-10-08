@@ -1,4 +1,5 @@
 import type { SimpleSlug } from "../../util/path"
+import { canonicalRoute } from "../../util/canonicalRoutes"
 
 const storageKey = "graph-visited"
 const memory = new Set<SimpleSlug>()
@@ -9,7 +10,7 @@ export function getVisited(): Set<SimpleSlug> {
     const value: unknown = JSON.parse(localStorage.getItem(storageKey) ?? "[]")
     if (Array.isArray(value)) {
       for (const slug of value) {
-        if (typeof slug === "string") memory.add(slug as SimpleSlug)
+        if (typeof slug === "string") memory.add((canonicalRoute(slug) ?? slug) as SimpleSlug)
       }
     }
   } catch {
@@ -19,6 +20,7 @@ export function getVisited(): Set<SimpleSlug> {
 }
 
 export function addToVisited(slug: SimpleSlug) {
+  slug = (canonicalRoute(slug) ?? slug) as SimpleSlug
   const visited = getVisited()
   if (visited.has(slug)) return
   visited.add(slug)

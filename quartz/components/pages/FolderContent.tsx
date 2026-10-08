@@ -123,9 +123,9 @@ export default ((opts?: Partial<FolderContentOptions>) => {
         : htmlToJsx(fileData.filePath!, tree)
     ) as ComponentChildren
     const language = languageForSlug(fileData.slug)
-    const isEnglishAtoms = fileData.slug === "en/Атомы/index"
-    const isThaiAtoms = fileData.slug === "th/Atoms/index"
-    const isAtomsFolder = fileData.slug === "Атомы/index" || isEnglishAtoms || isThaiAtoms
+    const isEnglishAtoms = fileData.slug === "en/atoms/index"
+    const isThaiAtoms = fileData.slug === "th/atoms/index"
+    const isAtomsFolder = fileData.slug === "ru/atoms/index" || isEnglishAtoms || isThaiAtoms
     const labels =
       language === "ru"
         ? {

@@ -3,6 +3,7 @@ import fs from "node:fs"
 import path from "node:path"
 import { fileURLToPath } from "node:url"
 import matter from "gray-matter"
+import { publicPath } from "../quartz/util/canonicalRoutes"
 
 type AiNode = {
   id: string
@@ -541,7 +542,7 @@ function quartzSlug(relativePath: string): string {
 
 function pageUrl(relativePath: string): string {
   const slug = quartzSlug(relativePath)
-  return slug ? `${siteBaseUrl}/${encodeURI(slug)}` : `${siteBaseUrl}/`
+  return `${siteBaseUrl}${encodeURI(publicPath(slug))}`
 }
 
 function cleanMarkdown(markdown: string): string {
@@ -630,11 +631,19 @@ function buildAtomsKnowledge(atomNodes: AiNode[]): string {
     .map((node) => {
       const parsed = matter(fs.readFileSync(path.join(contentDir, node.path), "utf8"))
       const canonicalText = parsed.content.trim()
-      const aliases = Array.isArray(parsed.data.aliases) ? parsed.data.aliases.filter((v) => typeof v === "string") : []
-      const queries = knowledgeRoutes.filter((route) => route.atoms.includes(node.title)).map((route) => route.query)
+      const aliases = Array.isArray(parsed.data.aliases)
+        ? parsed.data.aliases.filter((v) => typeof v === "string")
+        : []
+      const queries = knowledgeRoutes
+        .filter((route) => route.atoms.includes(node.title))
+        .map((route) => route.query)
       const searchTerms = unique([...atomSynonyms(node), ...aliases, ...queries])
-      const transitions = unique(Array.from(canonicalText.matchAll(/\[\[([^\]|#]+)(?:#[^\]|]+)?(?:\|([^\]]+))?\]\]/g),
-        (match) => `«${match[2] ?? match[1]}» → «${match[1]}»`))
+      const transitions = unique(
+        Array.from(
+          canonicalText.matchAll(/\[\[([^\]|#]+)(?:#[^\]|]+)?(?:\|([^\]]+))?\]\]/g),
+          (match) => `«${match[2] ?? match[1]}» → «${match[1]}»`,
+        ),
+      )
       const usageHint = atomHints[node.title]?.when
 
       return `## Атом: ${node.title}
@@ -1080,8 +1089,12 @@ components:
 `,
 )
 
-const instructions = fs.readFileSync(path.join(rootDir, "scripts", "ai", "custom-gpt-instructions.txt"), "utf8")
-if (instructions.length > 8000) throw new Error(`Instructions exceed 8000 characters: ${instructions.length}`)
+const instructions = fs.readFileSync(
+  path.join(rootDir, "scripts", "ai", "custom-gpt-instructions.txt"),
+  "utf8",
+)
+if (instructions.length > 8000)
+  throw new Error(`Instructions exceed 8000 characters: ${instructions.length}`)
 for (const filename of ["custom-gpt-instructions.txt", "chatgpt-project-instructions.txt"]) {
   writeText(path.join(aiDir, filename), instructions)
 }
@@ -1089,7 +1102,12 @@ for (const filename of ["custom-gpt-instructions.txt", "chatgpt-project-instruct
 const uploadDir = path.join(aiDir, "upload")
 const knowledgeDir = path.join(uploadDir, "knowledge")
 fs.mkdirSync(knowledgeDir, { recursive: true })
-for (const filename of ["post-ego-map.md", "post-ego-system.md", "post-ego-corpus.md", "post-ego-core.md"]) {
+for (const filename of [
+  "post-ego-map.md",
+  "post-ego-system.md",
+  "post-ego-corpus.md",
+  "post-ego-core.md",
+]) {
   fs.copyFileSync(path.join(aiDir, filename), path.join(knowledgeDir, filename))
 }
 writeText(path.join(uploadDir, "Instructions.txt"), instructions)
