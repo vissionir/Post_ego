@@ -3,6 +3,15 @@
   "sourceCommit": "6a2936f68d132ba59989cc59939f5f898f4fcbbe",
   "atoms": [
     {
+      "title": "Внутренний мир",
+      "paths": [
+        "content/Атомы/Внутренний мир.md",
+        "content/en/Атомы/Inner World.md",
+        "content/th/Atoms/Inner World.md"
+      ],
+      "published": "2026-10-09T11:04:52+07:00"
+    },
+    {
       "title": "Постижение Дао",
       "paths": [
         "content/Атомы/Постижение Дао.md",
