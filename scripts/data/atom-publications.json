@@ -3,6 +3,46 @@
   "sourceCommit": "6a2936f68d132ba59989cc59939f5f898f4fcbbe",
   "atoms": [
     {
+      "title": "Этика",
+      "paths": [
+        "content/Атомы/Этика.md",
+        "content/en/Атомы/Ethics.md",
+        "content/th/Atoms/Ethics.md"
+      ],
+      "published": "2026-10-13T13:01:42+07:00",
+      "publicationOrder": 0
+    },
+    {
+      "title": "Инверсия этики",
+      "paths": [
+        "content/Атомы/Инверсия этики.md",
+        "content/en/Атомы/Ethical Inversion.md",
+        "content/th/Atoms/Ethical Inversion.md"
+      ],
+      "published": "2026-10-13T13:01:42+07:00",
+      "publicationOrder": 1
+    },
+    {
+      "title": "Самодетерминация этики",
+      "paths": [
+        "content/Атомы/Самодетерминация этики.md",
+        "content/en/Атомы/Ethical Self-Determination.md",
+        "content/th/Atoms/Ethical Self-Determination.md"
+      ],
+      "published": "2026-10-13T13:01:42+07:00",
+      "publicationOrder": 2
+    },
+    {
+      "title": "Счастье",
+      "paths": [
+        "content/Атомы/Счастье.md",
+        "content/en/Атомы/Happiness.md",
+        "content/th/Atoms/Happiness.md"
+      ],
+      "published": "2026-10-13T13:01:42+07:00",
+      "publicationOrder": 3
+    },
+    {
       "title": "Внутренний контролёр",
       "paths": [
         "content/Атомы/Внутренний контролёр.md",
