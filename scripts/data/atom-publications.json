@@ -3,6 +3,15 @@
   "sourceCommit": "6a2936f68d132ba59989cc59939f5f898f4fcbbe",
   "atoms": [
     {
+      "title": "Опора на обладание",
+      "paths": [
+        "content/Атомы/Опора на обладание.md",
+        "content/en/Атомы/Reliance on Possession.md",
+        "content/th/Atoms/Reliance on Possession.md"
+      ],
+      "published": "2026-10-13T13:30:19+07:00"
+    },
+    {
       "title": "Этика",
       "paths": [
         "content/Атомы/Этика.md",

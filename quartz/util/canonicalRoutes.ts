@@ -75,11 +75,17 @@ for (const [ru, en] of Object.entries(atoms)) {
 for (const [oldName, current] of [
   ["Trust-in-Oneself", "self-trust"],
   ["Итеративное-разотождествление", "iterative-deidentification"],
+  ["Собственничество", "possession"],
+  ["Possessiveness", "possession"],
 ]) {
   for (const lang of languages) {
     const prefix = lang === "ru" ? "Атомы/" : lang === "en" ? "en/Атомы/" : "th/Atoms/"
     register(`${prefix}${oldName}`, `${lang}/atoms/${current}` as FullSlug)
   }
+}
+
+for (const lang of languages) {
+  register(`${lang}/atoms/possessiveness`, `${lang}/atoms/possession` as FullSlug)
 }
 
 export function canonicalRoute(source: string): FullSlug | undefined {

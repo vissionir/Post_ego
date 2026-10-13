@@ -8083,16 +8083,23 @@
       "renames": []
     },
     {
-      "title": "Собственничество",
+      "title": "Обладание",
       "paths": [
-        "content/Атомы/Собственничество.md",
-        "content/en/Атомы/Possessiveness.md",
-        "content/th/Atoms/Possessiveness.md"
+        "content/Атомы/Обладание.md",
+        "content/en/Атомы/Possession.md",
+        "content/th/Atoms/Possession.md"
       ],
       "created": "2026-09-25T07:24:47+07:00",
       "originCommit": "af8c9c0daf93335b7bfc643cbb8e308426b9daaf",
       "originalPath": "content/Атомы/Собственничество.md",
-      "renames": []
+      "renames": [
+        {
+          "date": "2026-10-13",
+          "from": "Собственничество",
+          "to": "Обладание",
+          "reason": "Author-approved rename preserving the definition, original date and release order."
+        }
+      ]
     },
     {
       "title": "Сознание",
