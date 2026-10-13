@@ -216,6 +216,7 @@ export function renderForceGraph(
     const footer = document.createElement("div")
     footer.className = "graph-article-actions"
     open.classList.add("graph-article-page")
+    open.append(actionIcon.cloneNode(true))
     open.dataset.routerIgnore = ""
     open.setAttribute(
       "aria-label",

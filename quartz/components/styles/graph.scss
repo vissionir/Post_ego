@@ -371,6 +371,7 @@
     flex: 1;
     align-items: center;
     justify-content: center;
+    gap: 0.5rem;
     min-width: 0;
     min-height: 44px;
     box-sizing: border-box;
@@ -382,6 +383,11 @@
     font: inherit;
     font-weight: 400;
     text-decoration: none;
+    svg {
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+    }
     &:hover {
       background: var(--highlight);
     }
