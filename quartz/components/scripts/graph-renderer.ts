@@ -47,6 +47,7 @@ export function renderForceGraph(
     selected?: SimpleSlug
     origin: SimpleSlug
     openAtom: (id: SimpleSlug) => void
+    openPage: (id: SimpleSlug) => void
   },
 ) {
   let slug = articleOptions?.origin ?? simplifySlug(fullSlug)
@@ -161,7 +162,11 @@ export function renderForceGraph(
   openAtom.type = "button"
   openAtom.className = "graph-article-open"
   const actionText = document.createElement("span")
-  actionText.textContent = fullSlug.startsWith("th/") ? "เปิด" : openText
+  actionText.textContent = fullSlug.startsWith("th/")
+    ? "เลือก"
+    : fullSlug.startsWith("en/")
+      ? "Select"
+      : "Выбрать"
   openAtom.append(actionText)
   const actionIcon = document.createElementNS("http://www.w3.org/2000/svg", "svg")
   actionIcon.setAttribute("viewBox", "0 0 24 24")
@@ -189,13 +194,20 @@ export function renderForceGraph(
   openAtom.setAttribute(
     "aria-label",
     fullSlug.startsWith("th/")
-      ? "เปิดการเชื่อมโยงของอะตอมนี้"
+      ? "เลือกอะตอมนี้เพื่อดูการเชื่อมโยง"
       : fullSlug.startsWith("en/")
-        ? "Open this atom's connections"
-        : "Открыть связи этого атома",
+        ? "Select this atom to view its connections"
+        : "Выбрать этот атом для просмотра связей",
   )
   const openSelected = () => {
     if (selected !== null) articleOptions?.openAtom(selected)
+  }
+  const openPage = (event: MouseEvent) => {
+    if (event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey)
+      return
+    event.preventDefault()
+    event.stopPropagation()
+    if (selected !== null) articleOptions?.openPage(selected)
   }
   if (expanded) {
     const header = document.createElement("div")
@@ -203,9 +215,20 @@ export function renderForceGraph(
     header.append(name)
     const footer = document.createElement("div")
     footer.className = "graph-article-actions"
-    footer.append(openAtom)
+    open.classList.add("graph-article-page")
+    open.dataset.routerIgnore = ""
+    open.setAttribute(
+      "aria-label",
+      fullSlug.startsWith("th/")
+        ? "เปิดหน้าอะตอม"
+        : fullSlug.startsWith("en/")
+          ? "Open atom page"
+          : "Открыть страницу атома",
+    )
+    footer.append(openAtom, open)
     card.append(header, articleBody, footer)
     openAtom.addEventListener("click", openSelected)
+    open.addEventListener("click", openPage)
   } else card.append(name, open)
   graph.append(card)
   const ordered = [...nodes].sort((a, b) => b.radius - a.radius)
@@ -237,6 +260,7 @@ export function renderForceGraph(
     previewed = null
     selected = n?.id ?? null
     openAtom.disabled = selected === null || (pageContext && selected === slug)
+    openAtom.hidden = pageContext && selected === slug
     const attempt = ++articleGeneration
     card.hidden = !n || (!expanded && pageContext && n.id === slug)
     if (n) {
@@ -290,6 +314,7 @@ export function renderForceGraph(
     const link = (event.target as Element)?.closest<HTMLAnchorElement>("a[href]")
     if (
       !link ||
+      link === open ||
       !card.contains(link) ||
       event.button !== 0 ||
       event.ctrlKey ||
@@ -724,6 +749,7 @@ export function renderForceGraph(
     articleGeneration++
     card.removeEventListener("click", articleClick)
     openAtom.removeEventListener("click", openSelected)
+    open.removeEventListener("click", openPage)
     cancelAnimationFrame(frame)
     simulation.stop().on("tick", null)
     selection.on(".zoom", null).on(".drag", null)
@@ -755,6 +781,7 @@ export function renderForceGraph(
       slug = id
       canvas.dataset.origin = id
       openAtom.disabled = pageContext && selected === id
+      openAtom.hidden = pageContext && selected === id
       focusCache.clear()
       requestDraw()
     },

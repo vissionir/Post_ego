@@ -326,21 +326,26 @@
     }
   }
   .graph-article-actions {
+    display: flex;
     flex-shrink: 0;
     margin: 0 -1rem -0.8rem;
     border-top: 1px solid var(--lightgray);
   }
   .graph-article-open {
+    &[hidden] {
+      display: none;
+    }
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
-    width: 100%;
+    flex: 1;
+    min-width: 0;
     min-height: 44px;
     padding: 0.5rem 1rem;
     border: none;
-    border-radius: 0 0 7px 7px;
-    background: transparent;
+    border-radius: 0 0 0 7px;
+    background: var(--highlight);
     color: var(--secondary);
     font: inherit;
     font-weight: 600;
@@ -355,6 +360,30 @@
     &:disabled {
       color: var(--gray);
       cursor: default;
+    }
+    &:focus-visible {
+      outline: 2px solid var(--secondary);
+      outline-offset: -3px;
+    }
+  }
+  a.graph-article-page {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    justify-content: center;
+    min-width: 0;
+    min-height: 44px;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0.5rem 1rem;
+    border-radius: 0 0 7px 0;
+    color: var(--secondary);
+    background: transparent;
+    font: inherit;
+    font-weight: 400;
+    text-decoration: none;
+    &:hover {
+      background: var(--highlight);
     }
     &:focus-visible {
       outline: 2px solid var(--secondary);
