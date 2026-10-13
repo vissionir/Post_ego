@@ -3,6 +3,15 @@
   "sourceCommit": "6a2936f68d132ba59989cc59939f5f898f4fcbbe",
   "atoms": [
     {
+      "title": "Внутренний контролёр",
+      "paths": [
+        "content/Атомы/Внутренний контролёр.md",
+        "content/en/Атомы/Inner Controller.md",
+        "content/th/Atoms/Inner Controller.md"
+      ],
+      "published": "2026-10-13T11:31:28+07:00"
+    },
+    {
       "title": "Внутренний мир",
       "paths": [
         "content/Атомы/Внутренний мир.md",
