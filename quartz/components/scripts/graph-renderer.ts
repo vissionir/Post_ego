@@ -47,7 +47,6 @@ export function renderForceGraph(
     selected?: SimpleSlug
     origin: SimpleSlug
     openAtom: (id: SimpleSlug) => void
-    openPage: (id: SimpleSlug) => void
   },
 ) {
   let slug = articleOptions?.origin ?? simplifySlug(fullSlug)
@@ -202,13 +201,6 @@ export function renderForceGraph(
   const openSelected = () => {
     if (selected !== null) articleOptions?.openAtom(selected)
   }
-  const openPage = (event: MouseEvent) => {
-    if (event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey)
-      return
-    event.preventDefault()
-    event.stopPropagation()
-    if (selected !== null) articleOptions?.openPage(selected)
-  }
   if (expanded) {
     const header = document.createElement("div")
     header.className = "graph-article-header"
@@ -216,20 +208,29 @@ export function renderForceGraph(
     const footer = document.createElement("div")
     footer.className = "graph-article-actions"
     open.classList.add("graph-article-page")
-    open.append(actionIcon.cloneNode(true))
+    const pageIcon = actionIcon.cloneNode(false) as SVGElement
+    const pageIconPath = document.createElementNS("http://www.w3.org/2000/svg", "path")
+    pageIconPath.setAttribute(
+      "d",
+      "M14 3h7v7M21 3 10 14M10 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-5",
+    )
+    pageIcon.append(pageIconPath)
+    open.append(pageIcon)
+    open.target = "_blank"
+    open.rel = "noopener noreferrer"
     open.dataset.routerIgnore = ""
     open.setAttribute(
       "aria-label",
       fullSlug.startsWith("th/")
-        ? "เปิดหน้าอะตอม"
+        ? "เปิดหน้าอะตอมในแท็บใหม่"
         : fullSlug.startsWith("en/")
-          ? "Open atom page"
-          : "Открыть страницу атома",
+          ? "Open atom page in a new tab"
+          : "Открыть страницу атома в новой вкладке",
     )
+    open.title = open.getAttribute("aria-label")!
     footer.append(openAtom, open)
     card.append(header, articleBody, footer)
     openAtom.addEventListener("click", openSelected)
-    open.addEventListener("click", openPage)
   } else card.append(name, open)
   graph.append(card)
   const ordered = [...nodes].sort((a, b) => b.radius - a.radius)
@@ -750,7 +751,6 @@ export function renderForceGraph(
     articleGeneration++
     card.removeEventListener("click", articleClick)
     openAtom.removeEventListener("click", openSelected)
-    open.removeEventListener("click", openPage)
     cancelAnimationFrame(frame)
     simulation.stop().on("tick", null)
     selection.on(".zoom", null).on(".drag", null)

@@ -1,4 +1,4 @@
-import { FullSlug, SimpleSlug, simplifySlug, resolveRelative } from "../../util/path"
+import { FullSlug, SimpleSlug, simplifySlug } from "../../util/path"
 import type { D3Config } from "../Graph"
 import { graphData } from "../../util/graph"
 import { renderForceGraph } from "./graph-renderer"
@@ -12,7 +12,6 @@ async function renderGraph(
     origin: SimpleSlug
     selected?: SimpleSlug
     openAtom: (id: SimpleSlug) => void
-    openPage: (id: SimpleSlug) => void
   },
 ) {
   const config = JSON.parse(graph.dataset.cfg!) as D3Config
@@ -131,10 +130,6 @@ document.addEventListener("nav", async (e: CustomEventMap["nav"]) => {
       const cleanup = await renderGraph(graph, slug, {
         origin,
         selected,
-        openPage: (id) => {
-          hide(false)
-          window.spaNavigate(new URL(resolveRelative(slug, id), window.location.href))
-        },
         openAtom: (id) => {
           if (!opened || disposed || (origin === id && showPageContext)) return
           origin = id
