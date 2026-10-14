@@ -20,6 +20,21 @@ type FolderState = {
 }
 
 let currentExplorerState: Array<FolderState>
+
+function alignActiveExplorer(explorer: Element) {
+  const list = explorer.querySelector<HTMLElement>(".explorer-ul")
+  const active = list?.querySelector(".active")
+  if (!list || !active || list.clientHeight === 0) return
+
+  list.style.removeProperty("padding-bottom")
+  const row = active.closest("li") ?? active
+  const target = list.scrollTop + row.getBoundingClientRect().top - list.getBoundingClientRect().top
+  // Leave enough trailing space to put even the last atom at the top.
+  const trailingSpace = Math.max(0, target - (list.scrollHeight - list.clientHeight))
+  if (trailingSpace > 0) list.style.paddingBottom = `${Math.ceil(trailingSpace)}px`
+  list.scrollTop = target
+}
+
 function toggleExplorer(this: HTMLElement) {
   const nearestExplorer = this.closest(".explorer") as HTMLElement
   if (!nearestExplorer) return
@@ -30,6 +45,8 @@ function toggleExplorer(this: HTMLElement) {
   )
 
   if (!explorerCollapsed) {
+    // The mobile drawer has no measurable layout until it is opened.
+    alignActiveExplorer(nearestExplorer)
     // Stop <html> from being scrollable when mobile explorer is open
     document.documentElement.classList.add("mobile-no-scroll")
   } else {
@@ -234,16 +251,7 @@ async function setupExplorer(currentSlug: FullSlug) {
     // where there is no active item but an old deep scroll position may exist.
     if (activeElement) {
       // Scroll only the list, keeping the page and its sticky header in place.
-      const row = activeElement.closest("li") ?? activeElement
-      const target =
-        explorerUl.scrollTop + row.getBoundingClientRect().top - explorerUl.getBoundingClientRect().top
-      // Leave enough trailing space to put even the last atom at the top.
-      const trailingSpace = Math.max(
-        0,
-        target - (explorerUl.scrollHeight - explorerUl.clientHeight),
-      )
-      if (trailingSpace > 0) explorerUl.style.paddingBottom = `${Math.ceil(trailingSpace)}px`
-      explorerUl.scrollTop = target
+      alignActiveExplorer(explorer)
     } else {
       const scrollTop = sessionStorage.getItem("explorerScrollTop")
       const shouldResetScroll =
