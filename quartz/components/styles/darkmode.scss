@@ -4,17 +4,18 @@
   position: relative;
   background: none;
   border: none;
-  width: 20px;
+  width: 24px;
   height: 32px;
   margin: 0;
   text-align: inherit;
   flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
   & svg {
-    position: absolute;
-    width: 20px;
-    height: 20px;
-    top: calc(50% - 10px);
+    width: 24px;
+    height: 24px;
     fill: var(--darkgray);
     transition: opacity 0.1s ease;
   }
@@ -33,13 +34,13 @@
     display: none;
   }
   & > .nightIcon {
-    display: inline;
+    display: block;
   }
 }
 
 :root .darkmode {
   & > .dayIcon {
-    display: inline;
+    display: block;
   }
   & > .nightIcon {
     display: none;
