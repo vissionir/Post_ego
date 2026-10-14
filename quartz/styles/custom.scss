@@ -39,6 +39,11 @@
     margin-top: calc(1.89375rem - 16px);
   }
 
+  #quartz-body:has(> .center > .page-header > .popover-hint > .breadcrumb-container)
+    > .sidebar.left > .explorer {
+    margin-top: 0.1rem;
+  }
+
   .page > #quartz-body {
     .sidebar.left {
       padding-top: 2.5rem;
@@ -61,6 +66,21 @@
 
     .sidebar.right {
       padding-top: 2.5rem;
+
+      > .backlinks {
+        flex: 1;
+
+        > .backlinks-scroll-area {
+          flex: 1;
+          margin-bottom: 0;
+          overflow: hidden;
+
+          > .backlinks-list {
+            height: 100%;
+            max-height: none;
+          }
+        }
+      }
     }
   }
 }
