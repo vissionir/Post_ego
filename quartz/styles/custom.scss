@@ -337,3 +337,10 @@ article :where(p, ul, ol, blockquote) + :where(h2, h3) {
 .tight-list-intro + ul {
   margin-top: 0.25rem;
 }
+// The project name is one unit in every language, including inside links and bold text.
+.brand-name {
+  white-space: nowrap;
+  word-break: normal;
+  overflow-wrap: normal;
+  hyphens: none;
+}

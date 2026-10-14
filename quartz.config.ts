@@ -74,6 +74,7 @@ const config: QuartzConfig = {
       Plugin.Description(),
       Plugin.Latex({ renderEngine: "katex" }),
       Plugin.CanonicalRoutes(),
+      Plugin.BrandNames(),
     ],
     filters: [Plugin.RemoveDrafts()],
     emitters: [
