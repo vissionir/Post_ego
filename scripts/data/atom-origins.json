@@ -6343,16 +6343,23 @@
       "renames": []
     },
     {
-      "title": "Прекращение цепляний",
+      "title": "Отпускание миссии",
       "paths": [
-        "content/Атомы/Прекращение цепляний.md",
-        "content/en/Атомы/Cessation of Clinging.md",
-        "content/th/Atoms/Cessation of Clinging.md"
+        "content/Атомы/Отпускание миссии.md",
+        "content/en/Атомы/Letting Go of the Mission.md",
+        "content/th/Atoms/Letting Go of the Mission.md"
       ],
       "created": "2026-08-17T17:22:07+07:00",
       "originCommit": "367d953ceb037afe0047885e2e598f72632531b1",
       "originalPath": "content/Атомы/Прекращение цепляний.md",
-      "renames": []
+      "renames": [
+        {
+          "date": "2026-10-14",
+          "from": "Прекращение цепляний",
+          "to": "Отпускание миссии",
+          "reason": "Author-approved clarification of mission-specific letting go, removing the claim that it leads directly to liberation; original date preserved."
+        }
+      ]
     },
     {
       "title": "Преодоление страха смерти",
