@@ -70,7 +70,7 @@ LanguageSwitcher.css = `
 .lang-switch {
   position: relative;
   flex-shrink: 0;
-  font-size: 0.9rem;
+  font-size: 1.05rem;
   line-height: 1.25;
   user-select: none;
 }
