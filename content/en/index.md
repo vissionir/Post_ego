@@ -3,7 +3,7 @@ title: Post-Ego
 socialDescription: A knowledge corpus about the “I” and its real structure.
 ---
 
-This site is the public corpus of the Post-Ego project. It gathers materials on the experience of “I,” the state of [[Presence|presence]], the work of the [[Mind|mind]], and [[The unconscious|unconscious]] mechanisms, all organized as a semantic network.
+This site is ***the public knowledge corpus of the Post-Ego project***. It gathers materials on the experience of “I,” the state of [[Presence|presence]], the work of the [[Mind|mind]], and [[The unconscious|unconscious]] mechanisms, all organized as a semantic network.
 
 ---
 
