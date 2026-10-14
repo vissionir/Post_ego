@@ -206,7 +206,7 @@ async function setupExplorer(currentSlug: FullSlug) {
       }
     })
 
-    const explorerUl = explorer.querySelector(".explorer-ul")
+    const explorerUl = explorer.querySelector<HTMLElement>(".explorer-ul")
     if (!explorerUl) continue
 
     const rootChildren =
@@ -233,7 +233,17 @@ async function setupExplorer(currentSlug: FullSlug) {
     // This avoids an "empty explorer" effect on pages like the homepage,
     // where there is no active item but an old deep scroll position may exist.
     if (activeElement) {
-      activeElement.scrollIntoView({ block: "nearest" })
+      // Scroll only the list, keeping the page and its sticky header in place.
+      const row = activeElement.closest("li") ?? activeElement
+      const target =
+        explorerUl.scrollTop + row.getBoundingClientRect().top - explorerUl.getBoundingClientRect().top
+      // Leave enough trailing space to put even the last atom at the top.
+      const trailingSpace = Math.max(
+        0,
+        target - (explorerUl.scrollHeight - explorerUl.clientHeight),
+      )
+      if (trailingSpace > 0) explorerUl.style.paddingBottom = `${Math.ceil(trailingSpace)}px`
+      explorerUl.scrollTop = target
     } else {
       const scrollTop = sessionStorage.getItem("explorerScrollTop")
       const shouldResetScroll =
