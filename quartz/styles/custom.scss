@@ -87,6 +87,19 @@ hr.text-measured-divider {
 }
 
 @media all and ($desktop) {
+  .page > #quartz-body:has(> .sidebar.right:empty) {
+    grid-template-columns: #{$sidePanelWidth} minmax(0, 1fr);
+    grid-template-areas:
+      "grid-sidebar-left grid-header"
+      "grid-sidebar-left grid-center"
+      "grid-sidebar-left grid-footer";
+    padding-right: 2rem;
+
+    > .sidebar.right {
+      display: none;
+    }
+  }
+
   .page > #quartz-body {
     // Empty grid tracks must not add scrolling below a viewport-height sidebar.
     row-gap: 0;
