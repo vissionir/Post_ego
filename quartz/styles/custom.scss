@@ -90,14 +90,19 @@ html[lang="th"] {
   align-items: center;
 }
 
-// The native scroll thumb is auto-hidden by iOS/macOS, even when overflow is explicit.
-.explorer-content {
-  position: relative;
+// Keep atom navigation scrollable without showing a scrollbar.
+.explorer-content,
+.explorer-content > .explorer-ul {
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 .persistent-scroll-list {
   scrollbar-width: none;
-  padding-right: 14px !important;
+  padding-right: 12px !important;
   box-sizing: border-box;
 
   &::-webkit-scrollbar {
@@ -139,10 +144,6 @@ html[lang="th"] {
     // The fixed-width drawer must start at the viewport, not the padded sidebar.
     left: -1rem;
     padding-inline: 1rem;
-  }
-
-  .explorer .persistent-scrollbar {
-    right: 1rem;
   }
 }
 

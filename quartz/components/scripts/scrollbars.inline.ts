@@ -1,9 +1,7 @@
 import { scrollThumbMetrics } from "../../util/scrollbar"
 
 document.addEventListener("nav", () => {
-  for (const list of document.querySelectorAll<HTMLElement>(
-    ".backlinks-list, .explorer-content > .explorer-ul",
-  )) {
+  for (const list of document.querySelectorAll<HTMLElement>(".backlinks-list")) {
     const parent = list.parentElement
     if (!parent) continue
     const bar = document.createElement("div")
