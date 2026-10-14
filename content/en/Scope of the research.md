@@ -6,7 +6,7 @@ The research lies at the intersection of phenomenology, philosophy of consciousn
 
 In that context, the central field of observation is direct experience — the process of experiencing itself. Post-Ego treats the state of [[Presence|presence]] as a special class of phenomena in which not only the quality of perception changes, but the very structure of the experience of “I.”
 
-In Buddhism, Daoism, Zen, and related traditions, this state has been described through different terms: awareness (sati, mindfulness), awakening, samadhi, [[Nonduality|nonduality]].
+In Buddhism, Daoism, Zen, and related traditions, this state has been described through different terms: awareness (sati, mindfulness), samadhi, [[Nonduality|nonduality]].
 
 In contemporary culture, these terms are used across contexts ranging from religious and philosophical to popular-psychological and [[Esotericism|esoteric]]. As a result, their original meanings are gradually eroded and increasingly interpreted as mystical.
 
