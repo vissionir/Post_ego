@@ -30,10 +30,20 @@ html[lang="th"] {
 @media all and (max-width: 480px) {
   .sidebar.left > .page-title {
     white-space: nowrap;
+    flex-shrink: 0;
+
+    > a {
+      white-space: nowrap;
+    }
+  }
+
+  .sidebar.left > .spacer {
+    min-width: 0.75rem;
   }
 
   .sidebar.left > .flex-component {
-    gap: 0.65rem !important;
+    flex-shrink: 0;
+    gap: 0.3rem !important;
   }
 
   .sidebar.left .search > .search-button {
@@ -51,12 +61,26 @@ html[lang="th"] {
   }
 }
 
-@media all and (max-width: 360px) {
-  .sidebar.left .search > .search-button {
-    min-width: 4.5rem;
-    font-size: 0.8rem;
+@media all and (max-width: 400px) {
+  .sidebar.left > .page-title {
+    font-size: 1.65rem;
   }
+}
 
+@media all and (max-width: 390px) {
+  .sidebar.left .search > .search-button {
+    width: 2rem;
+    min-width: 2rem;
+    padding: 0;
+    justify-content: center;
+
+    > span {
+      display: none;
+    }
+  }
+}
+
+@media all and (max-width: 360px) {
   .sidebar.left > .page-title {
     font-size: 1.35rem;
   }
