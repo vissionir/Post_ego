@@ -136,6 +136,18 @@ html[lang="th"] {
   background: var(--gray);
 }
 
+@media all and ($mobile) {
+  .explorer .explorer-content {
+    // The fixed-width drawer must start at the viewport, not the padded sidebar.
+    left: -1rem;
+    padding-inline: 1rem;
+  }
+
+  .explorer .persistent-scrollbar {
+    right: 1rem;
+  }
+}
+
 @media all and (max-width: 480px) {
   .sidebar.left > .page-title {
     white-space: nowrap;
