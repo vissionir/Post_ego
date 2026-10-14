@@ -1109,16 +1109,23 @@
       "renames": []
     },
     {
-      "title": "Внутренняя свобода",
+      "title": "Свобода",
       "paths": [
-        "content/Атомы/Внутренняя свобода.md",
-        "content/en/Атомы/Inner Freedom.md",
-        "content/th/Atoms/Inner Freedom.md"
+        "content/Атомы/Свобода.md",
+        "content/en/Атомы/Freedom.md",
+        "content/th/Atoms/Freedom.md"
       ],
       "created": "2026-04-15T23:52:49+07:00",
       "originCommit": "8be2de26731733954f036cd01ab0142563b84606",
       "originalPath": "content/Атомы/Внутренняя свобода.md",
-      "renames": []
+      "renames": [
+        {
+          "date": "2026-10-14",
+          "from": "Внутренняя свобода",
+          "to": "Свобода",
+          "reason": "Author-approved rename and revised definition, preserving the original publication date."
+        }
+      ]
     },
     {
       "title": "Внутренняя стая",
@@ -4908,16 +4915,23 @@
       "renames": []
     },
     {
-      "title": "Нецепляние",
+      "title": "Внутренняя свобода",
       "paths": [
-        "content/Атомы/Нецепляние.md",
-        "content/en/Атомы/Non-clinging.md",
-        "content/th/Atoms/Non-clinging.md"
+        "content/Атомы/Внутренняя свобода.md",
+        "content/en/Атомы/Inner Freedom.md",
+        "content/th/Atoms/Inner Freedom.md"
       ],
       "created": "2026-08-17T17:22:07+07:00",
       "originCommit": "367d953ceb037afe0047885e2e598f72632531b1",
       "originalPath": "content/Атомы/Нецепляние.md",
-      "renames": []
+      "renames": [
+        {
+          "date": "2026-10-14",
+          "from": "Нецепляние",
+          "to": "Внутренняя свобода",
+          "reason": "Author-approved rename and removal of the awakening clause, preserving the original publication date."
+        }
+      ]
     },
     {
       "title": "Неясность желания",
