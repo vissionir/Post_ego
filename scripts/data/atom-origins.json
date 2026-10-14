@@ -1109,11 +1109,11 @@
       "renames": []
     },
     {
-      "title": "Свобода",
+      "title": "Внутренняя свобода",
       "paths": [
-        "content/Атомы/Свобода.md",
-        "content/en/Атомы/Freedom.md",
-        "content/th/Atoms/Freedom.md"
+        "content/Атомы/Внутренняя свобода.md",
+        "content/en/Атомы/Inner Freedom.md",
+        "content/th/Atoms/Inner Freedom.md"
       ],
       "created": "2026-04-15T23:52:49+07:00",
       "originCommit": "8be2de26731733954f036cd01ab0142563b84606",
@@ -1124,6 +1124,12 @@
           "from": "Внутренняя свобода",
           "to": "Свобода",
           "reason": "Author-approved rename and revised definition, preserving the original publication date."
+        },
+        {
+          "date": "2026-10-14",
+          "from": "Свобода",
+          "to": "Внутренняя свобода",
+          "reason": "Author-approved restoration of the original name, definition and incoming branch, preserving its historical date."
         }
       ]
     },
@@ -4915,11 +4921,11 @@
       "renames": []
     },
     {
-      "title": "Внутренняя свобода",
+      "title": "Освобождение",
       "paths": [
-        "content/Атомы/Внутренняя свобода.md",
-        "content/en/Атомы/Inner Freedom.md",
-        "content/th/Atoms/Inner Freedom.md"
+        "content/Атомы/Освобождение.md",
+        "content/en/Атомы/Liberation.md",
+        "content/th/Atoms/Liberation.md"
       ],
       "created": "2026-08-17T17:22:07+07:00",
       "originCommit": "367d953ceb037afe0047885e2e598f72632531b1",
@@ -4930,6 +4936,12 @@
           "from": "Нецепляние",
           "to": "Внутренняя свобода",
           "reason": "Author-approved rename and removal of the awakening clause, preserving the original publication date."
+        },
+        {
+          "date": "2026-10-14",
+          "from": "Внутренняя свобода",
+          "to": "Освобождение",
+          "reason": "Author-approved name for the absence of clinging (vimutti), preserving the date and identity of the original Non-clinging atom."
         }
       ]
     },

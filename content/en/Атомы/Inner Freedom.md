@@ -1,8 +1,8 @@
 ---
 title: Inner Freedom
 aliases:
-  - en/Атомы/Non-clinging
-created: 2026-08-17T17:22:07+07:00
+  - en/Атомы/Freedom
+created: 2026-04-15T23:52:49+07:00
 ---
 
-Inner freedom is a condition of the absence of [[Clinging|clinging]].
+Inner freedom is a condition of the absence of [[Inner Coercion|inner compulsions]].

@@ -77,8 +77,10 @@ for (const [oldName, current] of [
   ["Итеративное-разотождествление", "iterative-deidentification"],
   ["Собственничество", "possession"],
   ["Possessiveness", "possession"],
-  ["Нецепляние", "inner-freedom"],
-  ["Non-clinging", "inner-freedom"],
+  ["Нецепляние", "liberation"],
+  ["Non-clinging", "liberation"],
+  ["Свобода", "inner-freedom"],
+  ["Freedom", "inner-freedom"],
 ]) {
   for (const lang of languages) {
     const prefix = lang === "ru" ? "Атомы/" : lang === "en" ? "en/Атомы/" : "th/Atoms/"
@@ -88,7 +90,8 @@ for (const [oldName, current] of [
 
 for (const lang of languages) {
   register(`${lang}/atoms/possessiveness`, `${lang}/atoms/possession` as FullSlug)
-  register(`${lang}/atoms/non-clinging`, `${lang}/atoms/inner-freedom` as FullSlug)
+  register(`${lang}/atoms/non-clinging`, `${lang}/atoms/liberation` as FullSlug)
+  register(`${lang}/atoms/freedom`, `${lang}/atoms/inner-freedom` as FullSlug)
 }
 
 export function canonicalRoute(source: string): FullSlug | undefined {
