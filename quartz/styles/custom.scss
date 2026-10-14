@@ -26,6 +26,12 @@
     min-height: 2.1875rem;
   }
 
+  body:is([data-slug="ru/index"], [data-slug="en/index"], [data-slug="th/index"])
+    .sidebar.left > .flex-component {
+    // Match the first paragraph's line center, not the paragraph's top edge.
+    margin-top: calc(0.6rem - 16px);
+  }
+
   body:has(.breadcrumb-container) .sidebar.left > .flex-component {
     margin-top: 1.1875rem;
   }
