@@ -15,7 +15,7 @@ html[lang="th"] {
   }
 
   .sidebar.left .search > .search-button {
-    width: 2.25rem;
+    width: clamp(2.75rem, 13.25vw, 3.25rem);
     padding: 0;
 
     > span {
@@ -29,6 +29,21 @@ html[lang="th"] {
 
   .sidebar.left .lang-switch {
     gap: 0.25rem;
+  }
+}
+
+@media all and (max-width: 360px) {
+  .sidebar.left > .page-title {
+    font-size: 1.35rem;
+  }
+
+  .sidebar.left > .flex-component {
+    gap: 0.3rem !important;
+  }
+
+  .sidebar.left .lang-switch {
+    gap: 0.2rem;
+    font-size: 0.8rem;
   }
 }
 

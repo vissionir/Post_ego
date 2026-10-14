@@ -74,8 +74,6 @@ export default (() => {
       if (lang) localStorage.setItem(key, lang)
     })
 
-    const stored = localStorage.getItem(key)
-
     // Normalize accidental trailing slash on atom deep links (e.g. /Атомы/Миссия/)
     if (pathname.startsWith(basePath) && pathname.endsWith("/")) {
       const rel = pathname.slice(basePath.length)
@@ -88,27 +86,6 @@ export default (() => {
       }
     }
 
-    const isRoot = pathname === basePath || pathname === basePath + "index.html"
-
-    // Auto-redirect ONLY on the root entrypoint
-    if (isRoot) {
-      const browserLanguage = (navigator.language || "").toLowerCase()
-      const detected = browserLanguage.startsWith("ru")
-        ? "ru"
-        : browserLanguage.startsWith("th")
-          ? "th"
-          : "en"
-      const desired = stored === "ru" || stored === "en" || stored === "th" ? stored : detected
-      if (!stored) localStorage.setItem(key, desired)
-
-      const enRoot = basePath.endsWith("/") ? basePath + "en/" : basePath + "/en/"
-      const thRoot = basePath.endsWith("/") ? basePath + "th/" : basePath + "/th/"
-      if (desired === "en" && pathname !== enRoot) {
-        window.location.replace(enRoot)
-      } else if (desired === "th" && pathname !== thRoot) {
-        window.location.replace(thRoot)
-      }
-    }
   } catch (_) {}
 })()`
 
@@ -145,7 +122,7 @@ export default (() => {
           </>
         )}
 
-        {/* Language routing (RU at /, EN at /en/, TH at /th/) */}
+        {/* Explicit language URLs keep their language; the root entry detects preferences. */}
         <script
           dangerouslySetInnerHTML={{
             __html: languageRoutingScript,

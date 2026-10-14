@@ -6,6 +6,7 @@ import { VFile } from "vfile"
 import path from "path"
 import { canonicalRoute, routeAliases } from "../../util/canonicalRoutes"
 import { escapeHTML } from "../../util/escape"
+import { languageEntryScript } from "../../util/siteLanguage"
 
 function getLegacyPathAlias(file: VFile): FullSlug | null {
   const relativePath = file.data.relativePath
@@ -128,6 +129,10 @@ async function* processFile(ctx: BuildCtx, file: VFile) {
       continue
     const redirUrl = `https://${ctx.cfg.configuration.baseUrl}/${ogSlug}`
     const localUrl = `/${ogSlug}`
+    const isLanguageEntry = aliasTargetSlug === "index" && fullSlug === "ru/index"
+    const redirectMarkup = isLanguageEntry
+      ? `<script>${languageEntryScript()}</script><noscript><meta http-equiv="refresh" content="0; url=${escapeHTML(localUrl)}"></noscript>`
+      : `<meta http-equiv="refresh" content="0; url=${escapeHTML(localUrl)}"><script>location.replace(${JSON.stringify(localUrl)} + location.search + location.hash)</script>`
     yield write({
       ctx,
       content: `
@@ -137,8 +142,7 @@ async function* processFile(ctx: BuildCtx, file: VFile) {
         <title>${escapeHTML(file.data.frontmatter?.title ?? ogSlug)}</title>
         <link rel="canonical" href="${escapeHTML(redirUrl)}">
         <meta charset="utf-8">
-        <meta http-equiv="refresh" content="0; url=${escapeHTML(localUrl)}">
-        <script>location.replace(${JSON.stringify(localUrl)} + location.search + location.hash)</script>
+        ${redirectMarkup}
         </head>
         <body><a href="${escapeHTML(localUrl)}">${escapeHTML(file.data.frontmatter?.title ?? ogSlug)}</a></body>
         </html>

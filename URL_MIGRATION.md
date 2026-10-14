@@ -19,7 +19,10 @@ canonical tags, hreflang, sitemap and AI exports use these public IDs.
 Legacy URLs remain as immediate HTML redirects with canonical targets, a
 clickable fallback and query/hash-preserving JavaScript. GitHub Pages cannot
 configure HTTP 301 rules; these are HTML redirects, not claimed HTTP 301s.
-Keep them indefinitely for shared links. The root URL redirects to `/ru/`.
+Keep them indefinitely for shared links. The root URL follows a saved manual
+language choice or the browser's preferred supported language, falling back to
+English. Explicit `/ru/`, `/en/` and `/th/` links keep their language. With
+JavaScript disabled, the root falls back to `/ru/`.
 
 `node --import tsx scripts/check-public-routes.ts` validates the built site.
 The deploy workflow runs it before uploading the artifact. On case-insensitive
