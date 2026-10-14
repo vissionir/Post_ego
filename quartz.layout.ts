@@ -132,7 +132,6 @@ export const defaultContentPageLayout: PageLayout = {
         },
         { Component: Component.LanguageSwitcher() },
         { Component: Component.Darkmode() },
-        { Component: Component.ReaderMode() },
       ],
     }),
     Component.Explorer({
