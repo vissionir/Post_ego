@@ -7,6 +7,23 @@ html[lang="th"] {
 
 .sidebar.left .lang-switch {
   display: flex;
+  line-height: 1.25;
+
+  a.lang-link {
+    position: relative;
+    padding: 0;
+    border-bottom: 0;
+
+    // Keep the active underline from shifting the text baseline.
+    &.active::after {
+      content: "";
+      position: absolute;
+      inset-inline: 0;
+      bottom: -0.2rem;
+      height: 1px;
+      background-color: currentColor;
+    }
+  }
 }
 
 .sidebar.left .search > .search-button {
@@ -14,6 +31,7 @@ html[lang="th"] {
   padding: 0 0.5rem;
   gap: 0.35rem;
   font-size: 0.9rem;
+  line-height: 1.25;
 
   > span {
     color: var(--darkgray);
