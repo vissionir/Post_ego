@@ -9,7 +9,7 @@ type AiNode = {
   id: string
   title: string
   type: "atom" | "page"
-  language: "ru" | "en" | "th"
+  language: "ru" | "en" | "th" | "zh"
   path: string
   url: string
   summary: string
@@ -800,22 +800,26 @@ function buildNode(filePath: string): AiNode {
   const title = typeof parsed.data.title === "string" ? parsed.data.title : fallbackTitle
   const body = cleanMarkdown(parsed.content)
   const truncated = body.length > maxBodyLength
-  const language = relativePath.startsWith(`th${path.sep}`)
-    ? "th"
-    : relativePath.startsWith(`en${path.sep}`)
-      ? "en"
-      : "ru"
+  const language = relativePath.startsWith(`zh${path.sep}`)
+    ? "zh"
+    : relativePath.startsWith(`th${path.sep}`)
+      ? "th"
+      : relativePath.startsWith(`en${path.sep}`)
+        ? "en"
+        : "ru"
   const normalizedPath = relativePath.split(path.sep).join("/")
   const isAtomSectionPage =
     normalizedPath === "Атомы/index.md" ||
     normalizedPath === "en/Атомы/index.md" ||
     normalizedPath === "en/Атомы/Atoms.md" ||
-    normalizedPath === "th/Atoms/index.md"
+    normalizedPath === "th/Atoms/index.md" ||
+    normalizedPath === "zh/Atoms/index.md"
   const isAtom =
     !isAtomSectionPage &&
     (relativePath.startsWith(`Атомы${path.sep}`) ||
       relativePath.startsWith(`en${path.sep}Атомы${path.sep}`) ||
-      relativePath.startsWith(`th${path.sep}Atoms${path.sep}`))
+      relativePath.startsWith(`th${path.sep}Atoms${path.sep}`) ||
+      relativePath.startsWith(`zh${path.sep}Atoms${path.sep}`))
 
   return {
     id: nodeId(relativePath),
@@ -1032,6 +1036,7 @@ components:
             - ru
             - en
             - th
+            - zh
         path:
           type: string
         url:
@@ -1071,6 +1076,7 @@ components:
             - ru
             - en
             - th
+            - zh
         path:
           type: string
         url:

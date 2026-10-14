@@ -11,7 +11,7 @@ const snapshot = JSON.parse(
 const publications = JSON.parse(
   fs.readFileSync(path.join(root, "scripts/data/atom-publications.json"), "utf8"),
 )
-const directories = ["content/Атомы", "content/en/Атомы", "content/th/Atoms"]
+const directories = ["content/Атомы", "content/en/Атомы", "content/th/Atoms", "content/zh/Atoms"]
 const restore = process.argv.includes("--restore")
 assert(restore || process.argv.includes("--check"), "Use --check or --restore")
 
@@ -29,7 +29,7 @@ for (const atom of snapshot.atoms) {
   const existing = atom.paths.filter((file) => fs.existsSync(path.join(root, file)))
   // This historical register must never resurrect a deleted atom.
   if (!existing.length) continue
-  assert.equal(existing.length, 3, `Incomplete mirror group: ${atom.title}`)
+  assert.equal(existing.length, directories.length, `Incomplete mirror group: ${atom.title}`)
   for (const file of existing) {
     const absolute = path.join(root, file)
     const before = fs.readFileSync(absolute, "utf8")
@@ -69,7 +69,11 @@ for (const atom of publications.atoms) {
   assert(validDate(atom.published), `Invalid first-publication date: ${atom.title}`)
   const existing = atom.paths.filter((file) => fs.existsSync(path.join(root, file)))
   if (!existing.length) continue
-  assert.equal(existing.length, 3, `Incomplete publication mirror group: ${atom.title}`)
+  assert.equal(
+    existing.length,
+    directories.length,
+    `Incomplete publication mirror group: ${atom.title}`,
+  )
   for (const file of existing) {
     const data = matter(fs.readFileSync(path.join(root, file), "utf8")).data
     assert.equal(

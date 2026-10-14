@@ -11,6 +11,7 @@ import { GlobalConfiguration } from "../cfg"
 import { i18n } from "../i18n"
 import { styleText } from "util"
 import { languageForSlug, localeForSlug } from "../util/lang"
+import { siteLanguages } from "../util/siteLanguages"
 
 interface RenderComponents {
   head: QuartzComponent
@@ -265,7 +266,8 @@ export function renderPage(
   )
 
   const locale = localeForSlug(slug)
-  const lang = componentData.fileData.frontmatter?.lang ?? languageForSlug(slug)
+  const lang =
+    componentData.fileData.frontmatter?.lang ?? siteLanguages[languageForSlug(slug)].hreflang
   const direction = i18n(locale).direction ?? "ltr"
   const doc = (
     <html lang={lang} dir={direction}>

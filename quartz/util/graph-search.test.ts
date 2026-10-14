@@ -50,3 +50,24 @@ test("Thai search preserves vowels and tone marks", () => {
   assert.equal(searchGraphAtoms(index, "อิสรภาพ")[0].id, "th/Atoms/Freedom")
   assert.deepEqual(searchGraphAtoms(index, "อสรภาพ"), [])
 })
+
+test("Chinese graph search filters source and canonical atoms and ranks Chinese substrings", () => {
+  const chinese = [
+    { id: "zh/Atoms/Inner-freedom", text: "内在自由" },
+    { id: "zh/atoms/freedom", text: "自由" },
+    { id: "zh/atoms/social-freedom", text: "社会自由" },
+    { id: "zh/atoms/", text: "原子" },
+    { id: "zh/atoms/index", text: "原子" },
+    { id: "zh/Atoms/index", text: "原子" },
+    { id: "zh/project-mission", text: "自由研究" },
+  ] as GraphNode[]
+  const index = graphSearchIndex([...nodes, ...chinese], "zh")
+  assert.equal(index.length, 3)
+  const results = searchGraphAtoms(index, "自由")
+  assert.equal(results[0].text, "自由")
+  assert.equal(results.length, 3)
+  assert.equal(searchGraphAtoms(index, "内在")[0].id, "zh/Atoms/Inner-freedom")
+  assert.equal(searchGraphAtoms(index, "社会 自由")[0].text, "社会自由")
+  assert.deepEqual(searchGraphAtoms(index, "Freedom"), [])
+  assert.equal(graphSearchIndex([...nodes, ...chinese], "ru").length, 4)
+})

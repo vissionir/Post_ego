@@ -1,12 +1,13 @@
 import type { GraphNode } from "./graph"
+import { siteLanguages, type SiteLanguage } from "./siteLanguages"
 
 function normalize(text: string) {
   return text.normalize("NFC").toLowerCase().replace(/ё/g, "е").replace(/\s+/g, " ").trim()
 }
 
-export function graphSearchIndex(nodes: GraphNode[], language: "ru" | "en" | "th") {
-  const prefix = language === "ru" ? "Атомы/" : language === "en" ? "en/Атомы/" : "th/Atoms/"
-  const collator = new Intl.Collator(language)
+export function graphSearchIndex(nodes: GraphNode[], language: SiteLanguage) {
+  const prefix = siteLanguages[language].atomPrefix
+  const collator = new Intl.Collator(siteLanguages[language].locale)
   return nodes
     .filter((node) =>
       [prefix, `${language}/atoms/`].some(

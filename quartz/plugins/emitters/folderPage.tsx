@@ -20,6 +20,7 @@ import { write } from "./helpers"
 import { i18n, TRANSLATIONS } from "../../i18n"
 import { BuildCtx } from "../../util/ctx"
 import { StaticResources } from "../../util/resources"
+import { isSiteLanguage } from "../../util/siteLanguages"
 interface FolderPageOptions extends FullPageLayout {
   sort?: (f1: QuartzPluginData, f2: QuartzPluginData) => number
 }
@@ -137,11 +138,7 @@ export const FolderPage: QuartzEmitterPlugin<Partial<FolderPageOptions>> = (user
           return data.slug
             ? _getFolders(data.slug).filter(
                 (folderName) =>
-                  folderName !== "." &&
-                  folderName !== "tags" &&
-                  folderName !== "ru" &&
-                  folderName !== "en" &&
-                  folderName !== "th",
+                  folderName !== "." && folderName !== "tags" && !isSiteLanguage(folderName),
               )
             : []
         }),
@@ -161,11 +158,7 @@ export const FolderPage: QuartzEmitterPlugin<Partial<FolderPageOptions>> = (user
         const slug = changeEvent.file.data.slug!
         const folders = _getFolders(slug).filter(
           (folderName) =>
-            folderName !== "." &&
-            folderName !== "tags" &&
-            folderName !== "ru" &&
-            folderName !== "en" &&
-            folderName !== "th",
+            folderName !== "." && folderName !== "tags" && !isSiteLanguage(folderName),
         )
         folders.forEach((folder) => affectedFolders.add(folder))
       }

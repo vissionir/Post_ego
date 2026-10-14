@@ -15,6 +15,10 @@ describe("formatDate", () => {
     assert.equal(formatDate(date, "en-US"), "Jun 01, 2026")
   })
 
+  test("formats Chinese calendar dates", () => {
+    assert.equal(formatDate(date, "zh-CN"), "2026年6月01日")
+  })
+
   test("late-night origin dates do not move to yesterday on the UTC build server", () => {
     const midnight = new Date("2026-02-07T00:10:00+07:00")
     assert.equal(formatDate(midnight, "ru-RU"), "7 февр 2026")
@@ -31,7 +35,13 @@ describe("atom chronology", () => {
     ({ slug, dates: { created, modified, published } }) as QuartzPluginData
 
   test("existing atom mirrors keep their original dates despite later edits or bulk commits", () => {
-    for (const slug of ["Атомы/Конгруэнтность", "en/Атомы/Congruence", "th/Atoms/Congruence"]) {
+    for (const slug of [
+      "Атомы/Конгруэнтность",
+      "en/Атомы/Congruence",
+      "th/Atoms/Congruence",
+      "zh/Atoms/Congruence",
+      "zh/atoms/congruence",
+    ]) {
       assert.equal(getDate(cfg, page(slug)), created)
       const edited = page(slug)
       edited.dates!.modified = new Date("2027-01-01")
@@ -46,6 +56,7 @@ describe("atom chronology", () => {
       "Атомы/Постижение-Дао",
       "en/Атомы/Realization-of-the-Dao",
       "th/Atoms/Realization-of-the-Dao",
+      "zh/Atoms/Realization-of-the-Dao",
     ]) {
       const atom = {
         ...page(slug),
@@ -59,7 +70,14 @@ describe("atom chronology", () => {
   })
 
   test("other pages and folder indexes retain their configured date", () => {
-    for (const slug of ["Миссия-проекта", "Атомы/index", "en/Атомы/index", "th/Atoms/index"]) {
+    for (const slug of [
+      "Миссия-проекта",
+      "Атомы/index",
+      "en/Атомы/index",
+      "th/Atoms/index",
+      "zh/Atoms/index",
+      "zh/atoms/index",
+    ]) {
       assert.equal(getDate(cfg, page(slug)), modified)
     }
   })

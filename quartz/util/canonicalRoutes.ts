@@ -1,7 +1,8 @@
 import atoms from "./atom-routes.json"
 import { FilePath, FullSlug, slugifyFilePath, simplifySlug } from "./path"
+import { languages, siteLanguages, type SiteLanguage } from "./siteLanguages"
 
-export const languages = ["ru", "en", "th"] as const
+export { languages } from "./siteLanguages"
 const routes = new Map<string, FullSlug>()
 const originals = new Map<FullSlug, Set<string>>()
 
@@ -29,14 +30,24 @@ function register(source: string, target: FullSlug) {
   originals.set(target, aliases)
 }
 
-const pages = [
-  ["index", "index", "index"],
-  ["Атомы/index", "Атомы/index", "Atoms/index"],
-  ["Граф", "Graph", "Graph"],
-  ["Нейронавигатор", "Нейронавигатор", "Нейронавигатор"],
-  ["Как-устроено-исследование", "How-the-research-is-structured", "How-the-research-is-structured"],
-  ["Область-исследования", "Scope-of-the-research", "Scope-of-the-research"],
-  ["Миссия-проекта", "Project-Mission", "Project-Mission"],
+const pages: { [Language in SiteLanguage]: string }[] = [
+  { ru: "index", en: "index", th: "index", zh: "index" },
+  { ru: "Атомы/index", en: "Атомы/index", th: "Atoms/index", zh: "Atoms/index" },
+  { ru: "Граф", en: "Graph", th: "Graph", zh: "Graph" },
+  { ru: "Нейронавигатор", en: "Нейронавигатор", th: "Нейронавигатор", zh: "Нейронавигатор" },
+  {
+    ru: "Как-устроено-исследование",
+    en: "How-the-research-is-structured",
+    th: "How-the-research-is-structured",
+    zh: "How-the-research-is-structured",
+  },
+  {
+    ru: "Область-исследования",
+    en: "Scope-of-the-research",
+    th: "Scope-of-the-research",
+    zh: "Scope-of-the-research",
+  },
+  { ru: "Миссия-проекта", en: "Project-Mission", th: "Project-Mission", zh: "Project-Mission" },
 ]
 const pageRoutes = [
   "index",
@@ -48,10 +59,11 @@ const pageRoutes = [
   "project-mission",
 ]
 pages.forEach((page, i) =>
-  languages.forEach((lang, j) => {
+  languages.forEach((lang) => {
     const target = `${lang}/${pageRoutes[i]}` as FullSlug
-    register((lang === "ru" ? "" : `${lang}/`) + page[j], target)
-    for (const name of new Set(page)) register((lang === "ru" ? "" : `${lang}/`) + name, target)
+    register((lang === "ru" ? "" : `${lang}/`) + page[lang], target)
+    for (const name of new Set(Object.values(page)))
+      register((lang === "ru" ? "" : `${lang}/`) + name, target)
     register(target, target)
   }),
 )
@@ -59,7 +71,7 @@ pages.forEach((page, i) =>
 for (const [ru, en] of Object.entries(atoms)) {
   for (const lang of languages) {
     const target = `${lang}/atoms/${asciiSlug(en)}` as FullSlug
-    const prefix = lang === "ru" ? "Атомы/" : lang === "en" ? "en/Атомы/" : "th/Atoms/"
+    const prefix = siteLanguages[lang].atomPrefix
     // Mixed-language paths were previously crawled by Google; retain them too.
     for (const name of new Set([ru, en])) {
       const source = slugifyFilePath(`${prefix}${name}.md` as FilePath)
@@ -85,7 +97,7 @@ for (const [oldName, current] of [
   ["Cessation-of-Clinging", "letting-go-of-the-mission"],
 ]) {
   for (const lang of languages) {
-    const prefix = lang === "ru" ? "Атомы/" : lang === "en" ? "en/Атомы/" : "th/Atoms/"
+    const prefix = siteLanguages[lang].atomPrefix
     register(`${prefix}${oldName}`, `${lang}/atoms/${current}` as FullSlug)
   }
 }
@@ -94,7 +106,10 @@ for (const lang of languages) {
   register(`${lang}/atoms/possessiveness`, `${lang}/atoms/possession` as FullSlug)
   register(`${lang}/atoms/non-clinging`, `${lang}/atoms/liberation` as FullSlug)
   register(`${lang}/atoms/freedom`, `${lang}/atoms/inner-freedom` as FullSlug)
-  register(`${lang}/atoms/cessation-of-clinging`, `${lang}/atoms/letting-go-of-the-mission` as FullSlug)
+  register(
+    `${lang}/atoms/cessation-of-clinging`,
+    `${lang}/atoms/letting-go-of-the-mission` as FullSlug,
+  )
 }
 
 export function canonicalRoute(source: string): FullSlug | undefined {

@@ -2,6 +2,8 @@ import FlexSearch, { DefaultDocumentSearchResults } from "flexsearch"
 import { ContentDetails } from "../../plugins/emitters/contentIndex"
 import { registerEscapeHandler, removeAllChildren } from "./util"
 import { FullSlug, normalizeRelativeURLs, resolveRelative } from "../../util/path"
+import { languageForSlug } from "../../util/lang"
+import { matchingTitleIds } from "../../util/searchTitles"
 
 interface Item {
   id: number
@@ -209,12 +211,7 @@ async function setupSearch(searchElement: Element, currentSlug: FullSlug, data: 
   if (!searchLayout) return
 
   const idDataMap = Object.keys(data) as FullSlug[]
-  const slugLanguage = (slug: FullSlug) =>
-    slug === "en" || slug.startsWith("en/")
-      ? "en"
-      : slug === "th" || slug.startsWith("th/")
-        ? "th"
-        : "ru"
+  const slugLanguage = languageForSlug
   const currentLanguage = slugLanguage(currentSlug)
   const appendLayout = (el: HTMLElement) => {
     searchLayout.appendChild(el)
@@ -233,6 +230,25 @@ async function setupSearch(searchElement: Element, currentSlug: FullSlug, data: 
     appendLayout(preview)
   }
 
+  // iOS keyboards resize the visual viewport, not the layout viewport used by vh.
+  const viewport = window.visualViewport
+  function syncViewport() {
+    if (!container.classList.contains("active")) return
+    container.style.setProperty(
+      "--search-viewport-height",
+      `${viewport?.height ?? window.innerHeight}px`,
+    )
+    container.style.setProperty("--search-viewport-top", `${viewport?.offsetTop ?? 0}px`)
+  }
+  viewport?.addEventListener("resize", syncViewport)
+  viewport?.addEventListener("scroll", syncViewport)
+  window.addEventListener("resize", syncViewport)
+  window.addCleanup(() => {
+    viewport?.removeEventListener("resize", syncViewport)
+    viewport?.removeEventListener("scroll", syncViewport)
+    window.removeEventListener("resize", syncViewport)
+  })
+
   function hideSearch() {
     container.classList.remove("active")
     searchBar.value = "" // clear the input when we dismiss the search
@@ -250,6 +266,7 @@ async function setupSearch(searchElement: Element, currentSlug: FullSlug, data: 
     searchType = searchTypeNew
     if (sidebar) sidebar.style.zIndex = "1"
     container.classList.add("active")
+    syncViewport()
     searchBar.focus()
   }
 
@@ -388,11 +405,12 @@ async function setupSearch(searchElement: Element, currentSlug: FullSlug, data: 
 
   async function displayResults(finalResults: Item[]) {
     removeAllChildren(results)
+    results.scrollTop = 0
     if (finalResults.length === 0) {
       const language = document.documentElement.lang
       results.innerHTML = `<a class="result-card no-match">
-          <h3>${language === "ru" ? "Ничего не найдено." : language === "th" ? "ไม่พบผลลัพธ์" : "No results."}</h3>
-          <p>${language === "ru" ? "Попробуйте другой запрос." : language === "th" ? "ลองใช้คำค้นหาอื่น" : "Try another search term?"}</p>
+          <h3>${language === "ru" ? "Ничего не найдено." : language === "th" ? "ไม่พบผลลัพธ์" : language === "zh-CN" || language === "zh" ? "未找到结果。" : "No results."}</h3>
+          <p>${language === "ru" ? "Попробуйте другой запрос." : language === "th" ? "ลองใช้คำค้นหาอื่น" : language === "zh-CN" || language === "zh" ? "请尝试其他关键词。" : "Try another search term?"}</p>
       </a>`
     } else {
       results.append(...finalResults.map(resultToHTML))
@@ -433,6 +451,7 @@ async function setupSearch(searchElement: Element, currentSlug: FullSlug, data: 
 
   async function displayPreview(el: HTMLElement | null) {
     if (!searchLayout || !enablePreview || !el || !preview) return
+    if (getComputedStyle(preview).display === "none") return
     const slug = el.id as FullSlug
     const innerDiv = await fetchContent(slug).then((contents) =>
       contents.flatMap((el) => [...highlightHTML(currentSearchTerm, el as HTMLElement).children]),
@@ -499,6 +518,12 @@ async function setupSearch(searchElement: Element, currentSlug: FullSlug, data: 
 
     // order titles ahead of content
     const allIds: Set<number> = new Set([
+      ...(currentLanguage === "zh" && searchType === "basic"
+        ? matchingTitleIds(
+            idDataMap.map((slug) => (slugLanguage(slug) === "zh" ? data[slug].title : "")),
+            currentSearchTerm,
+          )
+        : []),
       ...getByField("title"),
       ...getByField("content"),
       ...getByField("tags"),

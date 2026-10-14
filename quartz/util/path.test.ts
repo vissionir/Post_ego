@@ -315,6 +315,152 @@ describe("link strategies", () => {
   })
 })
 
+describe("four-language link resolution", () => {
+  const mirrors = {
+    ru: "Атомы/Imprint",
+    en: "en/Атомы/Imprint",
+    th: "th/Atoms/Imprint",
+    zh: "zh/Atoms/Imprint",
+  }
+  const allSlugs = [
+    "index",
+    "en/index",
+    "th/index",
+    "zh/index",
+    "Атомы/index",
+    "en/Атомы/index",
+    "th/Atoms/index",
+    "zh/Atoms/index",
+    ...Object.values(mirrors),
+  ] as FullSlug[]
+  const opts: TransformOptions = { strategy: "shortest", allSlugs }
+
+  test("four identical English basenames prefer the exact source language subtree", () => {
+    for (const [language, target] of Object.entries(mirrors)) {
+      const source = (language === "ru" ? "Атомы/Other" : `${language}/Atoms/Other`) as FullSlug
+      assert.strictEqual(
+        path.transformLink(source, "Imprint", opts),
+        path.resolveRelative(source, target as FullSlug),
+      )
+      assert.strictEqual(
+        path.transformLink(source, "Imprint#Definition", opts),
+        `${path.resolveRelative(source, target as FullSlug)}#definition`,
+      )
+    }
+  })
+
+  test("canonical ru/en/th/zh paths also resolve duplicate basenames within their language", () => {
+    const slugs = ["ru", "en", "th", "zh"].map(
+      (language) => `${language}/atoms/imprint`,
+    ) as FullSlug[]
+    for (const language of ["ru", "en", "th", "zh"]) {
+      const source = `${language}/atoms/other` as FullSlug
+      assert.strictEqual(
+        path.transformLink(source, "imprint", { ...opts, allSlugs: slugs }),
+        `../../${language}/atoms/imprint`,
+      )
+    }
+  })
+
+  test("unprefixed explicit paths and folder indexes qualify to the same language", () => {
+    for (const strategy of ["shortest", "absolute"] as const) {
+      for (const language of ["en", "th", "zh"]) {
+        const source = `${language}/Atoms/Other` as FullSlug
+        const folder = language === "en" ? "Атомы" : "Atoms"
+        const options = { ...opts, strategy }
+        assert.strictEqual(
+          path.transformLink(source, `${folder}/Imprint`, options),
+          `../../${mirrors[language as keyof typeof mirrors]}`,
+        )
+        for (const target of [folder, `${folder}/`, `${folder}/index`, `${folder}/index.md`]) {
+          assert.strictEqual(
+            path.transformLink(source, target, options),
+            `../../${language}/${folder}/`,
+          )
+        }
+        assert.strictEqual(
+          path.transformLink(source, `${folder}/index#List`, options),
+          `../../${language}/${folder}/#list`,
+        )
+        assert.strictEqual(path.transformLink(source, "index", options), `../../${language}/`)
+      }
+      assert.strictEqual(
+        path.transformLink("Атомы/Other" as FullSlug, "Атомы/index", { ...opts, strategy }),
+        "../Атомы/",
+      )
+      assert.strictEqual(
+        path.transformLink("Атомы/Other" as FullSlug, "index", { ...opts, strategy }),
+        "../",
+      )
+    }
+  })
+
+  test("prefixed Russian pages qualify unprefixed atom and folder paths too", () => {
+    const options: TransformOptions = {
+      strategy: "shortest",
+      allSlugs: ["ru/index", "ru/atoms/index", "ru/atoms/imprint"] as FullSlug[],
+    }
+    const source = "ru/atoms/other" as FullSlug
+    assert.strictEqual(
+      path.transformLink(source, "atoms/imprint", options),
+      "../../ru/atoms/imprint",
+    )
+    assert.strictEqual(path.transformLink(source, "atoms/index", options), "../../ru/atoms/")
+    assert.strictEqual(path.transformLink(source, "index", options), "../../ru/")
+  })
+
+  test("explicit cross-language atom and folder links retain their requested language", () => {
+    for (const source of Object.values(mirrors)) {
+      for (const language of ["en", "th", "zh"]) {
+        const folder = language === "en" ? "Атомы" : "Atoms"
+        const atom = mirrors[language as keyof typeof mirrors] as FullSlug
+        for (const strategy of ["shortest", "absolute"] as const) {
+          const options = { ...opts, strategy }
+          for (const prefix of ["", "/"]) {
+            assert.strictEqual(
+              path.transformLink(source as FullSlug, `${prefix}${atom}#Details`, options),
+              `${path.resolveRelative(source as FullSlug, atom)}#details`,
+            )
+            assert.strictEqual(
+              path.transformLink(
+                source as FullSlug,
+                `${prefix}${language}/${folder}/index`,
+                options,
+              ),
+              `${path.pathToRoot(source as FullSlug)}/${language}/${folder}/`,
+            )
+          }
+        }
+      }
+      assert.strictEqual(
+        path.transformLink(source as FullSlug, "/Атомы/Imprint", opts),
+        `${path.pathToRoot(source as FullSlug)}/Атомы/Imprint`,
+      )
+    }
+  })
+
+  test("same-language ambiguity is not resolved by arbitrarily selecting a foreign mirror", () => {
+    const options = { ...opts, allSlugs: [...allSlugs, "th/Other/Imprint" as FullSlug] }
+    assert.strictEqual(
+      path.transformLink("th/Atoms/Other" as FullSlug, "Imprint", options),
+      "../../Imprint",
+    )
+    assert.strictEqual(
+      path.transformLink("zh/Atoms/Other" as FullSlug, "Imprint", options),
+      "../../zh/Atoms/Imprint",
+    )
+  })
+
+  test("relative links and shared assets remain unchanged", () => {
+    const source = "zh/Atoms/Other" as FullSlug
+    assert.strictEqual(
+      path.transformLink(source, "../Atoms/Imprint", { ...opts, strategy: "relative" }),
+      "../Atoms/Imprint",
+    )
+    assert.strictEqual(path.transformLink(source, "static/icon.png", opts), "../../static/icon.png")
+  })
+})
+
 describe("resolveRelative", () => {
   test("from index", () => {
     assert.strictEqual(path.resolveRelative("index" as FullSlug, "index" as FullSlug), "./")

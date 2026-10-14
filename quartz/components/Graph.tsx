@@ -83,13 +83,21 @@ export default ((opts?: Partial<GraphOptions>) => {
               all: "กราฟทั้งหมด",
               close: "ปิดกราฟ",
             }
-          : {
-              expand: "Open graph",
-              nearby: "Nearby connections",
-              paths: "Atom connections",
-              all: "Full graph",
-              close: "Close graph",
-            }
+          : locale === "zh-CN"
+            ? {
+                expand: "打开图谱",
+                nearby: "邻近关联",
+                paths: "概念原子关联",
+                all: "完整图谱",
+                close: "关闭图谱",
+              }
+            : {
+                expand: "Open graph",
+                nearby: "Nearby connections",
+                paths: "Atom connections",
+                all: "Full graph",
+                close: "Close graph",
+              }
     return (
       <div
         class={classNames(displayClass, "graph", opts?.standalone ? "graph-launcher" : "")}

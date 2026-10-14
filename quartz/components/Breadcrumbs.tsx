@@ -3,6 +3,7 @@ import breadcrumbsStyle from "./styles/breadcrumbs.scss"
 import { FullSlug, SimpleSlug, resolveRelative, simplifySlug } from "../util/path"
 import { classNames, localeForSlug } from "../util/lang"
 import { trieFromAllFiles } from "../util/ctx"
+import { isSiteLanguage } from "../util/siteLanguages"
 
 type CrumbData = {
   displayName: string
@@ -53,7 +54,7 @@ export default ((opts?: Partial<BreadcrumbOptions>) => {
     const trie = (ctx.trie ??= trieFromAllFiles(allFiles))
     const slugParts = fileData.slug!.split("/")
     const ancestry = trie.ancestryChain(slugParts)
-    const pathNodes = /^(ru|en|th)$/.test(slugParts[0]) ? ancestry?.slice(1) : ancestry
+    const pathNodes = isSiteLanguage(slugParts[0]) ? ancestry?.slice(1) : ancestry
     const locale = localeForSlug(fileData.slug)
     const rootName =
       options.rootName !== defaultOptions.rootName
@@ -62,7 +63,9 @@ export default ((opts?: Partial<BreadcrumbOptions>) => {
           ? "Главная"
           : locale === "th-TH"
             ? "หน้าแรก"
-            : options.rootName
+            : locale === "zh-CN"
+              ? "首页"
+              : options.rootName
 
     if (!pathNodes) {
       return null
@@ -94,7 +97,9 @@ export default ((opts?: Partial<BreadcrumbOptions>) => {
             ? "Навигационная цепочка"
             : locale === "th-TH"
               ? "เส้นทางการนำทาง"
-              : "Breadcrumbs"
+              : locale === "zh-CN"
+                ? "面包屑导航"
+                : "Breadcrumbs"
         }
       >
         {crumbs.map((crumb, index) => {

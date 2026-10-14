@@ -53,21 +53,30 @@ hr.text-measured-divider {
     min-height: 2.1875rem;
   }
 
-  body:is([data-slug="ru/index"], [data-slug="en/index"], [data-slug="th/index"])
-    #quartz-body > .sidebar.left > .flex-component {
+  body:is(
+      [data-slug="ru/index"],
+      [data-slug="en/index"],
+      [data-slug="th/index"],
+      [data-slug="zh/index"]
+    )
+    #quartz-body
+    > .sidebar.left
+    > .flex-component {
     // Center the 32px controls between the first two 1.6rem introduction lines.
     margin-top: calc(1.4rem - 16px);
   }
 
   // Only the main header counts: a link preview also contains breadcrumbs.
   #quartz-body:has(> .center > .page-header > .popover-hint > .breadcrumb-container)
-    > .sidebar.left > .flex-component {
+    > .sidebar.left
+    > .flex-component {
     // Match the center of the 2.1875rem title line with the 32px controls.
     margin-top: calc(1.89375rem - 16px);
   }
 
   #quartz-body:has(> .center > .page-header > .popover-hint > .breadcrumb-container)
-    > .sidebar.left > .explorer {
+    > .sidebar.left
+    > .explorer {
     margin-top: 0.1rem;
   }
 
@@ -132,6 +141,17 @@ hr.text-measured-divider {
 html[lang="th"] {
   --headerFont: "Noto Sans Thai", sans-serif;
   --bodyFont: "Noto Sans Thai", sans-serif;
+}
+
+html[lang="zh-CN"],
+html[lang="zh"] {
+  --headerFont: "PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif;
+  --bodyFont: "PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif;
+  line-break: strict;
+}
+
+:lang(zh) li.section-li > .section {
+  grid-template-columns: 7.5rem minmax(0, 1fr);
 }
 
 .sidebar.left .search > .search-button {

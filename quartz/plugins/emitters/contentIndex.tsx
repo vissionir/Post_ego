@@ -7,7 +7,7 @@ import { QuartzEmitterPlugin } from "../types"
 import { toHtml } from "hast-util-to-html"
 import { write } from "./helpers"
 import { i18n } from "../../i18n"
-import { languages } from "../../util/canonicalRoutes"
+import { isSiteLanguage, languages, siteLanguages } from "../../util/siteLanguages"
 
 export type ContentIndexMap = Map<FullSlug, ContentDetails>
 export type ContentDetails = {
@@ -41,16 +41,18 @@ const defaultOptions: Options = {
   includeEmptyFiles: true,
 }
 
-function generateSiteMap(cfg: GlobalConfiguration, idx: ContentIndexMap): string {
+export function generateSiteMap(cfg: GlobalConfiguration, idx: ContentIndexMap): string {
   const base = cfg.baseUrl ?? ""
   const createURLEntry = (slug: SimpleSlug, content: ContentDetails): string => `<url>
     <loc>https://${joinSegments(base, encodeURI(slug))}</loc>
     ${(content.modified ?? content.date) ? `<lastmod>${(content.modified ?? content.date)!.toISOString()}</lastmod>` : ""}
     ${languages
       .map((lang) => {
-        const alternate = content.slug.replace(/^(ru|en|th)\//, `${lang}/`) as FullSlug
+        const [prefix, ...parts] = content.slug.split("/")
+        if (!isSiteLanguage(prefix)) return ""
+        const alternate = `${lang}/${parts.join("/")}` as FullSlug
         return idx.has(alternate)
-          ? `<xhtml:link rel="alternate" hreflang="${lang}" href="https://${joinSegments(base, encodeURI(simplifySlug(alternate)))}"/>`
+          ? `<xhtml:link rel="alternate" hreflang="${siteLanguages[lang].hreflang}" href="https://${joinSegments(base, encodeURI(simplifySlug(alternate)))}"/>`
           : ""
       })
       .join("")}

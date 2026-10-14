@@ -10,6 +10,7 @@ import { ComponentChildren } from "preact"
 import { concatenateResources } from "../../util/resources"
 import { trieFromAllFiles } from "../../util/ctx"
 import { languageForSlug, localeForSlug } from "../../util/lang"
+import type { SiteLanguage } from "../../util/siteLanguages"
 // @ts-ignore
 import sortScript from "../scripts/pageListSort.inline"
 
@@ -27,9 +28,10 @@ const defaultOptions: FolderContentOptions = {
   showSubfolders: true,
 }
 
-function atomCountLabel(count: number, language: "ru" | "en" | "th") {
+function atomCountLabel(count: number, language: SiteLanguage) {
   if (language === "en") return `${count} atoms.`
   if (language === "th") return `${count} อะตอม.`
+  if (language === "zh") return `${count} 个概念原子。`
 
   const lastTwo = count % 100
   const last = count % 10
@@ -123,9 +125,7 @@ export default ((opts?: Partial<FolderContentOptions>) => {
         : htmlToJsx(fileData.filePath!, tree)
     ) as ComponentChildren
     const language = languageForSlug(fileData.slug)
-    const isEnglishAtoms = fileData.slug === "en/atoms/index"
-    const isThaiAtoms = fileData.slug === "th/atoms/index"
-    const isAtomsFolder = fileData.slug === "ru/atoms/index" || isEnglishAtoms || isThaiAtoms
+    const isAtomsFolder = fileData.slug === `${language}/atoms/index`
     const labels =
       language === "ru"
         ? {
@@ -143,13 +143,21 @@ export default ((opts?: Partial<FolderContentOptions>) => {
               newest: "ใหม่ล่าสุดก่อน",
               oldest: "เก่าที่สุดก่อน",
             }
-          : {
-              sort: "Sort",
-              sortAria: "Sort atoms",
-              alphabetical: "Alphabetical",
-              newest: "Newest first",
-              oldest: "Oldest first",
-            }
+          : language === "zh"
+            ? {
+                sort: "排序",
+                sortAria: "概念原子排序",
+                alphabetical: "按名称",
+                newest: "最新优先",
+                oldest: "最早优先",
+              }
+            : {
+                sort: "Sort",
+                sortAria: "Sort atoms",
+                alphabetical: "Alphabetical",
+                newest: "Newest first",
+                oldest: "Oldest first",
+              }
 
     return (
       <div class="popover-hint">

@@ -1,4 +1,5 @@
 import { comparePageListItems, type PageListSortMode } from "./page-list-order"
+import { isSiteLanguage, siteLanguages } from "../../util/siteLanguages"
 
 const atomSortStorageKey = "postego-atom-sort"
 
@@ -26,7 +27,7 @@ document.addEventListener("nav", () => {
     if (!list) return
 
     const requestedLocale = controls.dataset.sortLocale
-    const locale = requestedLocale === "en" || requestedLocale === "th" ? requestedLocale : "ru"
+    const locale = isSiteLanguage(requestedLocale) ? siteLanguages[requestedLocale].locale : "ru"
     const collator = new Intl.Collator(locale, { numeric: true, sensitivity: "base" })
     const buttons = Array.from(
       controls.querySelectorAll<HTMLButtonElement>("button[data-sort-mode]"),

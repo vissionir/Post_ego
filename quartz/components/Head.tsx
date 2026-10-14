@@ -7,6 +7,7 @@ import { unescapeHTML } from "../util/escape"
 import { CustomOgImagesEmitterName } from "../plugins/emitters/ogImage"
 import { localeForSlug } from "../util/lang"
 import { getLanguagePair } from "../util/languagePair"
+import { languages, siteLanguages } from "../util/siteLanguages"
 export default (() => {
   const Head: QuartzComponent = ({
     cfg,
@@ -45,7 +46,7 @@ export default (() => {
     const ogImageDefaultPath = `https://${cfg.baseUrl}/static/og-image.png?v=20260318-1`
     const languageRoutingScript = `(() => {
   try {
-    const basePath = ${JSON.stringify(path)}
+    const basePath = ${JSON.stringify(path.endsWith("/") ? path : `${path}/`)}
     const key = "siteLang"
     const pathname = window.location.pathname
 
@@ -54,11 +55,9 @@ export default (() => {
       const relativePath = currentPath.startsWith(basePath)
         ? currentPath.slice(basePath.length)
         : currentPath.replace(/^\\/+/, "")
-      document.documentElement.lang = relativePath === "en" || relativePath.startsWith("en/")
-        ? "en"
-        : relativePath === "th" || relativePath.startsWith("th/")
-          ? "th"
-          : "ru"
+      const language = relativePath.split("/")[0]
+      const languageTags = ${JSON.stringify(Object.fromEntries(languages.map((language) => [language, siteLanguages[language].hreflang])))}
+      document.documentElement.lang = languageTags[language] || "ru"
     }
 
     updateDocumentLanguage()
@@ -79,7 +78,7 @@ export default (() => {
       const rel = pathname.slice(basePath.length)
       const parts = rel.split("/").filter(Boolean)
       const depth = parts.length
-      const shouldNormalize = ["ru", "en", "th"].includes(parts[0]) && depth >= 3
+      const shouldNormalize = ${JSON.stringify(languages)}.includes(parts[0]) && depth >= 3
       if (shouldNormalize) {
         window.location.replace(pathname.replace(/\\/+$/, "") + window.location.search + window.location.hash)
         return
@@ -115,10 +114,23 @@ export default (() => {
         {cfg.baseUrl && fileData.slug !== "404" && <link rel="canonical" href={canonicalUrl} />}
         {cfg.baseUrl && languagePair && (
           <>
-            <link rel="alternate" hrefLang="ru" href={absoluteUrlForSlug(languagePair.ru)} />
-            <link rel="alternate" hrefLang="en" href={absoluteUrlForSlug(languagePair.en)} />
-            <link rel="alternate" hrefLang="th" href={absoluteUrlForSlug(languagePair.th)} />
-            <link rel="alternate" hrefLang="x-default" href={absoluteUrlForSlug(languagePair.ru)} />
+            {languages.map((language) => {
+              const alternate = languagePair[language]
+              return alternate ? (
+                <link
+                  rel="alternate"
+                  hrefLang={siteLanguages[language].hreflang}
+                  href={absoluteUrlForSlug(alternate)}
+                />
+              ) : null
+            })}
+            {languagePair.ru && (
+              <link
+                rel="alternate"
+                hrefLang="x-default"
+                href={absoluteUrlForSlug(languagePair.ru)}
+              />
+            )}
           </>
         )}
 
@@ -132,6 +144,15 @@ export default (() => {
         <meta name="og:site_name" content={cfg.pageTitle}></meta>
         <meta property="og:title" content={title} />
         <meta property="og:type" content="website" />
+        <meta property="og:locale" content={locale.replace("-", "_")} />
+        {languages.map((language) =>
+          languagePair?.[language] && siteLanguages[language].locale !== locale ? (
+            <meta
+              property="og:locale:alternate"
+              content={siteLanguages[language].locale.replace("-", "_")}
+            />
+          ) : null,
+        )}
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={title} />
         <meta name="twitter:description" content={description} />

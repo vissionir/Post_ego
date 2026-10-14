@@ -18,6 +18,8 @@ const index = {
   "Атомы/Isolated": { title: "Isolated", links: [] },
   "en/Atoms/A": { title: "English", links: ["th/Atoms/A"] },
   "th/Atoms/A": { title: "Thai", links: [] },
+  "zh/atoms/a": { title: "中文", links: ["zh/atoms/b", "Атомы/A"] },
+  "zh/atoms/b": { title: "关联", links: [] },
 }
 test("neighbourhood includes both link directions without other languages", () => {
   const result = graphData(index, "Атомы/A" as FullSlug, 1)
@@ -29,8 +31,17 @@ test("full graph stays in the current language", () => {
     ["Атомы/A", 4],
     ["en/Atoms/A", 1],
     ["th/Atoms/A", 1],
+    ["zh/atoms/a", 2],
   ] as const)
     assert.equal(graphData(index, current as FullSlug, -1).nodes.length, count)
+})
+test("Chinese graph traversal never imports Russian nodes or cross-language edges", () => {
+  const result = graphData(index, "zh/atoms/a" as FullSlug, 1)
+  assert.deepEqual(
+    result.nodes.map((node) => node.text),
+    ["中文", "关联"],
+  )
+  assert.deepEqual(result.links, [{ source: "zh/atoms/a", target: "zh/atoms/b" }])
 })
 test("the whole map has the same node order regardless of the entry atom", () => {
   const first = graphData(index, "Атомы/A" as FullSlug, -1)

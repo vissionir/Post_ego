@@ -14,6 +14,7 @@ import { BuildCtx } from "../../util/ctx"
 import { Node } from "unist"
 import { StaticResources } from "../../util/resources"
 import { QuartzPluginData } from "../vfile"
+import { isSiteLanguage } from "../../util/siteLanguages"
 
 async function processContent(
   ctx: BuildCtx,
@@ -85,10 +86,7 @@ export const ContentPage: QuartzEmitterPlugin<Partial<FullPageLayout>> = (userOp
 
         // only process home page, language home pages, non-tag pages, and non-index pages
         if (
-          (slug.endsWith("/index") &&
-            slug !== "ru/index" &&
-            slug !== "en/index" &&
-            slug !== "th/index") ||
+          (slug.endsWith("/index") && !isSiteLanguage(slug.slice(0, -"/index".length))) ||
           slug.startsWith("tags/")
         )
           continue
@@ -120,10 +118,7 @@ export const ContentPage: QuartzEmitterPlugin<Partial<FullPageLayout>> = (userOp
         const slug = file.data.slug!
         if (!changedSlugs.has(slug)) continue
         if (
-          (slug.endsWith("/index") &&
-            slug !== "ru/index" &&
-            slug !== "en/index" &&
-            slug !== "th/index") ||
+          (slug.endsWith("/index") && !isSiteLanguage(slug.slice(0, -"/index".length))) ||
           slug.startsWith("tags/")
         )
           continue

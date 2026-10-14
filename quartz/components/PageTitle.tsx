@@ -6,9 +6,7 @@ import { i18n } from "../i18n"
 const PageTitle: QuartzComponent = ({ fileData, cfg, displayClass }: QuartzComponentProps) => {
   const title = cfg?.pageTitle ?? i18n(cfg.locale).propertyDefaults.title
   const language = languageForSlug(fileData.slug)
-  const homeSlug = (
-    language === "en" ? "en/index" : language === "th" ? "th/index" : "ru/index"
-  ) as FullSlug
+  const homeSlug = `${language}/index` as FullSlug
   const homeHref = resolveRelative(fileData.slug!, homeSlug)
   return (
     <h2 class={classNames(displayClass, "page-title")}>

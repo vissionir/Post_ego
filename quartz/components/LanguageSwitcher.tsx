@@ -2,16 +2,12 @@ import { QuartzComponent, QuartzComponentConstructor, QuartzComponentProps } fro
 import { FullSlug, resolveRelative } from "../util/path"
 import { getLanguagePair } from "../util/languagePair"
 import { languageForSlug } from "../util/lang"
+import { languages, siteLanguages } from "../util/siteLanguages"
 // @ts-ignore
 import languageSwitcherScript from "./scripts/language-switcher.inline"
 
 /**
- * Global RU/EN/TH switcher.
- *
- * Spec:
- * - RU lives at /ru/
- * - EN lives at /en/
- * - TH lives at /th/
+ * Global language switcher using the shared site language registry.
  * File names and slugs are translated, so the switcher resolves the semantic page group.
  */
 const LanguageSwitcher: QuartzComponent = ({ fileData, allFiles }: QuartzComponentProps) => {
@@ -20,20 +16,12 @@ const LanguageSwitcher: QuartzComponent = ({ fileData, allFiles }: QuartzCompone
   const pair = getLanguagePair(slug, allFiles)
 
   // Service pages without a translated counterpart fall back to the language home page.
-  const ruSlug = pair?.ru ?? ("ru/index" as FullSlug)
-  const enSlug = pair?.en ?? ("en/index" as FullSlug)
-  const thSlug = pair?.th ?? ("th/index" as FullSlug)
-
-  const ruHref = resolveRelative(slug, ruSlug)
-  const enHref = resolveRelative(slug, enSlug)
-  const thHref = resolveRelative(slug, thSlug)
-  const label =
-    language === "ru" ? "Переключение языка" : language === "th" ? "เปลี่ยนภาษา" : "Language switch"
-  const languages = [
-    { code: "ru", name: "Русский", href: ruHref },
-    { code: "en", name: "English", href: enHref },
-    { code: "th", name: "ไทย", href: thHref },
-  ]
+  const label = {
+    ru: "Переключение языка",
+    en: "Language switch",
+    th: "เปลี่ยนภาษา",
+    zh: "切换语言",
+  }[language]
 
   return (
     <details class="lang-switch">
@@ -44,16 +32,16 @@ const LanguageSwitcher: QuartzComponent = ({ fileData, allFiles }: QuartzCompone
         </svg>
       </summary>
       <nav class="lang-options" aria-label={label}>
-        {languages.map(({ code, name, href }) => (
+        {languages.map((code) => (
           <a
             class={`lang-link ${language === code ? "active" : ""}`}
-            href={href}
-            lang={code}
-            hreflang={code}
+            href={resolveRelative(slug, pair?.[code] ?? (`${code}/index` as FullSlug))}
+            lang={siteLanguages[code].hreflang}
+            hreflang={siteLanguages[code].hreflang}
             data-set-lang={code}
             aria-current={language === code ? "page" : undefined}
           >
-            <span>{name}</span>
+            <span>{siteLanguages[code].name}</span>
             {language === code && (
               <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true">
                 <path d="m3 7 2.5 2.5L11 4" fill="none" stroke="currentColor" stroke-width="1.5" />

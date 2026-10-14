@@ -37,6 +37,7 @@ jobs:
         # Definitions and modification dates remain independent of this chronology.
         run: |
           node scripts/atom-chronology.mjs --check
+          node scripts/check-chinese-corpus.mjs
           npx quartz build
           npx tsx scripts/check-public-routes.ts
 

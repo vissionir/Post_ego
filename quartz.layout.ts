@@ -19,49 +19,27 @@ export const sharedPageComponents: SharedLayout = {
 
 const explorerFilter = (node: any) => {
   const p = window.location.pathname
-  const isEn = /\/en(\/|$)/.test(p)
-  const isTh = /\/th(\/|$)/.test(p)
+  const currentLanguage = p.match(/\/(ru|en|th|zh)(\/|$)/)?.[1] ?? "ru"
 
   if (node.slugSegment === "tags") return false
 
   const slug = typeof node.slug === "string" ? node.slug : ""
   const nodeLanguage =
-    node.slugSegment === "en" || slug === "en" || slug.startsWith("en/")
-      ? "en"
-      : node.slugSegment === "th" || slug === "th" || slug.startsWith("th/")
-        ? "th"
-        : "ru"
-  const currentLanguage = isEn ? "en" : isTh ? "th" : "ru"
+    slug.match(/^(ru|en|th|zh)(\/|$)/)?.[1] ??
+    (["ru", "en", "th", "zh"].includes(node.slugSegment) ? node.slugSegment : "ru")
   return nodeLanguage === currentLanguage
 }
 
 const explorerSort = (a: any, b: any) => {
-  const explorerOrder: Record<"ru" | "en" | "th", readonly string[]> = {
-    ru: [
-      "atoms",
-      "graph",
-      "neuronavigator",
-      "how-the-research-is-structured",
-      "scope-of-the-research",
-      "project-mission",
-    ],
-    en: [
-      "atoms",
-      "graph",
-      "neuronavigator",
-      "how-the-research-is-structured",
-      "scope-of-the-research",
-      "project-mission",
-    ],
-    th: [
-      "atoms",
-      "graph",
-      "neuronavigator",
-      "how-the-research-is-structured",
-      "scope-of-the-research",
-      "project-mission",
-    ],
-  }
+  // Explorer callbacks are serialized into the browser and must be self-contained.
+  const explorerOrder = [
+    "atoms",
+    "graph",
+    "neuronavigator",
+    "how-the-research-is-structured",
+    "scope-of-the-research",
+    "project-mission",
+  ]
 
   const aParts = String(a?.slug ?? "")
     .replace(/\/index$/, "")
@@ -71,10 +49,10 @@ const explorerSort = (a: any, b: any) => {
     .replace(/\/index$/, "")
     .split("/")
     .filter(Boolean)
-  const aLanguage = aParts[0] === "en" ? "en" : aParts[0] === "th" ? "th" : "ru"
-  const bLanguage = bParts[0] === "en" ? "en" : bParts[0] === "th" ? "th" : "ru"
-  const aIndex = explorerOrder[aLanguage].indexOf(aParts.slice(1).join("/"))
-  const bIndex = explorerOrder[bLanguage].indexOf(bParts.slice(1).join("/"))
+  const aLanguage = ["ru", "en", "th", "zh"].includes(aParts[0]) ? aParts[0] : "ru"
+  const bLanguage = ["ru", "en", "th", "zh"].includes(bParts[0]) ? bParts[0] : "ru"
+  const aIndex = explorerOrder.indexOf(aParts.slice(1).join("/"))
+  const bIndex = explorerOrder.indexOf(bParts.slice(1).join("/"))
 
   if (aLanguage === bLanguage) {
     if (aIndex !== -1 && bIndex !== -1 && aIndex !== bIndex) {
@@ -85,7 +63,7 @@ const explorerSort = (a: any, b: any) => {
   }
 
   if ((!a.isFolder && !b.isFolder) || (a.isFolder && b.isFolder)) {
-    const locale = aLanguage === "th" ? "th" : aLanguage === "en" ? "en" : "ru"
+    const locale = aLanguage === "zh" ? "zh-CN" : aLanguage
     return a.displayName.localeCompare(b.displayName, locale, {
       numeric: true,
       sensitivity: "base",
@@ -96,12 +74,14 @@ const explorerSort = (a: any, b: any) => {
 }
 
 const explorerMap = (node: any) => {
-  if (["ru", "en", "th"].includes(node.slugSegment) && node.isFolder) {
+  if (["ru", "en", "th", "zh"].includes(node.slugSegment) && node.isFolder) {
     node.displayName = ""
   }
   if (node.slug === "ru/atoms/index" && node.isFolder) node.displayName = "Атомы"
   if (node.slug === "en/atoms/index" && node.isFolder) node.displayName = "Atoms"
   if (node.slug === "th/atoms/index" && node.isFolder) node.displayName = "อะตอม"
+  if (node.slug === "zh/atoms/index" && node.isFolder) node.displayName = "概念原子"
+  if (node.slug === "zh/neuronavigator") node.displayName = "AI 导航"
   return node
 }
 
@@ -116,7 +96,9 @@ export const defaultContentPageLayout: PageLayout = {
         page.fileData.slug !== "en" &&
         page.fileData.slug !== "en/index" &&
         page.fileData.slug !== "th" &&
-        page.fileData.slug !== "th/index",
+        page.fileData.slug !== "th/index" &&
+        page.fileData.slug !== "zh" &&
+        page.fileData.slug !== "zh/index",
     }),
     Component.ArticleTitle(),
     Component.TagList(),
@@ -167,7 +149,9 @@ export const defaultListPageLayout: PageLayout = {
         page.fileData.slug !== "en" &&
         page.fileData.slug !== "en/index" &&
         page.fileData.slug !== "th" &&
-        page.fileData.slug !== "th/index",
+        page.fileData.slug !== "th/index" &&
+        page.fileData.slug !== "zh" &&
+        page.fileData.slug !== "zh/index",
     }),
     Component.ArticleTitle(),
   ],

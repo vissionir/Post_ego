@@ -11,6 +11,32 @@ test("language entry respects manual choice and browser preference order", () =>
   assert.equal(preferredSiteLanguage(["fr-FR"], "invalid"), "en")
 })
 
+test("Chinese browser variants and stored choices use the simplified Chinese site", () => {
+  for (const locale of ["zh", "zh-CN", "zh-Hans-CN", "zh_TW", "ZH-hk"]) {
+    assert.equal(preferredSiteLanguage([locale, "en-US"]), "zh")
+  }
+  assert.equal(preferredSiteLanguage(["en-US", "zh-CN"]), "en")
+  assert.equal(preferredSiteLanguage(["de-DE", "zh-CN", "th-TH"]), "zh")
+  assert.equal(preferredSiteLanguage(["en-US"], "zh"), "zh")
+  assert.equal(preferredSiteLanguage(["zh-CN"], "th"), "th")
+})
+
+test("serialized entry script honors a Chinese manual choice and retains URL state", () => {
+  let target = ""
+  vm.runInNewContext(languageEntryScript(), {
+    navigator: { languages: ["en-US"] },
+    localStorage: { getItem: () => "zh" },
+    location: {
+      search: "?q=mind",
+      hash: "#intro",
+      replace(url: string) {
+        target = url
+      },
+    },
+  })
+  assert.equal(target, "/zh/?q=mind#intro")
+})
+
 test("root entry script redirects even without storage and preserves query and fragment", () => {
   let target = ""
   vm.runInNewContext(languageEntryScript(), {

@@ -1,6 +1,8 @@
 import { slug as slugAnchor } from "github-slugger"
 import type { Element as HastElement } from "hast"
 import { clone } from "./clone"
+import { languageForSlug } from "./lang"
+import { isSiteLanguage } from "./siteLanguages"
 
 // this file must be isomorphic so it can't use node libs (e.g. path)
 
@@ -250,11 +252,9 @@ export function transformLink(src: FullSlug, target: string, opts: TransformOpti
         return targetCanonical === fileName
       })
 
-      // i18n: prefer same-language twin when duplicates exist
-      const srcIsEn = src === ("en" as FullSlug) || src.startsWith("en/")
-      const preferred = matchingFileNames.filter((s) =>
-        srcIsEn ? s.startsWith("en/") : !s.startsWith("en/"),
-      )
+      // Translation mirrors share basenames: non-English does not imply Russian.
+      const sourceLanguage = languageForSlug(src)
+      const preferred = matchingFileNames.filter((slug) => languageForSlug(slug) === sourceLanguage)
       const candidates = preferred.length > 0 ? preferred : matchingFileNames
 
       // only match, just use it
@@ -264,17 +264,15 @@ export function transformLink(src: FullSlug, target: string, opts: TransformOpti
       }
     }
 
-    // i18n: if target exists in the same language subtree, prefer it
-    const srcIsEn = src === ("en" as FullSlug) || src.startsWith("en/")
-    if (srcIsEn && !targetCanonical.startsWith("en/")) {
-      const enCandidate = `en/${targetCanonical}` as FullSlug
-      if (opts.allSlugs.includes(enCandidate)) {
-        targetCanonical = enCandidate
-      }
-    } else if (!srcIsEn && targetCanonical.startsWith("en/")) {
-      const ruCandidate = targetCanonical.replace(/^en\//, "") as FullSlug
-      if (opts.allSlugs.includes(ruCandidate)) {
-        targetCanonical = ruCandidate
+    // Qualify unprefixed paths, but never rewrite an explicit cross-language target.
+    const targetLanguage = targetCanonical.split("/")[0]
+    if (!isSiteLanguage(targetLanguage) && !target.startsWith("/")) {
+      const sameLanguage = joinSegments(languageForSlug(src), targetCanonical)
+      if (
+        opts.allSlugs.includes(sameLanguage as FullSlug) ||
+        opts.allSlugs.includes(`${stripSlashes(sameLanguage)}/index` as FullSlug)
+      ) {
+        targetCanonical = sameLanguage
       }
     }
 

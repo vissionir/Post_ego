@@ -33,10 +33,10 @@ export default {
       title: "阅读模式",
     },
     explorer: {
-      title: "探索",
+      title: "研究导航",
     },
     footer: {
-      createdWith: "Created with",
+      createdWith: "使用以下工具构建：",
     },
     graph: {
       title: "关系图谱",
@@ -51,7 +51,7 @@ export default {
     },
     search: {
       title: "搜索",
-      searchBarPlaceholder: "搜索些什么",
+      searchBarPlaceholder: "搜索概念原子…",
     },
     tableOfContents: {
       title: "目录",

@@ -92,7 +92,9 @@ export function renderForceGraph(
       ? "กราฟการเชื่อมโยง"
       : fullSlug.startsWith("en/")
         ? "Interactive graph"
-        : "Интерактивный граф связей",
+        : fullSlug.startsWith("zh/")
+          ? "交互式关系图谱"
+          : "Интерактивный граф связей",
   )
   canvas.dataset.nodeCount = String(nodes.length)
   canvas.dataset.viewMode = !full ? "connections" : pageContext ? "paths" : "all"
@@ -138,7 +140,9 @@ export function renderForceGraph(
     ? "เปิดหน้า"
     : fullSlug.startsWith("en/")
       ? "Open"
-      : "Открыть"
+      : fullSlug.startsWith("zh/")
+        ? "打开"
+        : "Открыть"
   open.className = "internal"
   open.textContent = openText
   const articleBody = document.createElement("div")
@@ -150,10 +154,12 @@ export function renderForceGraph(
           loading: "Loading text…",
           error: "Could not load the text. Select the atom again to retry.",
         }
-      : {
-          loading: "Загружаю текст…",
-          error: "Не удалось загрузить текст. Нажмите на атом ещё раз.",
-        }
+      : fullSlug.startsWith("zh/")
+        ? { loading: "正在加载文本…", error: "无法加载文本，请再次选择该概念原子。" }
+        : {
+            loading: "Загружаю текст…",
+            error: "Не удалось загрузить текст. Нажмите на атом ещё раз.",
+          }
   const articleNodes = new Map((articleOptions?.nodes ?? data.nodes).map((n) => [n.id, n]))
   const knownArticles = new Set(articleNodes.keys())
   let articleGeneration = 0
@@ -165,7 +171,9 @@ export function renderForceGraph(
     ? "เลือก"
     : fullSlug.startsWith("en/")
       ? "Select"
-      : "Выбрать"
+      : fullSlug.startsWith("zh/")
+        ? "选择"
+        : "Выбрать"
   openAtom.append(actionText)
   const actionIcon = document.createElementNS("http://www.w3.org/2000/svg", "svg")
   actionIcon.setAttribute("viewBox", "0 0 24 24")
@@ -196,7 +204,9 @@ export function renderForceGraph(
       ? "เลือกอะตอมนี้เพื่อดูการเชื่อมโยง"
       : fullSlug.startsWith("en/")
         ? "Select this atom to view its connections"
-        : "Выбрать этот атом для просмотра связей",
+        : fullSlug.startsWith("zh/")
+          ? "选择此概念原子以查看关联"
+          : "Выбрать этот атом для просмотра связей",
   )
   const openSelected = () => {
     if (selected !== null) articleOptions?.openAtom(selected)
@@ -225,7 +235,9 @@ export function renderForceGraph(
         ? "เปิดหน้าอะตอมในแท็บใหม่"
         : fullSlug.startsWith("en/")
           ? "Open atom page in a new tab"
-          : "Открыть страницу атома в новой вкладке",
+          : fullSlug.startsWith("zh/")
+            ? "在新标签页打开概念原子页面"
+            : "Открыть страницу атома в новой вкладке",
     )
     open.title = open.getAttribute("aria-label")!
     footer.append(openAtom, open)

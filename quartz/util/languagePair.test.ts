@@ -67,3 +67,56 @@ describe("language pairs", () => {
     })
   })
 })
+
+describe("Chinese language counterparts", () => {
+  const data = (slugs: string[]) => slugs.map((slug) => ({ slug })) as QuartzPluginData[]
+
+  test("canonical pages and atoms resolve the same four counterparts in every direction", () => {
+    for (const suffix of [
+      "index",
+      "atoms/index",
+      "graph",
+      "neuronavigator",
+      "project-mission",
+      "atoms/mind",
+    ]) {
+      const pair = Object.fromEntries(
+        ["ru", "en", "th", "zh"].map((lang) => [lang, `${lang}/${suffix}`]),
+      )
+      const files = data(Object.values(pair))
+      for (const slug of Object.values(pair))
+        assert.deepEqual(getLanguagePair(slug as FullSlug, files), pair)
+    }
+  })
+
+  test("Chinese source counterparts resolve without any Thai or Russian files", () => {
+    const pair = { en: "en/Атомы/Mind", zh: "zh/Atoms/Mind" }
+    const files = data(Object.values(pair))
+    for (const slug of Object.values(pair))
+      assert.deepEqual(getLanguagePair(slug as FullSlug, files), pair)
+  })
+
+  test("a missing Chinese translation does not disable legacy canonical counterparts", () => {
+    const pair = { ru: "ru/graph", en: "en/graph", th: "th/graph" }
+    const files = data(Object.values(pair))
+    for (const slug of Object.values(pair)) {
+      const result = getLanguagePair(slug as FullSlug, files)
+      assert.deepEqual(result, pair)
+      assert.equal(Object.hasOwn(result!, "zh"), false)
+    }
+  })
+
+  test("legacy source names and canonical slugs can coexist in a partial group", () => {
+    const pair = { ru: "Граф", en: "en/graph", zh: "zh/Graph" }
+    const files = data(Object.values(pair))
+    for (const slug of Object.values(pair))
+      assert.deepEqual(getLanguagePair(slug as FullSlug, files), pair)
+  })
+
+  test("unknown pages are not paired with nonexistent translations", () => {
+    assert.equal(
+      getLanguagePair("zh/unknown" as FullSlug, data(["en/other", "zh/unknown"])),
+      undefined,
+    )
+  })
+})

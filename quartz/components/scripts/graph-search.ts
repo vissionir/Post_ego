@@ -1,13 +1,14 @@
 import type { GraphNode } from "../../util/graph"
 import type { SimpleSlug } from "../../util/path"
 import { graphSearchIndex, searchGraphAtoms } from "../../util/graph-search"
+import type { SiteLanguage } from "../../util/siteLanguages"
 
 let nextId = 0
 
 export function mountGraphSearch(
   root: HTMLElement,
   nodes: GraphNode[],
-  language: "ru" | "en" | "th",
+  language: SiteLanguage,
   select: (id: SimpleSlug) => boolean,
   preview: (id?: SimpleSlug) => void,
 ) {
@@ -16,7 +17,9 @@ export function mountGraphSearch(
       ? { search: "Найти атом", empty: "Атомы не найдены", results: "Найдено" }
       : language === "th"
         ? { search: "ค้นหาอะตอม", empty: "ไม่พบอะตอม", results: "ผลการค้นหา" }
-        : { search: "Find an atom", empty: "No atoms found", results: "Results" }
+        : language === "zh"
+          ? { search: "查找概念原子", empty: "未找到概念原子", results: "搜索结果" }
+          : { search: "Find an atom", empty: "No atoms found", results: "Results" }
   const index = graphSearchIndex(nodes, language)
   const controller = new AbortController()
   const options = { signal: controller.signal }

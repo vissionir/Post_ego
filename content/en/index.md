@@ -9,7 +9,7 @@ This site is the public knowledge corpus of the Post-Ego project. It gathers mat
 
 ## Sections
 
-- [[Atoms|Atoms]]
+- [[en/Атомы/index|Atoms]]
 - [[en/Graph|Atom graph]]
 - [[Нейронавигатор|Neuronavigator]]
 - [[How the research is structured|How the research is structured]]

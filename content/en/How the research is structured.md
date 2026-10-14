@@ -8,7 +8,7 @@ A semantic network is a structure of knowledge in which units of meaning appear 
 
 > **Atomic (adj.)** — logically indivisible: an atomic unit / atomic operation / atomic statement — something that either happens in full or does not happen at all.
 >
-> **[[Atoms|Atom]]** — the minimal indivisible semantic unit of the corpus.
+> **[[en/Атомы/index|Atom]]** — the minimal indivisible semantic unit of the corpus.
 >
 > **Atomic note** — one fixed thought: one distinction, one observation, one conclusion, or one constraint. It is the smallest semantic unit.
 

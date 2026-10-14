@@ -4,6 +4,7 @@ import { graphData } from "../../util/graph"
 import { renderForceGraph } from "./graph-renderer"
 import { mountGraphSearch } from "./graph-search"
 import { addToVisited, getVisited } from "./graph-visits"
+import { languageForSlug } from "../../util/lang"
 
 async function renderGraph(
   graph: HTMLElement,
@@ -42,7 +43,7 @@ document.addEventListener("nav", async (e: CustomEventMap["nav"]) => {
     cleanups.forEach((cleanup) => cleanup())
   })
   addToVisited(simplifySlug(slug))
-  const language = slug.startsWith("en/") ? "en" : slug.startsWith("th/") ? "th" : "ru"
+  const language = languageForSlug(slug)
   const copy =
     language === "ru"
       ? {
@@ -60,13 +61,21 @@ document.addEventListener("nav", async (e: CustomEventMap["nav"]) => {
             empty: "หน้านี้ยังไม่มีการเชื่อมโยง",
             error: "โหลดกราฟไม่สำเร็จ",
           }
-        : {
-            links: "Connections",
-            outgoing: "Links to",
-            incoming: "Linked from",
-            empty: "This page has no connections yet",
-            error: "Could not load graph",
-          }
+        : language === "zh"
+          ? {
+              links: "关联",
+              outgoing: "链接到",
+              incoming: "链接自",
+              empty: "此概念原子暂无关联",
+              error: "无法加载图谱",
+            }
+          : {
+              links: "Connections",
+              outgoing: "Links to",
+              incoming: "Linked from",
+              empty: "This page has no connections yet",
+              error: "Could not load graph",
+            }
   try {
     await fetchData
   } catch {

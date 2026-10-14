@@ -1,39 +1,15 @@
 import { QuartzPluginData } from "../plugins/vfile"
 import { FullSlug, simplifySlug } from "./path"
+import { canonicalRoute } from "./canonicalRoutes"
+import { languages, type SiteLanguage } from "./siteLanguages"
 
-export interface LanguagePair {
-  ru: FullSlug
-  en: FullSlug
-  th: FullSlug
-}
+export type LanguagePair = Partial<Record<SiteLanguage, FullSlug>>
 
 type AtomGraph = {
   files: QuartzPluginData[]
   outgoing: number[][]
   incoming: number[][]
 }
-
-const fixedPagePairs: [FullSlug, FullSlug, FullSlug][] = [
-  ["index" as FullSlug, "en/index" as FullSlug, "th/index" as FullSlug],
-  ["Атомы/index" as FullSlug, "en/Атомы/index" as FullSlug, "th/Atoms/index" as FullSlug],
-  ["Граф" as FullSlug, "en/Graph" as FullSlug, "th/Graph" as FullSlug],
-  [
-    "Как-устроено-исследование" as FullSlug,
-    "en/How-the-research-is-structured" as FullSlug,
-    "th/How-the-research-is-structured" as FullSlug,
-  ],
-  [
-    "Миссия-проекта" as FullSlug,
-    "en/Project-Mission" as FullSlug,
-    "th/Project-Mission" as FullSlug,
-  ],
-  ["Нейронавигатор" as FullSlug, "en/Нейронавигатор" as FullSlug, "th/Нейронавигатор" as FullSlug],
-  [
-    "Область-исследования" as FullSlug,
-    "en/Scope-of-the-research" as FullSlug,
-    "th/Scope-of-the-research" as FullSlug,
-  ],
-]
 
 // These stable semantic anchors align the two near-isomorphic atom graphs.
 const atomAnchors: [string, string][] = [
@@ -78,12 +54,14 @@ function addSlugPair(
   ru: FullSlug,
   en: FullSlug,
   th: FullSlug,
+  zh: FullSlug,
 ) {
-  if (!available.has(ru) || !available.has(en) || !available.has(th)) return
-  const pair = { ru, en, th }
-  pairs.set(ru, pair)
-  pairs.set(en, pair)
-  pairs.set(th, pair)
+  const pair: LanguagePair = {}
+  for (const [language, slug] of Object.entries({ ru, en, th, zh })) {
+    if (available.has(slug)) pair[language as SiteLanguage] = slug
+  }
+  if (Object.keys(pair).length < 2) return
+  for (const slug of Object.values(pair)) pairs.set(slug, pair)
 }
 
 function buildGraph(files: QuartzPluginData[]): AtomGraph {
@@ -214,7 +192,20 @@ function alignAtomGraphs(ru: AtomGraph, en: AtomGraph) {
 function buildLanguagePairs(allFiles: QuartzPluginData[]) {
   const pairs = new Map<FullSlug, LanguagePair>()
   const available = new Set(allFiles.flatMap((file) => (file.slug ? [file.slug] : [])))
-  fixedPagePairs.forEach(([ru, en, th]) => addSlugPair(pairs, available, ru, en, th))
+  const groups = new Map<string, LanguagePair>()
+  // Canonical routes also align legacy source names without relying on translated titles.
+  for (const slug of available) {
+    const route = canonicalRoute(slug)
+    if (!route) continue
+    const [language, ...parts] = route.split("/")
+    const key = parts.join("/")
+    const pair = groups.get(key) ?? {}
+    pair[language as SiteLanguage] = slug
+    groups.set(key, pair)
+  }
+  for (const pair of groups.values()) {
+    for (const slug of Object.values(pair)) pairs.set(slug, pair)
+  }
 
   const russianAtoms = allFiles.filter(
     (file) => file.slug?.startsWith("Атомы/") && file.slug !== "Атомы/index",
@@ -229,7 +220,8 @@ function buildLanguagePairs(allFiles: QuartzPluginData[]) {
   atomMapping.forEach((enIndex, ruIndex) => {
     const enSlug = enGraph.files[enIndex].slug!
     const thSlug = enSlug.replace(/^en\/Атомы\//, "th/Atoms/") as FullSlug
-    addSlugPair(pairs, available, ruGraph.files[ruIndex].slug!, enSlug, thSlug)
+    const zhSlug = enSlug.replace(/^en\/Атомы\//, "zh/Atoms/") as FullSlug
+    addSlugPair(pairs, available, ruGraph.files[ruIndex].slug!, enSlug, thSlug, zhSlug)
   })
 
   return pairs
@@ -240,20 +232,22 @@ export function getLanguagePair(
   allFiles: QuartzPluginData[],
 ): LanguagePair | undefined {
   if (!slug) return undefined
-  if (/^(ru|en|th)\//.test(slug)) {
-    const suffix = slug.replace(/^(ru|en|th)\//, "")
-    const pair = {
-      ru: `ru/${suffix}` as FullSlug,
-      en: `en/${suffix}` as FullSlug,
-      th: `th/${suffix}` as FullSlug,
-    }
-    if (Object.values(pair).every((candidate) => allFiles.some((file) => file.slug === candidate)))
-      return pair
-  }
   let pairs = pairCache.get(allFiles)
   if (!pairs) {
     pairs = buildLanguagePairs(allFiles)
     pairCache.set(allFiles, pairs)
   }
-  return pairs.get(slug)
+  const knownPair = pairs.get(slug)
+  if (knownPair) return knownPair
+
+  const [prefix, ...parts] = slug.split("/")
+  if (languages.some((language) => language === prefix)) {
+    const pair: LanguagePair = {}
+    for (const language of languages) {
+      const candidate = `${language}/${parts.join("/")}` as FullSlug
+      if (allFiles.some((file) => file.slug === candidate)) pair[language] = candidate
+    }
+    if (Object.keys(pair).length >= 2) return pair
+  }
+  return undefined
 }

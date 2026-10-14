@@ -8,10 +8,10 @@ import releaseOrderV1 from "./releaseOrderV1.json"
 
 export type SortFn = (f1: QuartzPluginData, f2: QuartzPluginData) => number
 
-function compareAlphabetically(f1: QuartzPluginData, f2: QuartzPluginData) {
+function compareAlphabetically(f1: QuartzPluginData, f2: QuartzPluginData, locale?: string) {
   const f1Title = f1.frontmatter?.title.toLowerCase() ?? ""
   const f2Title = f2.frontmatter?.title.toLowerCase() ?? ""
-  return f1Title.localeCompare(f2Title)
+  return f1Title.localeCompare(f2Title, locale)
 }
 
 export function byDateAndAlphabetical(cfg: GlobalConfiguration): SortFn {
@@ -60,14 +60,14 @@ export function byAlphabetical(): SortFn {
   return (f1, f2) => compareAlphabetically(f1, f2)
 }
 
-export function byAlphabeticalFolderFirst(): SortFn {
+export function byAlphabeticalFolderFirst(locale?: string): SortFn {
   return (f1, f2) => {
     const f1IsFolder = isFolderPath(f1.slug ?? "")
     const f2IsFolder = isFolderPath(f2.slug ?? "")
     if (f1IsFolder && !f2IsFolder) return -1
     if (!f1IsFolder && f2IsFolder) return 1
 
-    return compareAlphabetically(f1, f2)
+    return compareAlphabetically(f1, f2, locale)
   }
 }
 
@@ -79,8 +79,11 @@ type Props = {
 export const PageList: QuartzComponent = ({ cfg, fileData, allFiles, limit, sort }: Props) => {
   const locale = localeForSlug(fileData.slug)
   const language = languageForSlug(fileData.slug)
-  const releaseRanks = new Map(releaseOrderV1[language].map((filename, index) => [filename, index]))
-  const sorter = sort ?? byAlphabeticalFolderFirst()
+  // Chinese source filenames mirror English; chronology remains maintained separately.
+  const releaseRanks = new Map(
+    releaseOrderV1[language === "zh" ? "en" : language].map((filename, index) => [filename, index]),
+  )
+  const sorter = sort ?? byAlphabeticalFolderFirst(locale)
   let list = allFiles.sort(sorter)
   if (limit) {
     list = list.slice(0, limit)

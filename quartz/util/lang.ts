@@ -1,4 +1,5 @@
 import type { ValidLocale } from "../i18n"
+import { isSiteLanguage, siteLanguages, type SiteLanguage } from "./siteLanguages"
 
 export function capitalize(s: string): string {
   return s.substring(0, 1).toUpperCase() + s.substring(1)
@@ -12,16 +13,17 @@ export function isThaiSlug(slug?: string): boolean {
   return slug === "th" || slug?.startsWith("th/") === true
 }
 
-export function localeForSlug(slug?: string): ValidLocale {
-  if (isEnglishSlug(slug)) return "en-US"
-  if (isThaiSlug(slug)) return "th-TH"
-  return "ru-RU"
+export function isChineseSlug(slug?: string): boolean {
+  return slug === "zh" || slug?.startsWith("zh/") === true
 }
 
-export function languageForSlug(slug?: string): "en" | "ru" | "th" {
-  if (isEnglishSlug(slug)) return "en"
-  if (isThaiSlug(slug)) return "th"
-  return "ru"
+export function localeForSlug(slug?: string): ValidLocale {
+  return siteLanguages[languageForSlug(slug)].locale
+}
+
+export function languageForSlug(slug?: string): SiteLanguage {
+  const prefix = slug?.split("/")[0]
+  return isSiteLanguage(prefix) ? prefix : "ru"
 }
 
 export function classNames(
