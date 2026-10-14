@@ -1,7 +1,9 @@
 import { scrollThumbMetrics } from "../../util/scrollbar"
 
 document.addEventListener("nav", () => {
-  for (const list of document.querySelectorAll<HTMLElement>(".backlinks-list")) {
+  for (const list of document.querySelectorAll<HTMLElement>(
+    "#quartz-body .backlinks-list, #quartz-body .explorer-ul",
+  )) {
     const parent = list.parentElement
     if (!parent) continue
     const bar = document.createElement("div")
@@ -20,6 +22,7 @@ document.addEventListener("nav", () => {
     )
     bar.tabIndex = 0
     parent.append(bar)
+    parent.classList.add("scrollbar-container")
     list.classList.add("persistent-scroll-list")
 
     let frame = 0
@@ -28,6 +31,12 @@ document.addEventListener("nav", () => {
       frame = 0
       const metrics = scrollThumbMetrics(list.clientHeight, list.scrollHeight, list.scrollTop)
       bar.hidden = metrics.maxScroll <= 1 || list.clientHeight === 0
+      if (list.matches(".backlinks-list")) {
+        const fade = metrics.maxScroll - Math.max(0, list.scrollTop) > 1
+        if (list.classList.contains("gradient-active") !== fade) {
+          list.classList.toggle("gradient-active", fade)
+        }
+      }
       bar.style.top = `${list.offsetTop}px`
       bar.style.height = `${list.clientHeight}px`
       thumb.style.height = `${metrics.height}px`
@@ -101,7 +110,8 @@ document.addEventListener("nav", () => {
       cancelAnimationFrame(frame)
       list.removeEventListener("scroll", schedule)
       bar.remove()
-      list.classList.remove("persistent-scroll-list")
+      parent.classList.remove("scrollbar-container")
+      list.classList.remove("persistent-scroll-list", "gradient-active")
     })
   }
 })

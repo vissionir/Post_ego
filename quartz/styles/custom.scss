@@ -93,6 +93,18 @@ html[lang="th"] {
   align-items: center;
 }
 
+.scrollbar-container {
+  position: relative;
+}
+
+.explorer-content.scrollbar-container {
+  overflow: hidden;
+
+  @media all and ($mobile) {
+    position: absolute;
+  }
+}
+
 .persistent-scroll-list {
   scrollbar-width: none;
   padding-right: 12px !important;
@@ -103,7 +115,7 @@ html[lang="th"] {
   }
 
   &.persistent-scroll-list.gradient-active {
-    mask-image: none;
+    mask-image: linear-gradient(to bottom, black calc(100% - 50px), transparent 100%);
   }
 }
 
@@ -121,6 +133,18 @@ html[lang="th"] {
   &:focus-visible {
     outline: 2px solid var(--secondary);
     outline-offset: 2px;
+  }
+}
+
+@media (hover: hover) and (pointer: fine) and (min-width: 801px) {
+  .scrollbar-container > .persistent-scrollbar {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .scrollbar-container:is(:hover, :focus-within) > .persistent-scrollbar {
+    opacity: 1;
+    pointer-events: auto;
   }
 }
 
