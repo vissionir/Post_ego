@@ -28,8 +28,8 @@
 
   body:is([data-slug="ru/index"], [data-slug="en/index"], [data-slug="th/index"])
     #quartz-body > .sidebar.left > .flex-component {
-    // The introduction has a 1rem top margin; the sidebar gap is 1.2rem.
-    margin-top: -0.2rem;
+    // Center the 32px controls between the first two 1.6rem introduction lines.
+    margin-top: calc(1.4rem - 16px);
   }
 
   // Only the main header counts: a link preview also contains breadcrumbs.
