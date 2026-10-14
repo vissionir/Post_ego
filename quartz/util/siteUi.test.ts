@@ -22,6 +22,7 @@ const bundle = await build({
       export { default as Breadcrumbs } from "./quartz/components/Breadcrumbs"
       export { default as Graph } from "./quartz/components/Graph"
       export { default as PageTitle } from "./quartz/components/PageTitle"
+      export { default as Search } from "./quartz/components/Search"
       export { defaultContentPageLayout } from "./quartz.layout"
       export { languageEntryScript } from "./quartz/util/siteLanguage"
     `,
@@ -51,7 +52,7 @@ vm.runInNewContext(bundle.outputFiles[0].text, {
   require: createRequire(import.meta.url),
 })
 const ui = module.exports as Record<
-  "LanguageSwitcher" | "FolderContent" | "Breadcrumbs" | "Graph" | "PageTitle",
+  "LanguageSwitcher" | "FolderContent" | "Breadcrumbs" | "Graph" | "PageTitle" | "Search",
   () => QuartzComponent
 > & { defaultContentPageLayout: PageLayout; languageEntryScript: () => string }
 
@@ -80,6 +81,26 @@ function props(slug: string): QuartzComponentProps {
     tree: { type: "root", children: [] },
   } as unknown as QuartzComponentProps
 }
+
+test("search fields identify search intent and offer a localized mobile close control", () => {
+  const labels = { ru: "Закрыть поиск", en: "Close search", th: "ปิดการค้นหา", zh: "关闭搜索" }
+  for (const language of languages) {
+    const html = render(createElement(ui.Search(), props(`${language}/index`)))
+    for (const attribute of [
+      'type="search"',
+      'name="q"',
+      'inputMode="search"',
+      'enterKeyHint="search"',
+      'autocomplete="off"',
+      'autocorrect="off"',
+      'autocapitalize="none"',
+      'spellcheck="false"',
+    ])
+      assert(html.toLowerCase().includes(attribute.toLowerCase()), attribute)
+    assert(html.includes(`aria-label="${labels[language]}"`))
+    assert(html.includes('class="search-toolbar"'))
+  }
+})
 
 test("Chinese header shows all four options and retains atom counterparts", () => {
   const html = render(createElement(ui.LanguageSwitcher(), props("zh/atoms/mind")))

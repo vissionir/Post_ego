@@ -2,7 +2,7 @@ import { QuartzComponent, QuartzComponentConstructor, QuartzComponentProps } fro
 import style from "./styles/search.scss"
 // @ts-ignore
 import script from "./scripts/search.inline"
-import { classNames, localeForSlug } from "../util/lang"
+import { classNames, languageForSlug, localeForSlug } from "../util/lang"
 import { i18n } from "../i18n"
 
 export interface SearchOptions {
@@ -18,6 +18,12 @@ export default ((userOpts?: Partial<SearchOptions>) => {
     const opts = { ...defaultOptions, ...userOpts }
     const translation = i18n(localeForSlug(fileData.slug)).components.search
     const searchPlaceholder = translation.searchBarPlaceholder
+    const closeLabel = {
+      ru: "Закрыть поиск",
+      en: "Close search",
+      th: "ปิดการค้นหา",
+      zh: "关闭搜索",
+    }[languageForSlug(fileData.slug)]
     return (
       <div class={classNames(displayClass, "search")}>
         <button class="search-button" type="button" aria-label={translation.title}>
@@ -32,14 +38,31 @@ export default ((userOpts?: Partial<SearchOptions>) => {
         </button>
         <div class="search-container">
           <div class="search-space">
-            <input
-              autocomplete="off"
-              class="search-bar"
-              name="search"
-              type="text"
-              aria-label={searchPlaceholder}
-              placeholder={searchPlaceholder}
-            />
+            <div class="search-toolbar">
+              <input
+                autocomplete="off"
+                autocorrect="off"
+                autocapitalize="none"
+                spellcheck={false}
+                class="search-bar"
+                name="q"
+                type="search"
+                inputMode="search"
+                enterKeyHint="search"
+                aria-label={searchPlaceholder}
+                placeholder={searchPlaceholder}
+              />
+              <button class="search-close" type="button" aria-label={closeLabel}>
+                <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true">
+                  <path
+                    d="m5 5 10 10M15 5 5 15"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                  />
+                </svg>
+              </button>
+            </div>
             <div class="search-layout" data-preview={opts.enablePreview}></div>
           </div>
         </div>

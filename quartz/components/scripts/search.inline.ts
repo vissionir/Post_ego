@@ -206,6 +206,7 @@ async function setupSearch(searchElement: Element, currentSlug: FullSlug, data: 
 
   const searchBar = searchElement.querySelector(".search-bar") as HTMLInputElement
   if (!searchBar) return
+  const closeButton = searchElement.querySelector<HTMLButtonElement>(".search-close")
 
   const searchLayout = searchElement.querySelector(".search-layout") as HTMLElement
   if (!searchLayout) return
@@ -232,6 +233,8 @@ async function setupSearch(searchElement: Element, currentSlug: FullSlug, data: 
 
   // iOS keyboards resize the visual viewport, not the layout viewport used by vh.
   const viewport = window.visualViewport
+  let previousOverflow = ""
+  let previousSidebarZIndex = ""
   function syncViewport() {
     if (!container.classList.contains("active")) return
     container.style.setProperty(
@@ -250,24 +253,32 @@ async function setupSearch(searchElement: Element, currentSlug: FullSlug, data: 
   })
 
   function hideSearch() {
+    if (!container.classList.contains("active")) return
     container.classList.remove("active")
     searchBar.value = "" // clear the input when we dismiss the search
-    if (sidebar) sidebar.style.zIndex = ""
+    searchBar.blur()
+    document.body.style.overflow = previousOverflow
+    if (sidebar) sidebar.style.zIndex = previousSidebarZIndex
     removeAllChildren(results)
     if (preview) {
       removeAllChildren(preview)
     }
     searchLayout.classList.remove("display-results")
     searchType = "basic" // reset search type after closing
-    searchButton.focus()
+    searchButton.focus({ preventScroll: true })
   }
 
   function showSearch(searchTypeNew: SearchType) {
     searchType = searchTypeNew
-    if (sidebar) sidebar.style.zIndex = "1"
+    if (!container.classList.contains("active")) {
+      previousOverflow = document.body.style.overflow
+      previousSidebarZIndex = sidebar?.style.zIndex ?? ""
+    }
+    document.body.style.overflow = "hidden"
+    if (sidebar) sidebar.style.zIndex = "1000"
     container.classList.add("active")
     syncViewport()
-    searchBar.focus()
+    searchBar.focus({ preventScroll: true })
   }
 
   let currentHover: HTMLInputElement | null = null
@@ -537,8 +548,17 @@ async function setupSearch(searchElement: Element, currentSlug: FullSlug, data: 
 
   document.addEventListener("keydown", shortcutHandler)
   window.addCleanup(() => document.removeEventListener("keydown", shortcutHandler))
-  searchButton.addEventListener("click", () => showSearch("basic"))
-  window.addCleanup(() => searchButton.removeEventListener("click", () => showSearch("basic")))
+  const openSearch = () => showSearch("basic")
+  searchButton.addEventListener("click", openSearch)
+  closeButton?.addEventListener("click", hideSearch)
+  window.addCleanup(() => {
+    searchButton.removeEventListener("click", openSearch)
+    closeButton?.removeEventListener("click", hideSearch)
+    if (container.classList.contains("active")) {
+      document.body.style.overflow = previousOverflow
+      if (sidebar) sidebar.style.zIndex = previousSidebarZIndex
+    }
+  })
   searchBar.addEventListener("input", onType)
   window.addCleanup(() => searchBar.removeEventListener("input", onType))
 
