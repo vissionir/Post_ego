@@ -114,14 +114,6 @@ html[lang="th"] {
     display: none;
   }
 
-  &::before {
-    content: "";
-    position: absolute;
-    inset: 0 4px;
-    border-radius: 4px;
-    background: var(--lightgray);
-  }
-
   &:focus-visible {
     outline: 2px solid var(--secondary);
     outline-offset: 2px;
