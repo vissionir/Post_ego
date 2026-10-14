@@ -2,6 +2,8 @@ import { QuartzComponent, QuartzComponentConstructor, QuartzComponentProps } fro
 import { FullSlug, resolveRelative } from "../util/path"
 import { getLanguagePair } from "../util/languagePair"
 import { languageForSlug } from "../util/lang"
+// @ts-ignore
+import languageSwitcherScript from "./scripts/language-switcher.inline"
 
 /**
  * Global RU/EN/TH switcher.
@@ -25,61 +27,117 @@ const LanguageSwitcher: QuartzComponent = ({ fileData, allFiles }: QuartzCompone
   const ruHref = resolveRelative(slug, ruSlug)
   const enHref = resolveRelative(slug, enSlug)
   const thHref = resolveRelative(slug, thSlug)
+  const label =
+    language === "ru" ? "Переключение языка" : language === "th" ? "เปลี่ยนภาษา" : "Language switch"
+  const languages = [
+    { code: "ru", name: "Русский", href: ruHref },
+    { code: "en", name: "English", href: enHref },
+    { code: "th", name: "ไทย", href: thHref },
+  ]
 
   return (
-    <div
-      class="lang-switch"
-      aria-label={
-        language === "ru"
-          ? "Переключение языка"
-          : language === "th"
-            ? "เปลี่ยนภาษา"
-            : "Language switch"
-      }
-    >
-      <a class={`lang-link ${language === "ru" ? "active" : ""}`} href={ruHref} data-set-lang="ru">
-        RU
-      </a>
-      <span class="sep">/</span>
-      <a class={`lang-link ${language === "en" ? "active" : ""}`} href={enHref} data-set-lang="en">
-        EN
-      </a>
-      <span class="sep">/</span>
-      <a class={`lang-link ${language === "th" ? "active" : ""}`} href={thHref} data-set-lang="th">
-        TH
-      </a>
-    </div>
+    <details class="lang-switch">
+      <summary aria-label={`${label}: ${language.toUpperCase()}`}>
+        <span>{language.toUpperCase()}</span>
+        <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true">
+          <path d="m3 4.5 3 3 3-3" fill="none" stroke="currentColor" stroke-width="1.5" />
+        </svg>
+      </summary>
+      <nav class="lang-options" aria-label={label}>
+        {languages.map(({ code, name, href }) => (
+          <a
+            class={`lang-link ${language === code ? "active" : ""}`}
+            href={href}
+            lang={code}
+            hreflang={code}
+            data-set-lang={code}
+            aria-current={language === code ? "page" : undefined}
+          >
+            <span>{name}</span>
+            {language === code && (
+              <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true">
+                <path d="m3 7 2.5 2.5L11 4" fill="none" stroke="currentColor" stroke-width="1.5" />
+              </svg>
+            )}
+          </a>
+        ))}
+      </nav>
+    </details>
   )
 }
 
 LanguageSwitcher.css = `
 .lang-switch {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
+  position: relative;
+  flex-shrink: 0;
   font-size: 0.9rem;
+  line-height: 1.25;
   user-select: none;
-  opacity: 0.9;
 }
 
-.lang-switch .sep {
-  opacity: 0.5;
+.lang-switch > summary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  min-width: 2.75rem;
+  height: 32px;
+  padding: 0 0.2rem;
+  box-sizing: border-box;
+  list-style: none;
+  cursor: pointer;
+  color: var(--secondary);
+  font-weight: 600;
 }
 
-.lang-switch a.lang-link {
+.lang-switch > summary::-webkit-details-marker {
+  display: none;
+}
+
+.lang-switch[open] > summary > svg {
+  transform: rotate(180deg);
+}
+
+.lang-switch .lang-options {
+  position: absolute;
+  z-index: 10;
+  top: calc(100% + 0.4rem);
+  right: 0;
+  min-width: 9.5rem;
+  max-width: calc(100vw - 2rem);
+  padding: 0.3rem;
+  box-sizing: border-box;
+  border: 1px solid var(--lightgray);
+  border-radius: 6px;
+  background: var(--light);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.lang-switch .lang-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  min-height: 38px;
+  padding: 0 0.65rem;
+  border-radius: 3px;
+  font-weight: 400;
   text-decoration: none;
-  border-bottom: 1px solid transparent;
-  padding: 0.05rem 0;
+  color: var(--darkgray);
+  white-space: nowrap;
 }
 
-.lang-switch a.lang-link.active {
-  opacity: 1;
-  border-bottom-color: currentColor;
+.lang-switch .lang-link:hover,
+.lang-switch .lang-link:focus-visible {
+  background: var(--highlight);
 }
 
-.lang-switch a.lang-link:not(.active) {
-  opacity: 0.65;
+.lang-switch .lang-link.active {
+  color: var(--secondary);
+  font-weight: 600;
 }
 `
+
+LanguageSwitcher.afterDOMLoaded = languageSwitcherScript
 
 export default (() => LanguageSwitcher) satisfies QuartzComponentConstructor
