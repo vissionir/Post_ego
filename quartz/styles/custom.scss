@@ -344,3 +344,68 @@ article :where(p, ul, ol, blockquote) + :where(h2, h3) {
   overflow-wrap: normal;
   hyphens: none;
 }
+
+@media all and ($mobile) {
+  body[data-page-type="atom"] .page > #quartz-body {
+    // Short definitions use one screen; long text can still extend the document.
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    height: 100dvh;
+    min-height: 100svh;
+    gap: 0;
+    padding-bottom: max(1rem, env(safe-area-inset-bottom));
+
+    > .sidebar.left,
+    > .center {
+      flex: 0 0 auto;
+      min-width: 0;
+      width: 100%;
+    }
+
+    > .sidebar.right {
+      display: flex;
+      align-items: stretch;
+      flex: 1 0 12rem;
+      min-height: 12rem;
+      margin-top: 1rem;
+      gap: 1.2rem;
+
+      > .graph,
+      > .backlinks {
+        flex: 1 1 0;
+        min-width: 0;
+        min-height: 0;
+        max-height: none;
+      }
+
+      > .graph > .graph-outer {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        margin: 0;
+
+        > .graph-preview-toolbar {
+          flex-shrink: 0;
+        }
+
+        > .graph-container {
+          flex: 1;
+          min-height: 0;
+          height: auto;
+        }
+      }
+
+      > .backlinks > .backlinks-scroll-area {
+        flex: 1;
+        overflow: hidden;
+        margin-bottom: 0;
+
+        > .backlinks-list {
+          height: 100%;
+          max-height: none;
+        }
+      }
+    }
+  }
+}

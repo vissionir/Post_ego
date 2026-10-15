@@ -64,6 +64,9 @@ LanguageSwitcher.css = `
 }
 
 .lang-switch > summary {
+  font-family: "Source Sans Pro", sans-serif;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
   display: flex;
   align-items: center;
   justify-content: center;

@@ -289,6 +289,8 @@ document.addEventListener("nav", async (e: CustomEventMap["nav"]) => {
       }, 150)
     }
     window.addEventListener("resize", resize)
+    const graphResize = new ResizeObserver(resize)
+    if (local) graphResize.observe(local)
     cleanups.push(() => {
       hide(false)
       localGeneration++
@@ -300,6 +302,7 @@ document.addEventListener("nav", async (e: CustomEventMap["nav"]) => {
       document.removeEventListener("keydown", keydown)
       document.removeEventListener("themechange", theme)
       window.removeEventListener("resize", resize)
+      graphResize.disconnect()
       clearTimeout(resizeTimer)
     })
     if (standalone) open()
