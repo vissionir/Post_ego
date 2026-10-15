@@ -3,6 +3,16 @@
   "sourceCommit": "6a2936f68d132ba59989cc59939f5f898f4fcbbe",
   "atoms": [
     {
+      "title": "Стремление к совершенству",
+      "paths": [
+        "content/Атомы/Стремление к совершенству.md",
+        "content/en/Атомы/Striving for Perfection.md",
+        "content/th/Atoms/Striving for Perfection.md",
+        "content/zh/Atoms/Striving for Perfection.md"
+      ],
+      "published": "2026-10-15T13:16:44+07:00"
+    },
+    {
       "title": "Совершенство",
       "paths": [
         "content/Атомы/Совершенство.md",
