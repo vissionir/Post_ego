@@ -1,6 +1,7 @@
 import micromorph from "micromorph"
 import { FullSlug, RelativeURL, getFullSlug, normalizeRelativeURLs } from "../../util/path"
 import { fetchCanonical } from "./util"
+import { needsAssetReload, siteAssetVersion } from "../../util/siteAssetVersion"
 
 // adapted from `micromorph`
 // https://github.com/natemoo-re/micromorph
@@ -81,6 +82,22 @@ async function _navigate(url: URL, isBack: boolean = false) {
 
   if (!contents) return
 
+  const html = p.parseFromString(contents, "text/html")
+  const stylesheet = (doc: Document) =>
+    doc
+      .querySelector<HTMLLinkElement>('link[rel="stylesheet"][href*="index.css"]')
+      ?.getAttribute("href") ?? null
+  // Persistent CSS and scripts must not be reused with markup from a different release.
+  if (
+    needsAssetReload(
+      siteAssetVersion(stylesheet(document), location.href),
+      siteAssetVersion(stylesheet(html), canonicalUrl.href),
+    )
+  ) {
+    window.location.assign(canonicalUrl)
+    return
+  }
+
   // notify about to nav
   const event: CustomEventMap["prenav"] = new CustomEvent("prenav", { detail: {} })
   document.dispatchEvent(event)
@@ -89,7 +106,6 @@ async function _navigate(url: URL, isBack: boolean = false) {
   cleanupFns.forEach((fn) => fn())
   cleanupFns.clear()
 
-  const html = p.parseFromString(contents, "text/html")
   normalizeRelativeURLs(html, canonicalUrl)
 
   let title = html.querySelector("title")?.textContent
