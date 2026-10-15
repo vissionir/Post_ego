@@ -23,12 +23,14 @@ export interface D3Config {
 
 interface GraphOptions {
   standalone: boolean
+  modalOnly: boolean
   localGraph: Partial<D3Config> | undefined
   globalGraph: Partial<D3Config> | undefined
 }
 
 const defaultOptions: GraphOptions = {
   standalone: false,
+  modalOnly: false,
   localGraph: {
     drag: true,
     zoom: true,
@@ -100,8 +102,14 @@ export default ((opts?: Partial<GraphOptions>) => {
               }
     return (
       <div
-        class={classNames(displayClass, "graph", opts?.standalone ? "graph-launcher" : "")}
+        class={classNames(
+          displayClass,
+          "graph",
+          opts?.standalone ? "graph-launcher" : "",
+          opts?.modalOnly ? "graph-modal-only" : "",
+        )}
         data-auto-open={opts?.standalone ? "all" : undefined}
+        data-modal-only={opts?.modalOnly ? "true" : undefined}
       >
         <div class="graph-outer">
           <div class="graph-preview-toolbar">

@@ -154,6 +154,10 @@ export const defaultListPageLayout: PageLayout = {
         page.fileData.slug !== "zh/index",
     }),
     Component.ArticleTitle(),
+    Component.ConditionalRender({
+      component: Component.Graph({ modalOnly: true }),
+      condition: (page) => page.fileData.slug?.endsWith("/atoms/index") === true,
+    }),
   ],
   left: [
     Component.PageTitle(),

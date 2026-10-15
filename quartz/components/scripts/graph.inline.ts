@@ -84,6 +84,7 @@ document.addEventListener("nav", async (e: CustomEventMap["nav"]) => {
   if (disposed) return
   for (const component of document.querySelectorAll<HTMLElement>(".graph")) {
     const standalone = component.dataset.autoOpen === "all"
+    const modalOnly = component.dataset.modalOnly === "true"
     const local = component.querySelector<HTMLElement>(".graph-container")!
     const overlay = component.querySelector<HTMLElement>(".global-graph-outer")!
     const graph = overlay.querySelector<HTMLElement>(".global-graph-container")!
@@ -198,8 +199,11 @@ document.addEventListener("nav", async (e: CustomEventMap["nav"]) => {
       close.focus()
     }
     const open = () => {
-      returnFocus = trigger
-      show(standalone ? -1 : 1, !standalone)
+      returnFocus =
+        modalOnly && document.activeElement instanceof HTMLElement
+          ? document.activeElement
+          : trigger
+      show(standalone || modalOnly ? -1 : 1, !standalone && !modalOnly)
     }
     const graphLink = (event: MouseEvent) => {
       if (event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey)
@@ -262,7 +266,7 @@ document.addEventListener("nav", async (e: CustomEventMap["nav"]) => {
     )
     document.addEventListener("keydown", keydown)
     const theme = () => {
-      if (!standalone) {
+      if (!standalone && !modalOnly) {
         void renderLocal().catch(() => {
           local.textContent = copy.error
         })
@@ -290,7 +294,7 @@ document.addEventListener("nav", async (e: CustomEventMap["nav"]) => {
     }
     window.addEventListener("resize", resize)
     const graphResize = new ResizeObserver(resize)
-    if (local) graphResize.observe(local)
+    if (local && !modalOnly) graphResize.observe(local)
     cleanups.push(() => {
       hide(false)
       localGeneration++
@@ -306,7 +310,7 @@ document.addEventListener("nav", async (e: CustomEventMap["nav"]) => {
       clearTimeout(resizeTimer)
     })
     if (standalone) open()
-    else {
+    else if (!modalOnly) {
       await renderLocal().catch(() => {
         local.textContent = copy.error
       })

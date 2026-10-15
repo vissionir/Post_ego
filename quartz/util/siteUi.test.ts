@@ -24,6 +24,7 @@ const bundle = await build({
       export { default as PageTitle } from "./quartz/components/PageTitle"
       export { default as Search } from "./quartz/components/Search"
       export { defaultContentPageLayout } from "./quartz.layout"
+      export { defaultListPageLayout } from "./quartz.layout"
       export { languageEntryScript } from "./quartz/util/siteLanguage"
     `,
     resolveDir: fileURLToPath(new URL("../../", import.meta.url)),
@@ -54,7 +55,11 @@ vm.runInNewContext(bundle.outputFiles[0].text, {
 const ui = module.exports as Record<
   "LanguageSwitcher" | "FolderContent" | "Breadcrumbs" | "Graph" | "PageTitle" | "Search",
   () => QuartzComponent
-> & { defaultContentPageLayout: PageLayout; languageEntryScript: () => string }
+> & {
+  defaultContentPageLayout: PageLayout
+  defaultListPageLayout: PageLayout
+  languageEntryScript: () => string
+}
 
 function props(slug: string): QuartzComponentProps {
   const allFiles = [
@@ -62,7 +67,10 @@ function props(slug: string): QuartzComponentProps {
       slug: `${language}/index`,
       frontmatter: { title: "PostEgo" },
     })),
-    { slug: "zh/atoms/index", frontmatter: { title: "概念原子" } },
+    ...languages.map((language) => ({
+      slug: `${language}/atoms/index`,
+      frontmatter: { title: language === "zh" ? "概念原子" : "Atoms" },
+    })),
     ...languages.map((language) => ({
       slug: `${language}/atoms/mind`,
       filePath: `content/${language}/Atoms/Mind.md`,
@@ -141,6 +149,17 @@ test("Chinese graph toolbar uses localized actions", () => {
   const html = render(createElement(ui.Graph(), props("zh/atoms/mind")))
   for (const label of ["打开图谱", "邻近关联", "概念原子关联", "完整图谱", "关闭图谱"])
     assert(html.includes(label))
+})
+
+test("atom lists include an on-demand graph without a visible preview or automatic opening", () => {
+  const modal = ui.defaultListPageLayout.beforeBody.at(-1)!
+  for (const language of languages) {
+    const html = render(createElement(modal, props(`${language}/atoms/index`)))
+    assert(html.includes("graph-modal-only"))
+    assert(html.includes('data-modal-only="true"'))
+    assert(!html.includes('data-auto-open="all"'))
+  }
+  assert.equal(render(createElement(modal, props("zh/index"))), "")
 })
 
 test("serialized explorer callbacks filter, sort and label Chinese nodes without imports", () => {
