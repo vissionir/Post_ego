@@ -4,4 +4,4 @@ created: 2026-06-08T17:28:59+07:00
 lang: zh-CN
 ---
 
-接纳不完美是[[zh/Atoms/Self-Acceptance|自我接纳]]的一种形式，其中[[zh/Atoms/Human Imperfection|人的不完美]]不被体验为[[zh/Atoms/Wrongness|不对劲]]；它与[[zh/Atoms/Ideal Self|理想自我]]相反。
+接纳不完美是一种处境，在其中[[zh/Atoms/Reality|现实]]，包括[[zh/Atoms/Human Imperfection|自身的不完美]]，得到[[zh/Atoms/Acceptance|接纳]]，而不被要求达到[[zh/Atoms/Perfection|完美]]。

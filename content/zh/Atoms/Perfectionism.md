@@ -4,4 +4,4 @@ created: 2026-04-15T00:20:32+07:00
 lang: zh-CN
 ---
 
-完美主义是[[zh/Atoms/Inner Coercion|内在强迫]]的一种形式，其中与[[zh/Atoms/Ideal Self|理想自我]]的偏差被体验为需要消除的[[zh/Atoms/Wrongness|不对劲]]。
+完美主义是[[zh/Atoms/Inner Coercion|内在强迫]]的一种形式，主体在其中[[zh/Atoms/Ideal Self|要求自己完美]]或要求[[zh/Atoms/Extended Self|自身活动的结果]]完美，并将与这一要求的偏差体验为[[zh/Atoms/Wrongness|自身的不对劲]]。

@@ -3,6 +3,28 @@
   "sourceCommit": "6a2936f68d132ba59989cc59939f5f898f4fcbbe",
   "atoms": [
     {
+      "title": "Совершенство",
+      "paths": [
+        "content/Атомы/Совершенство.md",
+        "content/en/Атомы/Perfection.md",
+        "content/th/Atoms/Perfection.md",
+        "content/zh/Atoms/Perfection.md"
+      ],
+      "published": "2026-10-15T13:00:26+07:00",
+      "publicationOrder": 0
+    },
+    {
+      "title": "Экзистенциальная изоляция",
+      "paths": [
+        "content/Атомы/Экзистенциальная изоляция.md",
+        "content/en/Атомы/Existential Isolation.md",
+        "content/th/Atoms/Existential Isolation.md",
+        "content/zh/Atoms/Existential Isolation.md"
+      ],
+      "published": "2026-10-15T13:00:26+07:00",
+      "publicationOrder": 1
+    },
+    {
       "title": "Опора на обладание",
       "paths": [
         "content/Атомы/Опора на обладание.md",
