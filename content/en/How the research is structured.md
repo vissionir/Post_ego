@@ -1,5 +1,5 @@
 ---
-title: How the research is structured
+title: How the corpus is structured
 ---
 
 The research is arranged as a network of atomic notes — atoms — organized as a semantic network.

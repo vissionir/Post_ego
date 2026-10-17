@@ -13,7 +13,7 @@ modified: 2026-05-21
 - [[th/Atoms|อะตอม]]
 - [[th/Graph|กราฟอะตอม]]
 - [[th/Нейронавигатор|ระบบนำทางประสาท]]
-- [[How the research is structured|โครงสร้างงานวิจัย]]
+- [[How the research is structured|โครงสร้างของคลังความรู้]]
 - [[Scope of the research|ขอบเขตงานวิจัย]]
 - [[Project Mission|พันธกิจของโครงการ]]
 

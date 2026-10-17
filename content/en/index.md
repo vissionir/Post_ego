@@ -12,7 +12,7 @@ This site is the public knowledge corpus of the Post-Ego project. It gathers mat
 - [[en/Атомы/index|Atoms]]
 - [[en/Graph|Atom graph]]
 - [[Нейронавигатор|Neuronavigator]]
-- [[How the research is structured|How the research is structured]]
+- [[How the research is structured|How the corpus is structured]]
 - [[Scope of the research|Scope of the research]]
 - [[Project Mission|Project Mission]]
 

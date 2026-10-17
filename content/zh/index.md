@@ -12,7 +12,7 @@ socialDescription: 关于“我”及其实际运作方式的知识库。
 - [[zh/Atoms/index|概念原子]]
 - [[zh/Graph|概念原子图谱]]
 - [[zh/Нейронавигатор|AI 导航]]
-- [[zh/How the research is structured|研究如何组织]]
+- [[zh/How the research is structured|知识库的结构]]
 - [[zh/Scope of the research|研究范围]]
 - [[zh/Project Mission|项目使命]]
 
