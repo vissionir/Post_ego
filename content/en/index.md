@@ -14,13 +14,6 @@ This site is the public knowledge corpus of the Post-Ego project. It gathers mat
 - [[Нейронавигатор|Neuronavigator]]
 - [[How the research is structured|How the research is structured]]
 - [[Scope of the research|Scope of the research]]
-  - [[Scope of the research#empirical-basis-of-the-research|Empirical basis of the research]]
-  - [[Scope of the research#practical-relevance|Practical relevance]]
-  - [[Scope of the research#research-methods|Research methods]]
-  - [[Scope of the research#model-coherence-criteria|Model coherence criteria]]
-  - [[Scope of the research#project-boundaries|Project boundaries]]
-  - [[Scope of the research#boundary-of-thinking|Boundary of thinking]]
-  - [[Scope of the research#critical-remark|Critical remark]]
 - [[Project Mission|Project Mission]]
 
 ---

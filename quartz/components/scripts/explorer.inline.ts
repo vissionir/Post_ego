@@ -20,6 +20,40 @@ type FolderState = {
 }
 
 let currentExplorerState: Array<FolderState>
+const explorerMobileModes = new WeakMap<Element, boolean>()
+
+function setExplorerCollapsed(explorer: Element, collapsed: boolean) {
+  explorer.classList.toggle("collapsed", collapsed)
+  explorer.setAttribute("aria-expanded", String(!collapsed))
+  for (const button of explorer.querySelectorAll(".explorer-toggle")) {
+    button.setAttribute("aria-expanded", String(!collapsed))
+  }
+}
+
+function syncExplorerLayout(explorer: Element, resetMobile = false) {
+  const mobileButton = explorer.querySelector<HTMLElement>(".mobile-explorer")
+  if (!mobileButton) return
+
+  const isMobile = mobileButton.checkVisibility()
+  const wasMobile = explorerMobileModes.get(explorer)
+  if (isMobile && (resetMobile || wasMobile !== true)) {
+    setExplorerCollapsed(explorer, true)
+  } else if (!isMobile && wasMobile === true) {
+    setExplorerCollapsed(explorer, false)
+    alignActiveExplorer(explorer)
+  }
+  explorerMobileModes.set(explorer, isMobile)
+  mobileButton.classList.remove("hide-until-loaded")
+}
+
+function syncExplorerScrollLock() {
+  const drawerOpen = Array.from(document.querySelectorAll(".explorer")).some(
+    (explorer) =>
+      explorer.querySelector<HTMLElement>(".mobile-explorer")?.checkVisibility() &&
+      !explorer.classList.contains("collapsed"),
+  )
+  document.documentElement.classList.toggle("mobile-no-scroll", drawerOpen)
+}
 
 function alignActiveExplorer(explorer: Element) {
   const list = explorer.querySelector<HTMLElement>(".explorer-ul")
@@ -38,20 +72,14 @@ function alignActiveExplorer(explorer: Element) {
 function toggleExplorer(this: HTMLElement) {
   const nearestExplorer = this.closest(".explorer") as HTMLElement
   if (!nearestExplorer) return
-  const explorerCollapsed = nearestExplorer.classList.toggle("collapsed")
-  nearestExplorer.setAttribute(
-    "aria-expanded",
-    nearestExplorer.getAttribute("aria-expanded") === "true" ? "false" : "true",
-  )
+  const explorerCollapsed = !nearestExplorer.classList.contains("collapsed")
+  setExplorerCollapsed(nearestExplorer, explorerCollapsed)
 
   if (!explorerCollapsed) {
     // The mobile drawer has no measurable layout until it is opened.
     alignActiveExplorer(nearestExplorer)
-    // Stop <html> from being scrollable when mobile explorer is open
-    document.documentElement.classList.add("mobile-no-scroll")
-  } else {
-    document.documentElement.classList.remove("mobile-no-scroll")
   }
+  syncExplorerScrollLock()
 }
 
 function toggleFolder(evt: MouseEvent) {
@@ -308,31 +336,17 @@ document.addEventListener("nav", async (e: CustomEventMap["nav"]) => {
   const currentSlug = e.detail.url
   await setupExplorer(currentSlug)
 
-  // if mobile hamburger is visible, collapse by default
   for (const explorer of document.getElementsByClassName("explorer")) {
-    const mobileExplorer = explorer.querySelector(".mobile-explorer")
-    if (!mobileExplorer) return
-
-    if (mobileExplorer.checkVisibility()) {
-      explorer.classList.add("collapsed")
-      explorer.setAttribute("aria-expanded", "false")
-
-      // Allow <html> to be scrollable when mobile explorer is collapsed
-      document.documentElement.classList.remove("mobile-no-scroll")
-    }
-
-    mobileExplorer.classList.remove("hide-until-loaded")
+    syncExplorerLayout(explorer, true)
   }
+  syncExplorerScrollLock()
 })
 
 window.addEventListener("resize", function () {
-  // Desktop explorer opens by default, and it stays open when the window is resized
-  // to mobile screen size. Applies `no-scroll` to <html> in this edge case.
-  const explorer = document.querySelector(".explorer")
-  if (explorer && !explorer.classList.contains("collapsed")) {
-    document.documentElement.classList.add("mobile-no-scroll")
-    return
+  for (const explorer of document.getElementsByClassName("explorer")) {
+    syncExplorerLayout(explorer)
   }
+  syncExplorerScrollLock()
 })
 
 function setFolderState(folderElement: HTMLElement, collapsed: boolean) {

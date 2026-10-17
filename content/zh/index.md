@@ -14,13 +14,6 @@ socialDescription: 关于“我”及其实际运作方式的知识库。
 - [[zh/Нейронавигатор|AI 导航]]
 - [[zh/How the research is structured|研究如何组织]]
 - [[zh/Scope of the research|研究范围]]
-  - [[zh/Scope of the research#研究的经验基础|研究的经验基础]]
-  - [[zh/Scope of the research#实践意义|实践意义]]
-  - [[zh/Scope of the research#研究方法|研究方法]]
-  - [[zh/Scope of the research#模型的一致性标准|模型的一致性标准]]
-  - [[zh/Scope of the research#项目的边界|项目的边界]]
-  - [[zh/Scope of the research#思维的边界|思维的边界]]
-  - [[zh/Scope of the research#重要说明|重要说明]]
 - [[zh/Project Mission|项目使命]]
 
 ---
