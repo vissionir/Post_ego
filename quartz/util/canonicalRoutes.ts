@@ -95,6 +95,8 @@ for (const [oldName, current] of [
   ["Freedom", "inner-freedom"],
   ["Прекращение-цепляний", "letting-go-of-the-mission"],
   ["Cessation-of-Clinging", "letting-go-of-the-mission"],
+  ["Прекращение-удержания", "non-holding"],
+  ["Cessation-of-Holding", "non-holding"],
 ]) {
   for (const lang of languages) {
     const prefix = siteLanguages[lang].atomPrefix
@@ -105,6 +107,7 @@ for (const [oldName, current] of [
 for (const lang of languages) {
   register(`${lang}/atoms/possessiveness`, `${lang}/atoms/possession` as FullSlug)
   register(`${lang}/atoms/non-clinging`, `${lang}/atoms/liberation` as FullSlug)
+  register(`${lang}/atoms/cessation-of-holding`, `${lang}/atoms/non-holding` as FullSlug)
   register(`${lang}/atoms/freedom`, `${lang}/atoms/inner-freedom` as FullSlug)
   register(
     `${lang}/atoms/cessation-of-clinging`,

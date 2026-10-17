@@ -3,6 +3,138 @@
   "sourceCommit": "6a2936f68d132ba59989cc59939f5f898f4fcbbe",
   "atoms": [
     {
+      "title": "Отпускание эго",
+      "paths": [
+        "content/Атомы/Отпускание эго.md",
+        "content/en/Атомы/Letting Go of the Ego.md",
+        "content/th/Atoms/Letting Go of the Ego.md",
+        "content/zh/Atoms/Letting Go of the Ego.md"
+      ],
+      "published": "2026-10-17T10:46:18+07:00",
+      "publicationOrder": 0
+    },
+    {
+      "title": "Неблагополучность мира",
+      "paths": [
+        "content/Атомы/Неблагополучность мира.md",
+        "content/en/Атомы/Ill-Being of the World.md",
+        "content/th/Atoms/Ill-Being of the World.md",
+        "content/zh/Atoms/Ill-Being of the World.md"
+      ],
+      "published": "2026-10-17T10:46:18+07:00",
+      "publicationOrder": 1
+    },
+    {
+      "title": "Благополучность мира",
+      "paths": [
+        "content/Атомы/Благополучность мира.md",
+        "content/en/Атомы/Well-Being of the World.md",
+        "content/th/Atoms/Well-Being of the World.md",
+        "content/zh/Atoms/Well-Being of the World.md"
+      ],
+      "published": "2026-10-17T10:46:18+07:00",
+      "publicationOrder": 2
+    },
+    {
+      "title": "Благополучие",
+      "paths": [
+        "content/Атомы/Благополучие.md",
+        "content/en/Атомы/Well-Being.md",
+        "content/th/Atoms/Well-Being.md",
+        "content/zh/Atoms/Well-Being.md"
+      ],
+      "published": "2026-10-17T10:46:18+07:00",
+      "publicationOrder": 3
+    },
+    {
+      "title": "Обретение благополучия",
+      "paths": [
+        "content/Атомы/Обретение благополучия.md",
+        "content/en/Атомы/Attainment of Well-Being.md",
+        "content/th/Atoms/Attainment of Well-Being.md",
+        "content/zh/Atoms/Attainment of Well-Being.md"
+      ],
+      "published": "2026-10-17T10:46:18+07:00",
+      "publicationOrder": 4
+    },
+    {
+      "title": "Контроль мира",
+      "paths": [
+        "content/Атомы/Контроль мира.md",
+        "content/en/Атомы/Control of the World.md",
+        "content/th/Atoms/Control of the World.md",
+        "content/zh/Atoms/Control of the World.md"
+      ],
+      "published": "2026-10-17T10:46:18+07:00",
+      "publicationOrder": 5
+    },
+    {
+      "title": "Всемогущий контроль",
+      "paths": [
+        "content/Атомы/Всемогущий контроль.md",
+        "content/en/Атомы/Omnipotent Control.md",
+        "content/th/Atoms/Omnipotent Control.md",
+        "content/zh/Atoms/Omnipotent Control.md"
+      ],
+      "published": "2026-10-17T10:46:18+07:00",
+      "publicationOrder": 6
+    },
+    {
+      "title": "Ложная ответственность",
+      "paths": [
+        "content/Атомы/Ложная ответственность.md",
+        "content/en/Атомы/False Responsibility.md",
+        "content/th/Atoms/False Responsibility.md",
+        "content/zh/Atoms/False Responsibility.md"
+      ],
+      "published": "2026-10-17T10:46:18+07:00",
+      "publicationOrder": 7
+    },
+    {
+      "title": "Парентификация",
+      "paths": [
+        "content/Атомы/Парентификация.md",
+        "content/en/Атомы/Parentification.md",
+        "content/th/Atoms/Parentification.md",
+        "content/zh/Atoms/Parentification.md"
+      ],
+      "published": "2026-10-17T10:46:18+07:00",
+      "publicationOrder": 8
+    },
+    {
+      "title": "Суверенность",
+      "paths": [
+        "content/Атомы/Суверенность.md",
+        "content/en/Атомы/Sovereignty.md",
+        "content/th/Atoms/Sovereignty.md",
+        "content/zh/Atoms/Sovereignty.md"
+      ],
+      "published": "2026-10-17T10:46:18+07:00",
+      "publicationOrder": 9
+    },
+    {
+      "title": "Распознавание субъектности",
+      "paths": [
+        "content/Атомы/Распознавание субъектности.md",
+        "content/en/Атомы/Recognition of Subjectness.md",
+        "content/th/Atoms/Recognition of Subjectness.md",
+        "content/zh/Atoms/Recognition of Subjectness.md"
+      ],
+      "published": "2026-10-17T10:46:18+07:00",
+      "publicationOrder": 10
+    },
+    {
+      "title": "Автономия благополучия",
+      "paths": [
+        "content/Атомы/Автономия благополучия.md",
+        "content/en/Атомы/Autonomy of Well-Being.md",
+        "content/th/Atoms/Autonomy of Well-Being.md",
+        "content/zh/Atoms/Autonomy of Well-Being.md"
+      ],
+      "published": "2026-10-17T10:46:18+07:00",
+      "publicationOrder": 11
+    },
+    {
       "title": "Стремление к совершенству",
       "paths": [
         "content/Атомы/Стремление к совершенству.md",

@@ -1,5 +1,8 @@
 ---
-title: Sovereignty
-created: 2026-02-16T21:49:31+07:00
+title: "Sovereignty"
+created: 2026-10-17T10:46:18+07:00
+published: 2026-10-17T10:46:18+07:00
+publicationOrder: 9
 ---
-Sovereignty is inner independence and recognition of oneself as the highest instance in one’s own life; a necessary component of the [[Author position|author position]].
+
+Sovereignty is a position in which the subject is the highest authority in their own life.

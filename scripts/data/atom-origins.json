@@ -6847,17 +6847,24 @@
       "renames": []
     },
     {
-      "title": "Прекращение удержания",
+      "title": "Неудержание",
       "paths": [
-        "content/Атомы/Прекращение удержания.md",
-        "content/en/Атомы/Cessation of Holding.md",
-        "content/th/Atoms/Cessation of Holding.md",
-        "content/zh/Atoms/Cessation of Holding.md"
+        "content/Атомы/Неудержание.md",
+        "content/en/Атомы/Non-Holding.md",
+        "content/th/Atoms/Non-Holding.md",
+        "content/zh/Atoms/Non-Holding.md"
       ],
       "created": "2026-08-01T12:26:17+07:00",
       "originCommit": "5463f1729963585512e6a292e37bc54cf3e69dac",
       "originalPath": "content/Атомы/Прекращение удержания.md",
-      "renames": []
+      "renames": [
+        {
+          "date": "2026-10-17",
+          "from": "Прекращение удержания",
+          "to": "Неудержание",
+          "reason": "Author-approved rename preserving the predecessor definition branch and immutable publication chronology."
+        }
+      ]
     },
     {
       "title": "Отпускание миссии",
@@ -9448,17 +9455,24 @@
       "renames": []
     },
     {
-      "title": "Суверенность",
+      "title": "Самосуверенность",
       "paths": [
-        "content/Атомы/Суверенность.md",
-        "content/en/Атомы/Sovereignty.md",
-        "content/th/Atoms/Sovereignty.md",
-        "content/zh/Atoms/Sovereignty.md"
+        "content/Атомы/Самосуверенность.md",
+        "content/en/Атомы/Self-Sovereignty.md",
+        "content/th/Atoms/Self-Sovereignty.md",
+        "content/zh/Atoms/Self-Sovereignty.md"
       ],
       "created": "2026-02-16T21:49:31+07:00",
       "originCommit": "0696db51e0899337a854cbba5a441f53922c1530",
       "originalPath": "content/Атомы/Суверенность.md",
-      "renames": []
+      "renames": [
+        {
+          "date": "2026-10-17",
+          "from": "Суверенность",
+          "to": "Самосуверенность",
+          "reason": "Author-approved rename preserving the predecessor definition branch and immutable publication chronology."
+        }
+      ]
     },
     {
       "title": "Таковость",
