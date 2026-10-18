@@ -84,6 +84,17 @@ test("fear of exile preserves the old public and source routes in every language
   }
 })
 
+test("merged radical acceptance routes resolve to self-acceptance in every language", () => {
+  for (const language of languages) {
+    const expected = `${language}/atoms/self-acceptance`
+    const prefix = siteLanguages[language].atomPrefix
+    assert.equal(canonicalRoute(`${language}/atoms/radical-acceptance`), expected)
+    assert.equal(canonicalRoute(`${prefix}Radical-Acceptance`), expected)
+    assert.equal(canonicalRoute(`${prefix}Радикальное-принятие`), expected)
+    assert(routeAliases(expected as FullSlug).includes(`${language}/atoms/radical-acceptance`))
+  }
+})
+
 test("encoded, folder and mixed-language legacy URLs resolve without loops", () => {
   assert.equal(publicPath("/"), "/ru/")
   assert.equal(publicPath("/Атомы/"), "/ru/atoms/")
