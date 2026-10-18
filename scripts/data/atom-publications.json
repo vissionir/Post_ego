@@ -3,6 +3,16 @@
   "sourceCommit": "6a2936f68d132ba59989cc59939f5f898f4fcbbe",
   "atoms": [
     {
+      "title": "Сопротивление изменениям",
+      "paths": [
+        "content/Атомы/Сопротивление изменениям.md",
+        "content/en/Атомы/Resistance to Change.md",
+        "content/th/Atoms/Resistance to Change.md",
+        "content/zh/Atoms/Resistance to Change.md"
+      ],
+      "published": "2026-10-18T12:03:44+07:00"
+    },
+    {
       "title": "Деинверсия этики",
       "paths": [
         "content/Атомы/Деинверсия этики.md",
