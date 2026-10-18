@@ -3,6 +3,39 @@
   "sourceCommit": "6a2936f68d132ba59989cc59939f5f898f4fcbbe",
   "atoms": [
     {
+      "title": "Стремление к благу",
+      "paths": [
+        "content/Атомы/Стремление к благу.md",
+        "content/en/Атомы/Striving for the Good.md",
+        "content/th/Atoms/Striving for the Good.md",
+        "content/zh/Atoms/Striving for the Good.md"
+      ],
+      "published": "2026-10-18T15:23:57+07:00",
+      "publicationOrder": 0
+    },
+    {
+      "title": "Гиперфункционирование",
+      "paths": [
+        "content/Атомы/Гиперфункционирование.md",
+        "content/en/Атомы/Overfunctioning.md",
+        "content/th/Atoms/Overfunctioning.md",
+        "content/zh/Atoms/Overfunctioning.md"
+      ],
+      "published": "2026-10-18T15:23:57+07:00",
+      "publicationOrder": 1
+    },
+    {
+      "title": "Патернализм",
+      "paths": [
+        "content/Атомы/Патернализм.md",
+        "content/en/Атомы/Paternalism.md",
+        "content/th/Atoms/Paternalism.md",
+        "content/zh/Atoms/Paternalism.md"
+      ],
+      "published": "2026-10-18T15:23:57+07:00",
+      "publicationOrder": 2
+    },
+    {
       "title": "Сопротивление изменениям",
       "paths": [
         "content/Атомы/Сопротивление изменениям.md",

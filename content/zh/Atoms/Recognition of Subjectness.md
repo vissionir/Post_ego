@@ -6,4 +6,4 @@ publicationOrder: 10
 lang: zh-CN
 ---
 
-识别主体性是因[[zh/Atoms/Letting Go|放下]][[zh/Atoms/False Responsibility|虚假责任]]而发生的[[zh/Atoms/Irreversible shift|不可逆转变]]，其中其他人的[[zh/Atoms/Subjectness|主体性]]被识别。
+识别主体性是因[[zh/Atoms/Letting Go|放下]][[zh/Atoms/False Responsibility|虚假责任]]而发生的[[zh/Atoms/Irreversible shift|不可逆转变]]，其中其他人的[[zh/Atoms/Subjectness|主体性]]与[[zh/Atoms/Sovereignty|主权性]]被识别，由此走向[[zh/Atoms/Mutual Recognition|相互承认]]。

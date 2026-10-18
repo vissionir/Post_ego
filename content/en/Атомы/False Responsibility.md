@@ -5,4 +5,4 @@ published: 2026-10-17T10:46:18+07:00
 publicationOrder: 7
 ---
 
-False responsibility is a form of [[Hyper-Responsibility|hyper-responsibility]] in which the subject assumes responsibility for another person’s [[Submodal state|state]], [[Well-Being|well-being]], and [[Suffering|suffering]].
+False responsibility is a form of [[Hyper-Responsibility|hyper-responsibility]] in which the subject assumes responsibility for another person’s [[Submodal state|state]], [[Well-Being|well-being]], [[Suffering|suffering]], or the consequences of that person’s decisions and actions.
