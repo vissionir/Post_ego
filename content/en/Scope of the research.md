@@ -12,6 +12,8 @@ In contemporary culture, these terms are used across contexts ranging from relig
 
 The problem is not the diversity of descriptions, but the fact that they exist in isolation even though they refer to the same class of phenomena linked to the experience of “I” — not as [[Ego|personality or image]], but as that from which experience is perceived at all.
 
+This site presents an attempt to systematize experience that cannot be fully captured by its description.
+
 ## Empirical basis of the research
 
 The material of the research is a corpus of more than 12,000 atomic observations recorded over more than twelve years of systematic phenomenological self-inquiry.
