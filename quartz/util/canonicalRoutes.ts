@@ -97,6 +97,8 @@ for (const [oldName, current] of [
   ["Cessation-of-Clinging", "letting-go-of-the-mission"],
   ["Прекращение-удержания", "non-holding"],
   ["Cessation-of-Holding", "non-holding"],
+  ["Иллюзия-изгнания", "fear-of-exile"],
+  ["Illusion-of-Exile", "fear-of-exile"],
 ]) {
   for (const lang of languages) {
     const prefix = siteLanguages[lang].atomPrefix
@@ -105,6 +107,7 @@ for (const [oldName, current] of [
 }
 
 for (const lang of languages) {
+  register(`${lang}/atoms/illusion-of-exile`, `${lang}/atoms/fear-of-exile` as FullSlug)
   register(`${lang}/atoms/possessiveness`, `${lang}/atoms/possession` as FullSlug)
   register(`${lang}/atoms/non-clinging`, `${lang}/atoms/liberation` as FullSlug)
   register(`${lang}/atoms/cessation-of-holding`, `${lang}/atoms/non-holding` as FullSlug)

@@ -71,6 +71,19 @@ test("every registered atom's shortest link survives adding the Chinese English-
     }
   }
 })
+test("fear of exile preserves the old public and source routes in every language", () => {
+  for (const language of languages) {
+    const expected = `${language}/atoms/fear-of-exile`
+    const prefix = siteLanguages[language].atomPrefix
+    assert.equal(canonicalRoute(`${language}/atoms/illusion-of-exile`), expected)
+    assert.equal(canonicalRoute(`${prefix}Illusion-of-Exile`), expected)
+    assert.equal(canonicalRoute(`${prefix}Иллюзия-изгнания`), expected)
+    assert.equal(canonicalRoute(`${prefix}Fear-of-Exile`), expected)
+    assert.equal(canonicalRoute(`${prefix}Страх-изгнания`), expected)
+    assert(routeAliases(expected as FullSlug).includes(`${language}/atoms/illusion-of-exile`))
+  }
+})
+
 test("encoded, folder and mixed-language legacy URLs resolve without loops", () => {
   assert.equal(publicPath("/"), "/ru/")
   assert.equal(publicPath("/Атомы/"), "/ru/atoms/")
