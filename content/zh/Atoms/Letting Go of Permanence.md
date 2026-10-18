@@ -6,4 +6,4 @@ publicationOrder: 2
 lang: zh-CN
 ---
 
-放下恒常是[[zh/Atoms/Letting Go|停止]][[zh/Atoms/Clinging to Permanence|执取当前状况不变]]，由此走向[[zh/Atoms/Life in the Unknown|生活于未知]]。
+放下恒常是[[zh/Atoms/Letting Go|停止]][[zh/Atoms/Clinging to Permanence|执取]]当前状况不变，由此走向[[zh/Atoms/Life in the Unknown|生活于未知]]。
