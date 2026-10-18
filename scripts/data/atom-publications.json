@@ -3,6 +3,16 @@
   "sourceCommit": "6a2936f68d132ba59989cc59939f5f898f4fcbbe",
   "atoms": [
     {
+      "title": "Доступность пробуждения",
+      "paths": [
+        "content/Атомы/Доступность пробуждения.md",
+        "content/en/Атомы/Availability of Awakening.md",
+        "content/th/Atoms/Availability of Awakening.md",
+        "content/zh/Atoms/Availability of Awakening.md"
+      ],
+      "published": "2026-10-18T20:13:19+07:00"
+    },
+    {
       "title": "Изначальная пробуждённость",
       "paths": [
         "content/Атомы/Изначальная пробуждённость.md",
