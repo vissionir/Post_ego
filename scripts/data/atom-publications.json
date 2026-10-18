@@ -3,6 +3,16 @@
   "sourceCommit": "6a2936f68d132ba59989cc59939f5f898f4fcbbe",
   "atoms": [
     {
+      "title": "Изначальная пробуждённость",
+      "paths": [
+        "content/Атомы/Изначальная пробуждённость.md",
+        "content/en/Атомы/Primordial Wakefulness.md",
+        "content/th/Atoms/Primordial Wakefulness.md",
+        "content/zh/Atoms/Primordial Wakefulness.md"
+      ],
+      "published": "2026-10-18T17:36:05+07:00"
+    },
+    {
       "title": "Стремление к благу",
       "paths": [
         "content/Атомы/Стремление к благу.md",
