@@ -3,6 +3,39 @@
   "sourceCommit": "6a2936f68d132ba59989cc59939f5f898f4fcbbe",
   "atoms": [
     {
+      "title": "Деинверсия этики",
+      "paths": [
+        "content/Атомы/Деинверсия этики.md",
+        "content/en/Атомы/Ethical Deinversion.md",
+        "content/th/Atoms/Ethical Deinversion.md",
+        "content/zh/Atoms/Ethical Deinversion.md"
+      ],
+      "published": "2026-10-18T11:38:28+07:00",
+      "publicationOrder": 0
+    },
+    {
+      "title": "Деконформизация",
+      "paths": [
+        "content/Атомы/Деконформизация.md",
+        "content/en/Атомы/Deconformization.md",
+        "content/th/Atoms/Deconformization.md",
+        "content/zh/Atoms/Deconformization.md"
+      ],
+      "published": "2026-10-18T11:38:28+07:00",
+      "publicationOrder": 1
+    },
+    {
+      "title": "Отпускание постоянства",
+      "paths": [
+        "content/Атомы/Отпускание постоянства.md",
+        "content/en/Атомы/Letting Go of Permanence.md",
+        "content/th/Atoms/Letting Go of Permanence.md",
+        "content/zh/Atoms/Letting Go of Permanence.md"
+      ],
+      "published": "2026-10-18T11:38:28+07:00",
+      "publicationOrder": 2
+    },
+    {
       "title": "Отпускание эго",
       "paths": [
         "content/Атомы/Отпускание эго.md",
