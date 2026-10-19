@@ -112,7 +112,9 @@ export const PageList: QuartzComponent = ({ cfg, fileData, allFiles, limit, sort
               Number.isFinite(listDate) ? listDate : (getDate(cfg, page)?.getTime() ?? 0)
             }
             data-page-release-rank={releaseRanks.get(filename ?? "") ?? -1}
-            data-page-publication-order={page.frontmatter?.publicationOrder}
+            data-page-publication-order={
+              page.frontmatter?.listOrder ?? page.frontmatter?.publicationOrder
+            }
           >
             <div class="section">
               <p class="meta">

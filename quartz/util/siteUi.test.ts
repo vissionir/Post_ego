@@ -138,17 +138,17 @@ test("Chinese atom list has localized counts, sort controls, and English filenam
   )
 })
 
-test("editorial placement moves the golden rule below its preceding package in every language", () => {
+test("editorial placement puts the golden rule directly after the transition in every language", () => {
   const publication = new Date("2026-10-19T13:36:32+07:00")
   const precedingPackage = new Date("2026-10-19T13:08:58+07:00")
-  const listDate = "2026-10-19T13:08:57+07:00"
+  const listDate = "2026-10-19T13:08:58+07:00"
   const names = [
     "Transition to Post-Egoism",
+    "Golden Rule",
     "Sympathetic Joy",
     "Compassion",
     "Self-Compassion",
     "Letting Go of Awakening",
-    "Golden Rule",
   ]
   for (const language of languages) {
     const fixture = props(`${language}/atoms/index`)
@@ -163,8 +163,8 @@ test("editorial placement moves the golden rule below its preceding package in e
           frontmatter: {
             title,
             published: date.toISOString(),
-            publicationOrder: golden ? 0 : index,
-            ...(golden ? { listDate } : {}),
+            publicationOrder: golden ? 0 : Math.max(0, index - 1),
+            ...(golden ? { listDate, listOrder: 0.5 } : {}),
           },
           dates: { created: date, modified: date, published: date },
         } as QuartzPluginData
@@ -173,7 +173,7 @@ test("editorial placement moves the golden rule below its preceding package in e
     const html = render(createElement(ui.FolderContent(), fixture))
     const items = [
       ...html.matchAll(
-        /data-page-title="([^"]+)" data-page-date="(\d+)" data-page-release-rank="(-?\d+)" data-page-publication-order="(\d+)"/g,
+        /data-page-title="([^"]+)" data-page-date="(\d+)" data-page-release-rank="(-?\d+)" data-page-publication-order="(\d+(?:\.\d+)?)"/g,
       ),
     ].map((match) => ({
       title: match[1],
