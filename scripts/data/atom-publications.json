@@ -3,6 +3,16 @@
   "sourceCommit": "6a2936f68d132ba59989cc59939f5f898f4fcbbe",
   "atoms": [
     {
+      "title": "Переход к самосостраданию",
+      "paths": [
+        "content/Атомы/Переход к самосостраданию.md",
+        "content/en/Атомы/Transition to Self-Compassion.md",
+        "content/th/Atoms/Transition to Self-Compassion.md",
+        "content/zh/Atoms/Transition to Self-Compassion.md"
+      ],
+      "published": "2026-10-19T14:20:15+07:00"
+    },
+    {
       "title": "Золотое правило нравственности",
       "paths": [
         "content/Атомы/Золотое правило нравственности.md",

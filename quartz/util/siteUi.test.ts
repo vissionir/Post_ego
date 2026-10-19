@@ -138,8 +138,9 @@ test("Chinese atom list has localized counts, sort controls, and English filenam
   )
 })
 
-test("editorial placement puts the golden rule directly after the transition in every language", () => {
+test("editorial placement preserves both inserted atoms in every language", () => {
   const publication = new Date("2026-10-19T13:36:32+07:00")
+  const selfCompassionPublication = new Date("2026-10-19T14:20:15+07:00")
   const precedingPackage = new Date("2026-10-19T13:08:58+07:00")
   const listDate = "2026-10-19T13:08:58+07:00"
   const names = [
@@ -148,6 +149,7 @@ test("editorial placement puts the golden rule directly after the transition in 
     "Sympathetic Joy",
     "Compassion",
     "Self-Compassion",
+    "Transition to Self-Compassion",
     "Letting Go of Awakening",
   ]
   for (const language of languages) {
@@ -156,15 +158,22 @@ test("editorial placement puts the golden rule directly after the transition in 
       fixture.fileData,
       ...names.map((title, index) => {
         const golden = title === "Golden Rule"
-        const date = golden ? publication : precedingPackage
+        const selfCompassion = title === "Transition to Self-Compassion"
+        const date = golden
+          ? publication
+          : selfCompassion
+            ? selfCompassionPublication
+            : precedingPackage
+        const order = Math.max(0, index - 1 - (index > 5 ? 1 : 0))
         return {
           slug: `${language}/atoms/${golden ? "golden-rule" : `package-${index}`}`,
           filePath: `content/${language}/Atoms/${title}.md`,
           frontmatter: {
             title,
             published: date.toISOString(),
-            publicationOrder: golden ? 0 : Math.max(0, index - 1),
+            ...(!selfCompassion ? { publicationOrder: golden ? 0 : order } : {}),
             ...(golden ? { listDate, listOrder: 0.5 } : {}),
+            ...(selfCompassion ? { listDate, listOrder: 3.5 } : {}),
           },
           dates: { created: date, modified: date, published: date },
         } as QuartzPluginData
@@ -187,6 +196,7 @@ test("editorial placement puts the golden rule directly after the transition in 
       names,
     )
     assert(html.includes(`<time datetime="${publication.toISOString()}">`))
+    assert(html.includes(`<time datetime="${selfCompassionPublication.toISOString()}">`))
   }
 })
 
