@@ -3,6 +3,28 @@
   "sourceCommit": "6a2936f68d132ba59989cc59939f5f898f4fcbbe",
   "atoms": [
     {
+      "title": "Опора на полезность",
+      "paths": [
+        "content/Атомы/Опора на полезность.md",
+        "content/en/Атомы/Reliance on Usefulness.md",
+        "content/th/Atoms/Reliance on Usefulness.md",
+        "content/zh/Atoms/Reliance on Usefulness.md"
+      ],
+      "published": "2026-10-19T20:28:57+07:00",
+      "publicationOrder": 0
+    },
+    {
+      "title": "Условная нужность",
+      "paths": [
+        "content/Атомы/Условная нужность.md",
+        "content/en/Атомы/Conditional Neededness.md",
+        "content/th/Atoms/Conditional Neededness.md",
+        "content/zh/Atoms/Conditional Neededness.md"
+      ],
+      "published": "2026-10-19T20:28:57+07:00",
+      "publicationOrder": 1
+    },
+    {
       "title": "Совершенномудрый",
       "paths": [
         "content/Атомы/Совершенномудрый.md",
