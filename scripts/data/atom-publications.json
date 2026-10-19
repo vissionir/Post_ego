@@ -3,6 +3,16 @@
   "sourceCommit": "6a2936f68d132ba59989cc59939f5f898f4fcbbe",
   "atoms": [
     {
+      "title": "Совершенномудрый",
+      "paths": [
+        "content/Атомы/Совершенномудрый.md",
+        "content/en/Атомы/Sage.md",
+        "content/th/Atoms/Sage.md",
+        "content/zh/Atoms/Sage.md"
+      ],
+      "published": "2026-10-19T17:34:28+07:00"
+    },
+    {
       "title": "Переход к самосостраданию",
       "paths": [
         "content/Атомы/Переход к самосостраданию.md",
