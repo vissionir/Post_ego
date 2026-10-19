@@ -3,6 +3,17 @@
   "sourceCommit": "6a2936f68d132ba59989cc59939f5f898f4fcbbe",
   "atoms": [
     {
+      "title": "Золотое правило нравственности",
+      "paths": [
+        "content/Атомы/Золотое правило нравственности.md",
+        "content/en/Атомы/Golden Rule.md",
+        "content/th/Atoms/Golden Rule.md",
+        "content/zh/Atoms/Golden Rule.md"
+      ],
+      "published": "2026-10-19T13:36:32+07:00",
+      "publicationOrder": 0
+    },
+    {
       "title": "Переход к постэгоизму",
       "paths": [
         "content/Атомы/Переход к постэгоизму.md",
