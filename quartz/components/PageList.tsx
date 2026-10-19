@@ -98,12 +98,19 @@ export const PageList: QuartzComponent = ({ cfg, fileData, allFiles, limit, sort
           ?.split("/")
           .at(-1)
           ?.replace(/\.[^.]+$/, "")
+        // Editorial list placement is independent of the displayed publication date.
+        const listDate =
+          typeof page.frontmatter?.listDate === "string"
+            ? globalThis.Date.parse(page.frontmatter.listDate)
+            : NaN
 
         return (
           <li
             class="section-li"
             data-page-title={title ?? ""}
-            data-page-date={getDate(cfg, page)?.getTime() ?? 0}
+            data-page-date={
+              Number.isFinite(listDate) ? listDate : (getDate(cfg, page)?.getTime() ?? 0)
+            }
             data-page-release-rank={releaseRanks.get(filename ?? "") ?? -1}
             data-page-publication-order={page.frontmatter?.publicationOrder}
           >

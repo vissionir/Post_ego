@@ -12,6 +12,7 @@ import type { QuartzPluginData } from "../plugins/vfile"
 import { unescapeHTML } from "./escape"
 import { languages } from "./siteLanguages"
 import releaseOrderV1 from "../components/releaseOrderV1.json"
+import { comparePageListItems } from "../components/scripts/page-list-order"
 
 // Compile just the UI fixtures; browser scripts and styles are not executed in Node.
 const bundle = await build({
@@ -135,6 +136,58 @@ test("Chinese atom list has localized counts, sort controls, and English filenam
       `data-page-title="自我" data-page-date="0" data-page-release-rank="${releaseOrderV1.en.indexOf("Ego")}"`,
     ),
   )
+})
+
+test("editorial placement moves the golden rule below its preceding package in every language", () => {
+  const publication = new Date("2026-10-19T13:36:32+07:00")
+  const precedingPackage = new Date("2026-10-19T13:08:58+07:00")
+  const listDate = "2026-10-19T13:08:57+07:00"
+  const names = [
+    "Transition to Post-Egoism",
+    "Sympathetic Joy",
+    "Compassion",
+    "Self-Compassion",
+    "Letting Go of Awakening",
+    "Golden Rule",
+  ]
+  for (const language of languages) {
+    const fixture = props(`${language}/atoms/index`)
+    fixture.allFiles = [
+      fixture.fileData,
+      ...names.map((title, index) => {
+        const golden = title === "Golden Rule"
+        const date = golden ? publication : precedingPackage
+        return {
+          slug: `${language}/atoms/${golden ? "golden-rule" : `package-${index}`}`,
+          filePath: `content/${language}/Atoms/${title}.md`,
+          frontmatter: {
+            title,
+            published: date.toISOString(),
+            publicationOrder: golden ? 0 : index,
+            ...(golden ? { listDate } : {}),
+          },
+          dates: { created: date, modified: date, published: date },
+        } as QuartzPluginData
+      }),
+    ]
+    const html = render(createElement(ui.FolderContent(), fixture))
+    const items = [
+      ...html.matchAll(
+        /data-page-title="([^"]+)" data-page-date="(\d+)" data-page-release-rank="(-?\d+)" data-page-publication-order="(\d+)"/g,
+      ),
+    ].map((match) => ({
+      title: match[1],
+      date: Number(match[2]),
+      releaseRank: Number(match[3]),
+      publicationOrder: Number(match[4]),
+    }))
+    items.sort((a, b) => comparePageListItems(a, b, "newest", new Intl.Collator(language)))
+    assert.deepEqual(
+      items.map((item) => item.title),
+      names,
+    )
+    assert(html.includes(`<time datetime="${publication.toISOString()}">`))
+  }
 })
 
 test("Chinese breadcrumbs skip the language segment and retain the concept-atom title", () => {

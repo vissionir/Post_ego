@@ -3,6 +3,7 @@ title: "道德金律"
 created: 2026-10-19T13:36:32+07:00
 published: 2026-10-19T13:36:32+07:00
 publicationOrder: 0
+listDate: 2026-10-19T13:08:57+07:00
 lang: zh-CN
 ---
 
