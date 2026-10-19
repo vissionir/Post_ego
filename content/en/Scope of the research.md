@@ -12,7 +12,7 @@ In contemporary culture, these terms are used across contexts ranging from relig
 
 The problem is not the diversity of descriptions, but the fact that they exist in isolation even though they refer to the same class of phenomena linked to the experience of “I” — not as [[Ego|personality or image]], but as that from which experience is perceived at all.
 
-This site presents an attempt to systematize experience that cannot be fully captured by its description.
+This site presents an attempt to systematize experience traditionally described primarily in Eastern contemplative teachings and to translate it into the language of contemporary rational, analytical, and systems thinking.
 
 ## Empirical basis of the research
 
@@ -79,4 +79,4 @@ This research pushes thinking to its limit. Beyond that point, thinking ceases t
 
 ## Critical remark
 
-No study of ontology grants — or can grant — the state of [[Presence|presence]].
+No study of ontology grants — or can grant — the state of [[Presence|presence]], since that state cannot be fully captured by description.
