@@ -3,6 +3,61 @@
   "sourceCommit": "6a2936f68d132ba59989cc59939f5f898f4fcbbe",
   "atoms": [
     {
+      "title": "Переход к постэгоизму",
+      "paths": [
+        "content/Атомы/Переход к постэгоизму.md",
+        "content/en/Атомы/Transition to Post-Egoism.md",
+        "content/th/Atoms/Transition to Post-Egoism.md",
+        "content/zh/Atoms/Transition to Post-Egoism.md"
+      ],
+      "published": "2026-10-19T13:08:58+07:00",
+      "publicationOrder": 0
+    },
+    {
+      "title": "Сорадование",
+      "paths": [
+        "content/Атомы/Сорадование.md",
+        "content/en/Атомы/Sympathetic Joy.md",
+        "content/th/Atoms/Sympathetic Joy.md",
+        "content/zh/Atoms/Sympathetic Joy.md"
+      ],
+      "published": "2026-10-19T13:08:58+07:00",
+      "publicationOrder": 1
+    },
+    {
+      "title": "Сострадание",
+      "paths": [
+        "content/Атомы/Сострадание.md",
+        "content/en/Атомы/Compassion.md",
+        "content/th/Atoms/Compassion.md",
+        "content/zh/Atoms/Compassion.md"
+      ],
+      "published": "2026-10-19T13:08:58+07:00",
+      "publicationOrder": 2
+    },
+    {
+      "title": "Самосострадание",
+      "paths": [
+        "content/Атомы/Самосострадание.md",
+        "content/en/Атомы/Self-Compassion.md",
+        "content/th/Atoms/Self-Compassion.md",
+        "content/zh/Atoms/Self-Compassion.md"
+      ],
+      "published": "2026-10-19T13:08:58+07:00",
+      "publicationOrder": 3
+    },
+    {
+      "title": "Отпускание пробуждения",
+      "paths": [
+        "content/Атомы/Отпускание пробуждения.md",
+        "content/en/Атомы/Letting Go of Awakening.md",
+        "content/th/Atoms/Letting Go of Awakening.md",
+        "content/zh/Atoms/Letting Go of Awakening.md"
+      ],
+      "published": "2026-10-19T13:08:58+07:00",
+      "publicationOrder": 4
+    },
+    {
       "title": "Доступность пробуждения",
       "paths": [
         "content/Атомы/Доступность пробуждения.md",
