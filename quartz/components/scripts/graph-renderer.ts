@@ -23,7 +23,7 @@ import {
   type GraphNode,
 } from "../../util/graph"
 import { resolveRelative, simplifySlug, type FullSlug, type SimpleSlug } from "../../util/path"
-import { graphArticleTarget } from "../../util/graph-article"
+import { graphArticleHasBody, graphArticleTarget } from "../../util/graph-article"
 import { loadGraphArticle } from "./graph-article"
 import {
   graphFocusLabelPlacement,
@@ -282,8 +282,13 @@ export function renderForceGraph(
       addToVisited(n.id)
       name.textContent = n.text
       open.href = resolveRelative(fullSlug, n.id)
+      const hasBody = expanded && graphArticleHasBody(n.id)
       if (expanded) {
-        card.setAttribute("aria-busy", "true")
+        articleBody.hidden = !hasBody
+        articleBody.replaceChildren()
+        card.setAttribute("aria-busy", String(hasBody))
+      }
+      if (hasBody) {
         articleBody.textContent = articleCopy.loading
         articleBody.scrollTop = 0
         void loadGraphArticle(new URL(open.href))

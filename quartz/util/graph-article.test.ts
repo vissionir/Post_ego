@@ -1,10 +1,21 @@
 import { test } from "node:test"
 import assert from "node:assert/strict"
-import { graphArticleTarget } from "./graph-article"
+import { graphArticleHasBody, graphArticleTarget } from "./graph-article"
 import type { SimpleSlug } from "./path"
 
 const base = "https://post-ego.com/Атомы/Тревожность"
 const known = new Set(["Атомы/Дефицит", "Атомы/Контроль", "/"] as SimpleSlug[])
+
+test("atom lists and graph pages have title-only cards in every language", () => {
+  for (const language of ["ru", "en", "th", "zh"]) {
+    for (const page of ["atoms", "atoms/", "atoms/index", "graph"]) {
+      assert.equal(graphArticleHasBody(`${language}/${page}`), false)
+    }
+    for (const page of ["atoms/mind", "atoms/graph", "how-the-research-is-structured"]) {
+      assert.equal(graphArticleHasBody(`${language}/${page}`), true)
+    }
+  }
+})
 
 test("article links resolve relative and percent-encoded atom URLs", () => {
   assert.equal(graphArticleTarget("../Атомы/Дефицит", base, known), "Атомы/Дефицит")

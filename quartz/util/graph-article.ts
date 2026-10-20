@@ -1,5 +1,9 @@
 import { simplifySlug, type FullSlug, type SimpleSlug } from "./path"
 
+export function graphArticleHasBody(slug: string): boolean {
+  return !/^(ru|en|th|zh)\/(atoms(?:\/index)?|graph)\/?$/.test(slug)
+}
+
 export function graphArticleTarget(
   href: string,
   base: string,
