@@ -3,6 +3,39 @@
   "sourceCommit": "6a2936f68d132ba59989cc59939f5f898f4fcbbe",
   "atoms": [
     {
+      "title": "Утрата чувства собственной важности",
+      "paths": [
+        "content/Атомы/Утрата чувства собственной важности.md",
+        "content/en/Атомы/Loss of Self-Importance.md",
+        "content/th/Atoms/Loss of Self-Importance.md",
+        "content/zh/Atoms/Loss of Self-Importance.md"
+      ],
+      "published": "2026-10-20T12:32:57+07:00",
+      "publicationOrder": 0
+    },
+    {
+      "title": "Самоотражение",
+      "paths": [
+        "content/Атомы/Самоотражение.md",
+        "content/en/Атомы/Self-Reflection.md",
+        "content/th/Atoms/Self-Reflection.md",
+        "content/zh/Atoms/Self-Reflection.md"
+      ],
+      "published": "2026-10-20T12:32:57+07:00",
+      "publicationOrder": 1
+    },
+    {
+      "title": "Самопоглощённость",
+      "paths": [
+        "content/Атомы/Самопоглощённость.md",
+        "content/en/Атомы/Self-Absorption.md",
+        "content/th/Atoms/Self-Absorption.md",
+        "content/zh/Atoms/Self-Absorption.md"
+      ],
+      "published": "2026-10-20T12:32:57+07:00",
+      "publicationOrder": 2
+    },
+    {
       "title": "Опора на ясность",
       "paths": [
         "content/Атомы/Опора на ясность.md",
