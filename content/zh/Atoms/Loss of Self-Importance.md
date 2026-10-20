@@ -6,4 +6,4 @@ publicationOrder: 0
 lang: zh-CN
 ---
 
-自我重要感的消退是对[[zh/Atoms/Sense of Self-Importance|持续自我挂虑]]的[[zh/Atoms/Letting Go|止息]]；在其中，[[zh/Atoms/Indulgence|自我沉溺]]停止，从而释放[[zh/Atoms/Personal power|个人力量]]。
+自我重要感的消退是对[[zh/Atoms/Sense of Self-Importance|持续自我挂虑]]的[[zh/Atoms/Letting Go|止息]]；在其中，[[zh/Atoms/Indulgence|自我沉溺]]停止，从而释放[[zh/Atoms/Personal power|个人力量]]，而注意力转向[[zh/Atoms/Presence|当下正在发生的一切]]。
