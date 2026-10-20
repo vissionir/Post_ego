@@ -3,6 +3,39 @@
   "sourceCommit": "6a2936f68d132ba59989cc59939f5f898f4fcbbe",
   "atoms": [
     {
+      "title": "Опора на ясность",
+      "paths": [
+        "content/Атомы/Опора на ясность.md",
+        "content/en/Атомы/Reliance on Clarity.md",
+        "content/th/Atoms/Reliance on Clarity.md",
+        "content/zh/Atoms/Reliance on Clarity.md"
+      ],
+      "published": "2026-10-20T08:48:14+07:00",
+      "publicationOrder": 0
+    },
+    {
+      "title": "Мнимая сила",
+      "paths": [
+        "content/Атомы/Мнимая сила.md",
+        "content/en/Атомы/Illusory Power.md",
+        "content/th/Atoms/Illusory Power.md",
+        "content/zh/Atoms/Illusory Power.md"
+      ],
+      "published": "2026-10-20T08:48:14+07:00",
+      "publicationOrder": 1
+    },
+    {
+      "title": "Победа над вторым врагом человека знания",
+      "paths": [
+        "content/Атомы/Победа над вторым врагом человека знания.md",
+        "content/en/Атомы/Victory over the Second Enemy of a Man of Knowledge.md",
+        "content/th/Atoms/Victory over the Second Enemy of a Man of Knowledge.md",
+        "content/zh/Atoms/Victory over the Second Enemy of a Man of Knowledge.md"
+      ],
+      "published": "2026-10-20T08:48:14+07:00",
+      "publicationOrder": 2
+    },
+    {
       "title": "Опора на полезность",
       "paths": [
         "content/Атомы/Опора на полезность.md",
