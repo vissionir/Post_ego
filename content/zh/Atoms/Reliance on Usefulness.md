@@ -6,4 +6,4 @@ publicationOrder: 0
 lang: zh-CN
 ---
 
-以有用性为依托是一种[[zh/Atoms/Illusion of the Mind|心智幻象]]，其中对他人有用被错误地体验为自身[[zh/Atoms/Conditioned Worth|价值]]或[[zh/Atoms/Conditional Neededness|被需要感]]的必要条件。
+以有用性为依托是一种[[zh/Atoms/Illusion of the Mind|心智幻象]]，其中对他人有用被错误地体验为自身[[zh/Atoms/Conditioned Worth|价值]]、[[zh/Atoms/Conditional Neededness|被需要感]]或获得[[zh/Atoms/Love|爱]]的必要条件。
