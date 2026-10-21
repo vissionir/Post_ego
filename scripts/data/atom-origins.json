@@ -9475,17 +9475,24 @@
       ]
     },
     {
-      "title": "Таковость",
+      "title": "Прямое видение",
       "paths": [
-        "content/Атомы/Таковость.md",
-        "content/en/Атомы/Suchness.md",
-        "content/th/Atoms/Suchness.md",
-        "content/zh/Atoms/Suchness.md"
+        "content/Атомы/Прямое видение.md",
+        "content/en/Атомы/Direct Seeing.md",
+        "content/th/Atoms/Direct Seeing.md",
+        "content/zh/Atoms/Direct Seeing.md"
       ],
       "created": "2026-02-07T10:31:32+07:00",
       "originCommit": "7a92882b0ebe6fe8bb96bd5d97048711a442bdc6",
       "originalPath": "content/Атомы/Таковость.md",
-      "renames": []
+      "renames": [
+        {
+          "date": "2026-10-21",
+          "from": "Таковость",
+          "to": "Прямое видение",
+          "reason": "Author-approved rename preserving the definition and immutable publication chronology."
+        }
+      ]
     },
     {
       "title": "Телос миссии",
