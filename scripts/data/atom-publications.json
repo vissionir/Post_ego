@@ -3,6 +3,16 @@
   "sourceCommit": "6a2936f68d132ba59989cc59939f5f898f4fcbbe",
   "atoms": [
     {
+      "title": "Саматха",
+      "paths": [
+        "content/Атомы/Саматха.md",
+        "content/en/Атомы/Samatha.md",
+        "content/th/Atoms/Samatha.md",
+        "content/zh/Atoms/Samatha.md"
+      ],
+      "published": "2026-10-21T22:14:26+07:00"
+    },
+    {
       "title": "Утрата чувства собственной важности",
       "paths": [
         "content/Атомы/Утрата чувства собственной важности.md",
