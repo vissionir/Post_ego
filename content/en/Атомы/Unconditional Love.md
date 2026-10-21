@@ -3,4 +3,4 @@ title: Unconditional Love
 created: 2026-04-13T14:43:02+07:00
 ---
 
-Unconditional love is a [[Presupposition|presupposition]] according to which the subject experiences themselves as the source of [[Love|love]] directed toward themselves, does not make it dependent on conditions, and leads to [[Self-Acceptance|self-acceptance]].
+Unconditional love is a [[Presupposition|presupposition]] according to which the subject experiences themselves as the source of [[Love|love]] directed toward themselves, without making it dependent on conditions; this leads to [[Self-Acceptance|self-acceptance]].

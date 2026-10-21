@@ -1,10 +1,26 @@
 import assert from "node:assert/strict"
 import { test } from "node:test"
-import { resolvePublishedDate } from "./lastmod"
+import { resolveModifiedDate, resolvePublishedDate } from "./lastmod"
 
 const created = "2026-02-09T14:55:18+07:00"
 const modified = "2026-09-29T19:58:35+07:00"
 const published = "2026-10-07T17:49:15+07:00"
+
+test("a creation-date fallback cannot hide a later source edit from sitemap lastmod", () => {
+  const gitModified = Date.parse("2026-10-21T12:06:54+07:00")
+  assert.equal(resolveModifiedDate(created, gitModified), gitModified)
+  assert.equal(resolveModifiedDate(modified, gitModified), gitModified)
+  assert.equal(resolveModifiedDate(undefined, gitModified), gitModified)
+  assert.equal(resolveModifiedDate("invalid", gitModified), gitModified)
+  assert.equal(
+    resolvePublishedDate("Атомы/Самопоглощённость", published, created, gitModified),
+    published,
+  )
+})
+
+test("a documented modification date newer than Git is retained", () => {
+  assert.equal(resolveModifiedDate(modified, Date.parse(created)), modified)
+})
 
 test("bulk edits and later source commits cannot republish existing atoms", () => {
   for (const slug of ["Атомы/Нормис", "en/Атомы/Normie", "th/Atoms/Normie"]) {

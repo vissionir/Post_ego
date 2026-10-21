@@ -31,7 +31,7 @@ The format follows the logic of Zettelkasten: knowledge here is not accumulated 
 
 It is important to understand that comprehension here does not arise at the moment of reading, but at the moment when a coherent picture begins to emerge.
 
-Individual notes are not meant to be “understood” in isolation. The effect of the research appears when the links between notes become visible and can be held.
+Individual notes are not meant to be “understood” in isolation. The effect of the research appears when the links between notes become visible and can be kept in mind.
 
 The notes are written, by default, for myself — as working nodes of thought rather than as explanations for a reader.
 
@@ -39,10 +39,10 @@ If a formulation feels unclear or overly sharp, that only means it requires its 
 
 Reading here presumes navigation, comparison, and returns.
 
-Understanding forms gradually — when the same connections begin to repeat in different places and can be held as stable distinctions.
+Understanding forms gradually — when the same connections begin to repeat in different places and can be retained as stable distinctions.
 
 I maintain a denser, more interactive layer of work in the open Telegram channel. There you can ask questions, discuss notes, and follow the development of the research:
 
 https://t.me/post_ego
 
-This format was chosen not for aesthetic reasons, but because it was the only way to preserve the result of the research without distortion: without reducing it to a single theory and without losing connectedness.
+This format was chosen not for aesthetic reasons, but because it made it possible to preserve the result of the research without distortion: without reducing it to a single theory and without losing connectedness.

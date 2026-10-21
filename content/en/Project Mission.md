@@ -6,7 +6,7 @@ The mission of Post-Ego is to shape a [[Culture|cultural form]] of awareness and
 
 Post-Ego works with a key transition: moving awareness out of the realm of [[Spirituality|spiritual experience]] and into the realm of culture.
 
-Awareness is treated here not as a private inner episode and not as yet another interpretation of spirituality, but as a human phenomenon capable of taking on a cultural form — one that can be described, recognized, transmitted, and reproduced.
+Awareness is treated here not as a private inner experience and not as yet another interpretation of spirituality, but as a human phenomenon capable of taking on a cultural form — one that can be described, recognized, transmitted, and reproduced.
 
 The project seeks to shape a form of awareness that can exist in the world as a durable human practice, a cultural position, and an intellectual tradition.
 
@@ -47,11 +47,11 @@ Post-Ego is working to assemble that structure by gathering:
 - a cultural code and symbols;
 - a community capable of carrying it and mechanisms of transmission.
 
-This work is aimed at enabling awareness to exist not only as the private experience of isolated individuals, but as a **durable cultural structure** capable of being passed across generations and reproduced in different contexts.
+This work is aimed at enabling awareness to exist not only as the personal experience of individuals, but as a **durable cultural structure** capable of being passed across generations and reproduced in different contexts.
 
 The foundation of this work is the study of consciousness and a drive toward a [[Coherence|coherent]] architecture of understanding in which experience, language, and practice form an internally consistent system.
 
-Here, [[Coherence|coherence]] is not only a methodological requirement, but a value: the project seeks a lattice of distinctions whose elements do not contradict one another but fit together into a connected and resilient model.
+Here, [[Coherence|coherence]] is not only a methodological requirement, but a value: the project seeks a system of distinctions whose elements do not contradict one another but fit together into a connected and stable model.
 
 ## Cultural level
 

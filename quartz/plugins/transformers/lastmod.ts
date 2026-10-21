@@ -39,6 +39,16 @@ function coerceDate(fp: string, d: any): Date {
 
 type MaybeDate = undefined | string | number
 
+export function resolveModifiedDate(current: MaybeDate, gitModified: number): MaybeDate {
+  if (current === undefined) return gitModified
+  const value =
+    typeof current === "string" && iso8601DateOnlyRegex.test(current)
+      ? `${current}T00:00:00`
+      : current
+  const timestamp = new Date(value).getTime()
+  return Number.isFinite(timestamp) && timestamp >= gitModified ? current : gitModified
+}
+
 export function resolvePublishedDate(
   slug: string,
   published: MaybeDate,
@@ -93,7 +103,10 @@ export const CreatedModifiedDate: QuartzTransformerPlugin<Partial<Options>> = (u
               } else if (source === "git" && repo) {
                 try {
                   const relativePath = path.relative(repositoryWorkdir, fullFp)
-                  modified ||= await repo.getFileLatestModifiedDateAsync(relativePath)
+                  modified = resolveModifiedDate(
+                    modified,
+                    await repo.getFileLatestModifiedDateAsync(relativePath),
+                  )
                 } catch {
                   console.log(
                     styleText(

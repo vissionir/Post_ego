@@ -1,0 +1,4 @@
+User-agent: *
+Disallow:
+
+Sitemap: https://post-ego.com/sitemap.xml

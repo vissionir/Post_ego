@@ -3,4 +3,4 @@ title: Maintaining an Image
 created: 2026-05-20T15:20:42+07:00
 ---
 
-Maintaining an image is a mechanism of the [[Mind|mind]] that holds in the [[Tonal|tonal]] the model of oneself through the [[Ego|ego]] and models of others through the [[Inner pack|inner pack]] by means of [[Inner Dialogue|inner dialogue]].
+Maintaining an image is a mechanism of the [[Mind|mind]] that uses [[Inner Dialogue|inner dialogue]] to maintain within the [[Tonal|tonal]] a model of oneself through the [[Ego|ego]] and models of others through the [[Inner pack|inner pack]].
