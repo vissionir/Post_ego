@@ -29,7 +29,8 @@ export default (() => {
     const url = new URL(`https://${cfg.baseUrl ?? "example.com"}`)
     const path = url.pathname as FullSlug
     const baseDir = fileData.slug === "404" ? path : pathToRoot(fileData.slug!)
-    const iconPath = joinSegments(baseDir, "static/icon.png")
+    const iconVersion = "20261021"
+    const iconPath = (name: string) => `${joinSegments(baseDir, name)}?v=${iconVersion}`
 
     const siteRoot = new URL(url.toString())
     if (!siteRoot.pathname.endsWith("/")) siteRoot.pathname += "/"
@@ -179,9 +180,10 @@ export default (() => {
           </>
         )}
 
-        <link rel="icon" href={iconPath} />
-        <link rel="shortcut icon" href={iconPath} />
-        <link rel="apple-touch-icon" href={iconPath} />
+        <link rel="shortcut icon" type="image/x-icon" href={iconPath("favicon.ico")} />
+        <link rel="icon" type="image/png" sizes="32x32" href={iconPath("favicon-32.png")} />
+        <link rel="icon" type="image/png" sizes="192x192" href={iconPath("favicon-192.png")} />
+        <link rel="apple-touch-icon" sizes="180x180" href={iconPath("apple-touch-icon.png")} />
         <meta name="description" content={description} />
         <meta name="generator" content="Quartz" />
 
