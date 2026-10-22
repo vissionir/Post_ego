@@ -3,6 +3,17 @@
   "sourceCommit": "6a2936f68d132ba59989cc59939f5f898f4fcbbe",
   "atoms": [
     {
+      "title": "Сати",
+      "paths": [
+        "content/Атомы/Сати.md",
+        "content/en/Атомы/Sati.md",
+        "content/th/Atoms/Sati.md",
+        "content/zh/Atoms/Sati.md"
+      ],
+      "published": "2026-10-22T16:50:04+07:00",
+      "publicationOrder": 0
+    },
+    {
       "title": "Самадхи",
       "paths": [
         "content/Атомы/Самадхи.md",
