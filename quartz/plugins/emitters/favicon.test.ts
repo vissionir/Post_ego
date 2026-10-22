@@ -38,8 +38,7 @@ test("favicon emitter produces a valid multi-size ICO and correctly sized browse
       for (let y = 0; y < size; y++) {
         for (let x = 0; x < size; x++) {
           const pixel = (y * size + x) * info.channels
-          assert.equal(data[pixel + 3], 255, "icons must remain opaque on dark browser tiles")
-          if (Math.min(data[pixel], data[pixel + 1], data[pixel + 2]) < 180) {
+          if (data[pixel + 3] > 16) {
             minX = Math.min(minX, x)
             maxX = Math.max(maxX, x)
             minY = Math.min(minY, y)
@@ -49,7 +48,9 @@ test("favicon emitter produces a valid multi-size ICO and correctly sized browse
       }
       assert(maxX - minX + 1 >= size * 0.85, "crescent should fill most of the icon width")
       assert(maxY - minY + 1 >= size * 0.8, "crescent should fill most of the icon height")
-      assert.deepEqual([...data.subarray(0, 4)], [244, 246, 248, 255])
+      assert.equal(data[3], 0, "icon corners must remain transparent")
+      const center = (Math.floor(size / 2) * size + Math.floor(size / 2)) * info.channels
+      assert.equal(data[center + 3], 0, "the crescent must not have a background")
     }
 
     const ico = await readFile(path.join(output, "favicon.ico"))
@@ -68,6 +69,11 @@ test("favicon emitter produces a valid multi-size ICO and correctly sized browse
       assert.equal(metadata.format, "png")
       assert.equal(metadata.width, size)
       assert.equal(metadata.height, size)
+      const pixels = await sharp(ico.subarray(offset, offset + length))
+        .ensureAlpha()
+        .raw()
+        .toBuffer()
+      assert.equal(pixels[3], 0, "ICO entries must retain transparent corners")
       expectedOffset += length
     }
     assert.equal(expectedOffset, ico.length)
