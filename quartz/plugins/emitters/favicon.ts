@@ -8,13 +8,26 @@ export const Favicon: QuartzEmitterPlugin = () => ({
   name: "Favicon",
   async *emit({ argv }) {
     const iconPath = joinSegments(QUARTZ, "static", "icon.png")
+    const croppedIcon = await sharp(iconPath).trim({ threshold: 10 }).png().toBuffer()
+    const background = "#f4f6f8"
     const sizes = [16, 32, 48, 180, 192]
     const icons = new Map(
       await Promise.all(
-        sizes.map(
-          async (size) =>
-            [size, await sharp(iconPath).resize(size, size).png().toBuffer()] as const,
-        ),
+        sizes.map(async (size) => {
+          const padding = Math.max(1, Math.round(size * 0.04))
+          const artworkSize = size - padding * 2
+          // Keep the original artwork, with a small safe margin and a stable background.
+          const icon = await sharp(croppedIcon)
+            .resize(artworkSize, artworkSize, {
+              fit: "contain",
+              background,
+            })
+            .extend({ top: padding, bottom: padding, left: padding, right: padding, background })
+            .flatten({ background })
+            .png()
+            .toBuffer()
+          return [size, icon] as const
+        }),
       ),
     )
 

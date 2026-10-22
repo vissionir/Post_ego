@@ -29,7 +29,7 @@ export default (() => {
     const url = new URL(`https://${cfg.baseUrl ?? "example.com"}`)
     const path = url.pathname as FullSlug
     const baseDir = fileData.slug === "404" ? path : pathToRoot(fileData.slug!)
-    const iconVersion = "20261021"
+    const iconVersion = "20261022"
     const iconPath = (name: string) => `${joinSegments(baseDir, name)}?v=${iconVersion}`
 
     const siteRoot = new URL(url.toString())

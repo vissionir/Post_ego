@@ -27,6 +27,29 @@ test("favicon emitter produces a valid multi-size ICO and correctly sized browse
       assert.equal(metadata.format, "png")
       assert.equal(metadata.width, size)
       assert.equal(metadata.height, size)
+      const { data, info } = await sharp(path.join(output, filename))
+        .ensureAlpha()
+        .raw()
+        .toBuffer({ resolveWithObject: true })
+      let minX: number = size,
+        maxX = -1,
+        minY: number = size,
+        maxY = -1
+      for (let y = 0; y < size; y++) {
+        for (let x = 0; x < size; x++) {
+          const pixel = (y * size + x) * info.channels
+          assert.equal(data[pixel + 3], 255, "icons must remain opaque on dark browser tiles")
+          if (Math.min(data[pixel], data[pixel + 1], data[pixel + 2]) < 180) {
+            minX = Math.min(minX, x)
+            maxX = Math.max(maxX, x)
+            minY = Math.min(minY, y)
+            maxY = Math.max(maxY, y)
+          }
+        }
+      }
+      assert(maxX - minX + 1 >= size * 0.85, "crescent should fill most of the icon width")
+      assert(maxY - minY + 1 >= size * 0.8, "crescent should fill most of the icon height")
+      assert.deepEqual([...data.subarray(0, 4)], [244, 246, 248, 255])
     }
 
     const ico = await readFile(path.join(output, "favicon.ico"))
