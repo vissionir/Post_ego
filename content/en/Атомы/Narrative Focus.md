@@ -5,4 +5,4 @@ published: 2026-10-22T13:20:24+07:00
 publicationOrder: 4
 ---
 
-Narrative focus is a mode of [[Neurodynamics|organization of brain activity]] in which attention is directed toward [[Self-Reflection|self-reflection]]. It is opposite to [[Experiential Focus|experiential focus]].
+Narrative focus is a mode of [[Neurodynamics|organization of brain activity]] in which attention is directed toward thoughts about oneself and one's own life. It is opposite to [[Experiential Focus|experiential focus]].
