@@ -6,4 +6,4 @@ publicationOrder: 5
 lang: zh-CN
 ---
 
-注意力重定向是从[[zh/Atoms/Self-Absorption|注意力持续指向自身]]到[[zh/Atoms/Presence|直接体验正在发生之事]]的[[zh/Atoms/Transition|转变]]。
+注意力重定向是将注意力的主要取向从[[zh/Atoms/Narrative Focus|叙事性聚焦]]转向[[zh/Atoms/Experiential Focus|体验性聚焦]]的[[zh/Atoms/Transition|转变]]。

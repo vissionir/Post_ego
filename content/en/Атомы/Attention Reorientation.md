@@ -5,4 +5,4 @@ published: 2026-10-22T13:20:24+07:00
 publicationOrder: 5
 ---
 
-Attention reorientation is a [[Transition|transition]] from [[Self-Absorption|attention being continuously directed toward oneself]] to [[Presence|directly experiencing what is happening]].
+Attention reorientation is a [[Transition|transition]] from [[Narrative Focus|narrative]] to [[Experiential Focus|experiential focus]] as the primary orientation of attention.
