@@ -640,17 +640,24 @@
       "renames": []
     },
     {
-      "title": "Безусильность",
+      "title": "Свобода от удержания состояния",
       "paths": [
-        "content/Атомы/Безусильность.md",
-        "content/en/Атомы/Effortlessness.md",
-        "content/th/Atoms/Effortlessness.md",
-        "content/zh/Atoms/Effortlessness.md"
+        "content/Атомы/Свобода от удержания состояния.md",
+        "content/en/Атомы/Freedom from Holding On to a State.md",
+        "content/th/Atoms/Freedom from Holding On to a State.md",
+        "content/zh/Atoms/Freedom from Holding On to a State.md"
       ],
       "created": "2026-08-01T12:26:17+07:00",
       "originCommit": "5463f1729963585512e6a292e37bc54cf3e69dac",
       "originalPath": "content/Атомы/Безусильность.md",
-      "renames": []
+      "renames": [
+        {
+          "date": "2026-10-22",
+          "from": "Безусильность",
+          "to": "Свобода от удержания состояния",
+          "reason": "Author-approved rename preserving the predecessor definition and immutable chronology; Effortlessness is now a separate new atom."
+        }
+      ]
     },
     {
       "title": "Безусловная любовь",

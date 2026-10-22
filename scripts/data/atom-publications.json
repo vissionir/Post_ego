@@ -3,6 +3,17 @@
   "sourceCommit": "6a2936f68d132ba59989cc59939f5f898f4fcbbe",
   "atoms": [
     {
+      "title": "Безусильность",
+      "paths": [
+        "content/Атомы/Безусильность.md",
+        "content/en/Атомы/Effortlessness.md",
+        "content/th/Atoms/Effortlessness.md",
+        "content/zh/Atoms/Effortlessness.md"
+      ],
+      "published": "2026-10-22T21:09:57+07:00",
+      "publicationOrder": 0
+    },
+    {
       "title": "Сати",
       "paths": [
         "content/Атомы/Сати.md",
