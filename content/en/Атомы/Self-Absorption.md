@@ -5,4 +5,4 @@ published: 2026-10-20T12:32:57+07:00
 publicationOrder: 2
 ---
 
-Self-absorption is a form of [[Self-Reflection|self-reflection]] in which the subject's attention is continuously directed toward themselves, while [[Reality|what happens]] is used for [[Indulgence|maintaining]] thoughts and feelings about themselves.
+Self-absorption is a form of [[Self-Reflection|self-reflection]] in which the subject's attention is continuously [[Narrative Focus|directed toward themselves]], while [[Reality|what happens]] is used for [[Indulgence|maintaining]] thoughts and feelings about themselves.

@@ -4,4 +4,4 @@ created: 2026-03-20T15:34:18+07:00
 lang: zh-CN
 ---
 
-无为是通过[[zh/Atoms/Non-doing|不为]]顺应[[zh/Atoms/Dao|事情的自然进程]]：正在发生的一切[[zh/Atoms/Presence|被直接体验]]，行动自然生起，无须多余的努力，其具体形式由[[zh/Atoms/Mission|使命]]规定。
+无为是在[[zh/Atoms/Samadhi|心智稳定地专注凝聚]]之中，通过[[zh/Atoms/Non-doing|不为]]顺应[[zh/Atoms/Dao|事情的自然进程]]：正在发生的一切[[zh/Atoms/Presence|被直接体验]]，行动自然生起，无须多余的努力，其具体形式由[[zh/Atoms/Mission|使命]]规定。

@@ -3,6 +3,72 @@
   "sourceCommit": "6a2936f68d132ba59989cc59939f5f898f4fcbbe",
   "atoms": [
     {
+      "title": "Самадхи",
+      "paths": [
+        "content/Атомы/Самадхи.md",
+        "content/en/Атомы/Samadhi.md",
+        "content/th/Atoms/Samadhi.md",
+        "content/zh/Atoms/Samadhi.md"
+      ],
+      "published": "2026-10-22T13:20:24+07:00",
+      "publicationOrder": 0
+    },
+    {
+      "title": "Джхана",
+      "paths": [
+        "content/Атомы/Джхана.md",
+        "content/en/Атомы/Jhana.md",
+        "content/th/Atoms/Jhana.md",
+        "content/zh/Atoms/Jhana.md"
+      ],
+      "published": "2026-10-22T13:20:24+07:00",
+      "publicationOrder": 1
+    },
+    {
+      "title": "Сахаджа-самадхи",
+      "paths": [
+        "content/Атомы/Сахаджа-самадхи.md",
+        "content/en/Атомы/Sahaja-Samadhi.md",
+        "content/th/Atoms/Sahaja-Samadhi.md",
+        "content/zh/Atoms/Sahaja-Samadhi.md"
+      ],
+      "published": "2026-10-22T13:20:24+07:00",
+      "publicationOrder": 2
+    },
+    {
+      "title": "Экспериенциальный фокус",
+      "paths": [
+        "content/Атомы/Экспериенциальный фокус.md",
+        "content/en/Атомы/Experiential Focus.md",
+        "content/th/Atoms/Experiential Focus.md",
+        "content/zh/Atoms/Experiential Focus.md"
+      ],
+      "published": "2026-10-22T13:20:24+07:00",
+      "publicationOrder": 3
+    },
+    {
+      "title": "Нарративный фокус",
+      "paths": [
+        "content/Атомы/Нарративный фокус.md",
+        "content/en/Атомы/Narrative Focus.md",
+        "content/th/Atoms/Narrative Focus.md",
+        "content/zh/Atoms/Narrative Focus.md"
+      ],
+      "published": "2026-10-22T13:20:24+07:00",
+      "publicationOrder": 4
+    },
+    {
+      "title": "Переориентация внимания",
+      "paths": [
+        "content/Атомы/Переориентация внимания.md",
+        "content/en/Атомы/Attention Reorientation.md",
+        "content/th/Atoms/Attention Reorientation.md",
+        "content/zh/Atoms/Attention Reorientation.md"
+      ],
+      "published": "2026-10-22T13:20:24+07:00",
+      "publicationOrder": 5
+    },
+    {
       "title": "Саматха",
       "paths": [
         "content/Атомы/Саматха.md",

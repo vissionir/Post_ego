@@ -5,4 +5,4 @@ published: 2026-10-21T22:14:26+07:00
 lang: zh-CN
 ---
 
-奢摩他是[[zh/Atoms/Mind|心智]]持续平静的状态，通向[[zh/Atoms/Serenity|安宁]]。
+奢摩他是[[zh/Atoms/Mind|心智]]自然且稳定地平静的状态，通向[[zh/Atoms/Samadhi|三摩地]]。
