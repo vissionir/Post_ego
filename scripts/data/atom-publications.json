@@ -3,6 +3,50 @@
   "sourceCommit": "6a2936f68d132ba59989cc59939f5f898f4fcbbe",
   "atoms": [
     {
+      "title": "Уддхачча",
+      "paths": [
+        "content/Атомы/Уддхачча.md",
+        "content/en/Атомы/Uddhacca.md",
+        "content/th/Atoms/Uddhacca.md",
+        "content/zh/Atoms/Uddhacca.md"
+      ],
+      "published": "2026-10-24T01:27:23+07:00",
+      "publicationOrder": 0
+    },
+    {
+      "title": "Тхина",
+      "paths": [
+        "content/Атомы/Тхина.md",
+        "content/en/Атомы/Thina.md",
+        "content/th/Atoms/Thina.md",
+        "content/zh/Atoms/Thina.md"
+      ],
+      "published": "2026-10-24T01:27:23+07:00",
+      "publicationOrder": 1
+    },
+    {
+      "title": "Вичикиччха",
+      "paths": [
+        "content/Атомы/Вичикиччха.md",
+        "content/en/Атомы/Vicikiccha.md",
+        "content/th/Atoms/Vicikiccha.md",
+        "content/zh/Atoms/Vicikiccha.md"
+      ],
+      "published": "2026-10-24T01:27:23+07:00",
+      "publicationOrder": 2
+    },
+    {
+      "title": "Сотапанна",
+      "paths": [
+        "content/Атомы/Сотапанна.md",
+        "content/en/Атомы/Sotapanna.md",
+        "content/th/Atoms/Sotapanna.md",
+        "content/zh/Atoms/Sotapanna.md"
+      ],
+      "published": "2026-10-24T01:27:23+07:00",
+      "publicationOrder": 3
+    },
+    {
       "title": "Омрачение",
       "paths": [
         "content/Атомы/Омрачение.md",
