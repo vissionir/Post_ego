@@ -3,6 +3,61 @@
   "sourceCommit": "6a2936f68d132ba59989cc59939f5f898f4fcbbe",
   "atoms": [
     {
+      "title": "Омрачение",
+      "paths": [
+        "content/Атомы/Омрачение.md",
+        "content/en/Атомы/Defilement.md",
+        "content/th/Atoms/Defilement.md",
+        "content/zh/Atoms/Defilement.md"
+      ],
+      "published": "2026-10-24T00:38:13+07:00",
+      "publicationOrder": 0
+    },
+    {
+      "title": "Лобха",
+      "paths": [
+        "content/Атомы/Лобха.md",
+        "content/en/Атомы/Lobha.md",
+        "content/th/Atoms/Lobha.md",
+        "content/zh/Atoms/Lobha.md"
+      ],
+      "published": "2026-10-24T00:38:13+07:00",
+      "publicationOrder": 1
+    },
+    {
+      "title": "Сантуттхи",
+      "paths": [
+        "content/Атомы/Сантуттхи.md",
+        "content/en/Атомы/Santutthi.md",
+        "content/th/Atoms/Santutthi.md",
+        "content/zh/Atoms/Santutthi.md"
+      ],
+      "published": "2026-10-24T00:38:13+07:00",
+      "publicationOrder": 2
+    },
+    {
+      "title": "Нирвана",
+      "paths": [
+        "content/Атомы/Нирвана.md",
+        "content/en/Атомы/Nirvana.md",
+        "content/th/Atoms/Nirvana.md",
+        "content/zh/Atoms/Nirvana.md"
+      ],
+      "published": "2026-10-24T00:38:13+07:00",
+      "publicationOrder": 3
+    },
+    {
+      "title": "Защитный импринт",
+      "paths": [
+        "content/Атомы/Защитный импринт.md",
+        "content/en/Атомы/Protective Imprint.md",
+        "content/th/Atoms/Protective Imprint.md",
+        "content/zh/Atoms/Protective Imprint.md"
+      ],
+      "published": "2026-10-24T00:38:13+07:00",
+      "publicationOrder": 4
+    },
+    {
       "title": "Безусильность",
       "paths": [
         "content/Атомы/Безусильность.md",

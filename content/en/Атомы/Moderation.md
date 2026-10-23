@@ -3,4 +3,4 @@ title: Moderation
 created: 2026-04-15T00:20:32+07:00
 ---
 
-Moderation is a mode of action arising from [[Sufficiency|sufficiency]], in which action is carried out without experiencing insufficiency and without demanding [[Perfectionism|the maximum]]; it makes [[Wu-wei|wu-wei]] possible.
+Moderation is a mode of action arising from [[Sufficiency|sufficiency]] and [[Santutthi|contentment with what one has]], in which action is carried out without experiencing [[Insufficiency|insufficiency]] and without demanding [[Perfectionism|the maximum]]; it makes [[Wu-wei|wu-wei]] possible.
