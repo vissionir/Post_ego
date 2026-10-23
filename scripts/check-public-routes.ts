@@ -46,6 +46,13 @@ for (const slug of slugs) {
       errors.add(`Unknown graph edge: ${slug} -> ${link}`)
   }
   const html = fs.readFileSync(path.join(root, `${slug}.html`), "utf8")
+  const searchInputs = [...html.matchAll(/<input\b[^>]*class="search-bar"[^>]*>/g)]
+  assert(searchInputs.length > 0, `Missing search input: ${slug}`)
+  for (const [input] of searchInputs)
+    assert(
+      input.includes(`lang="${siteLanguages[language].hreflang}"`),
+      `Search input language mismatch: ${slug}`,
+    )
   const url = new URL(`https://post-ego.com/${simplifySlug(slug as FullSlug)}`)
   assert(html.includes(`rel="canonical" href="${url.href}"`), `Canonical mismatch: ${slug}`)
   for (const lang of languages) {

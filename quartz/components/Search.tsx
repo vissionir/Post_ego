@@ -4,6 +4,7 @@ import style from "./styles/search.scss"
 import script from "./scripts/search.inline"
 import { classNames, languageForSlug, localeForSlug } from "../util/lang"
 import { i18n } from "../i18n"
+import { siteLanguages } from "../util/siteLanguages"
 
 export interface SearchOptions {
   enablePreview: boolean
@@ -17,13 +18,14 @@ export default ((userOpts?: Partial<SearchOptions>) => {
   const Search: QuartzComponent = ({ displayClass, fileData }: QuartzComponentProps) => {
     const opts = { ...defaultOptions, ...userOpts }
     const translation = i18n(localeForSlug(fileData.slug)).components.search
+    const language = languageForSlug(fileData.slug)
     const searchPlaceholder = translation.searchBarPlaceholder
     const closeLabel = {
       ru: "Закрыть поиск",
       en: "Close search",
       th: "ปิดการค้นหา",
       zh: "关闭搜索",
-    }[languageForSlug(fileData.slug)]
+    }[language]
     return (
       <div class={classNames(displayClass, "search")}>
         <button class="search-button" type="button" aria-label={translation.title}>
@@ -40,6 +42,7 @@ export default ((userOpts?: Partial<SearchOptions>) => {
           <div class="search-space">
             <div class="search-toolbar">
               <input
+                lang={siteLanguages[language].hreflang}
                 autocomplete="off"
                 autocorrect="off"
                 autocapitalize="none"

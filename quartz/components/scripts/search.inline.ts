@@ -3,6 +3,7 @@ import { ContentDetails } from "../../plugins/emitters/contentIndex"
 import { registerEscapeHandler, removeAllChildren } from "./util"
 import { FullSlug, normalizeRelativeURLs, resolveRelative } from "../../util/path"
 import { languageForSlug } from "../../util/lang"
+import { siteLanguages } from "../../util/siteLanguages"
 import { matchingTitleIds } from "../../util/searchTitles"
 
 interface Item {
@@ -214,6 +215,7 @@ async function setupSearch(searchElement: Element, currentSlug: FullSlug, data: 
   const idDataMap = Object.keys(data) as FullSlug[]
   const slugLanguage = languageForSlug
   const currentLanguage = slugLanguage(currentSlug)
+  searchBar.lang = siteLanguages[currentLanguage].hreflang
   const appendLayout = (el: HTMLElement) => {
     searchLayout.appendChild(el)
   }
