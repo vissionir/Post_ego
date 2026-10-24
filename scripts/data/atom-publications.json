@@ -3,6 +3,61 @@
   "sourceCommit": "6a2936f68d132ba59989cc59939f5f898f4fcbbe",
   "atoms": [
     {
+      "title": "Неудовлетворительность",
+      "paths": [
+        "content/Атомы/Неудовлетворительность.md",
+        "content/en/Атомы/Unsatisfactoriness.md",
+        "content/th/Atoms/Unsatisfactoriness.md",
+        "content/zh/Atoms/Unsatisfactoriness.md"
+      ],
+      "published": "2026-10-24T23:49:46+07:00",
+      "publicationOrder": 0
+    },
+    {
+      "title": "Випассана",
+      "paths": [
+        "content/Атомы/Випассана.md",
+        "content/en/Атомы/Vipassana.md",
+        "content/th/Atoms/Vipassana.md",
+        "content/zh/Atoms/Vipassana.md"
+      ],
+      "published": "2026-10-24T23:49:46+07:00",
+      "publicationOrder": 1
+    },
+    {
+      "title": "Благородный путь",
+      "paths": [
+        "content/Атомы/Благородный путь.md",
+        "content/en/Атомы/Noble Path.md",
+        "content/th/Atoms/Noble Path.md",
+        "content/zh/Atoms/Noble Path.md"
+      ],
+      "published": "2026-10-24T23:49:46+07:00",
+      "publicationOrder": 2
+    },
+    {
+      "title": "Изменчивость переживания",
+      "paths": [
+        "content/Атомы/Изменчивость переживания.md",
+        "content/en/Атомы/Variability of Experience.md",
+        "content/th/Atoms/Variability of Experience.md",
+        "content/zh/Atoms/Variability of Experience.md"
+      ],
+      "published": "2026-10-24T23:49:46+07:00",
+      "publicationOrder": 3
+    },
+    {
+      "title": "Кама-танха",
+      "paths": [
+        "content/Атомы/Кама-танха.md",
+        "content/en/Атомы/Kama-Tanha.md",
+        "content/th/Atoms/Kama-Tanha.md",
+        "content/zh/Atoms/Kama-Tanha.md"
+      ],
+      "published": "2026-10-24T23:49:46+07:00",
+      "publicationOrder": 4
+    },
+    {
       "title": "Уддхачча",
       "paths": [
         "content/Атомы/Уддхачча.md",
