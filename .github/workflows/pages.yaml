@@ -5,9 +5,16 @@ on:
     branches:
       - v4
   workflow_dispatch:
+    inputs:
+      ai_snapshot_run:
+        description: "Keep the AI layer unchanged by restoring github-pages from this run"
+        required: false
+        default: ""
+        type: string
 
 permissions:
   contents: read
+  actions: read
   pages: write
   id-token: write
 
@@ -42,7 +49,26 @@ jobs:
           npx tsx scripts/check-public-routes.ts
 
       - name: Build AI context
+        if: ${{ github.event_name != 'workflow_dispatch' || inputs.ai_snapshot_run == '' }}
         run: npm run build:ai
+
+      - name: Download unchanged AI snapshot
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.ai_snapshot_run != '' }}
+        uses: actions/download-artifact@v7
+        with:
+          name: github-pages
+          path: ${{ runner.temp }}/postego-ai-snapshot
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: ${{ inputs.ai_snapshot_run }}
+
+      - name: Restore unchanged AI snapshot
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.ai_snapshot_run != '' }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/postego-ai-extract"
+          tar -xf "$RUNNER_TEMP/postego-ai-snapshot/artifact.tar" -C "$RUNNER_TEMP/postego-ai-extract" ./ai
+          test -f "$RUNNER_TEMP/postego-ai-extract/ai/manifest.json"
+          test ! -e public/ai
+          cp -a "$RUNNER_TEMP/postego-ai-extract/ai" public/ai
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
