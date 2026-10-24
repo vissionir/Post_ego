@@ -103,6 +103,8 @@ for (const [oldName, current] of [
   ["Radical-Acceptance", "self-acceptance"],
   ["Таковость", "direct-seeing"],
   ["Suchness", "direct-seeing"],
+  ["Джхана", "four-jhanas"],
+  ["Jhana", "four-jhanas"],
 ]) {
   for (const lang of languages) {
     const prefix = siteLanguages[lang].atomPrefix
@@ -111,6 +113,7 @@ for (const [oldName, current] of [
 }
 
 for (const lang of languages) {
+  register(`${lang}/atoms/jhana`, `${lang}/atoms/four-jhanas` as FullSlug)
   register(`${lang}/atoms/suchness`, `${lang}/atoms/direct-seeing` as FullSlug)
   register(`${lang}/atoms/radical-acceptance`, `${lang}/atoms/self-acceptance` as FullSlug)
   register(`${lang}/atoms/illusion-of-exile`, `${lang}/atoms/fear-of-exile` as FullSlug)

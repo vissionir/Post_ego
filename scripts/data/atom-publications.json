@@ -190,12 +190,12 @@
       "publicationOrder": 0
     },
     {
-      "title": "Джхана",
+      "title": "Четыре джханы",
       "paths": [
-        "content/Атомы/Джхана.md",
-        "content/en/Атомы/Jhana.md",
-        "content/th/Atoms/Jhana.md",
-        "content/zh/Atoms/Jhana.md"
+        "content/Атомы/Четыре джханы.md",
+        "content/en/Атомы/Four Jhanas.md",
+        "content/th/Atoms/Four Jhanas.md",
+        "content/zh/Atoms/Four Jhanas.md"
       ],
       "published": "2026-10-22T13:20:24+07:00",
       "publicationOrder": 1
