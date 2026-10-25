@@ -3,6 +3,7 @@ import { QuartzComponent, QuartzComponentConstructor, QuartzComponentProps } fro
 import script from "./scripts/graph.inline"
 import style from "./styles/graph.scss"
 import { classNames, localeForSlug } from "../util/lang"
+import { isAtomPage } from "../util/pageLayout"
 
 export interface D3Config {
   drag: boolean
@@ -67,6 +68,11 @@ export default ((opts?: Partial<GraphOptions>) => {
   const Graph: QuartzComponent = ({ displayClass, fileData }: QuartzComponentProps) => {
     const localGraph = { ...defaultOptions.localGraph, ...opts?.localGraph }
     const globalGraph = { ...defaultOptions.globalGraph, ...opts?.globalGraph }
+    if (!isAtomPage(fileData.slug)) {
+      localGraph.depth = -1
+      localGraph.showPageContext = false
+      globalGraph.showPageContext = false
+    }
     const locale = localeForSlug(fileData.slug)
     const copy =
       locale === "ru-RU"

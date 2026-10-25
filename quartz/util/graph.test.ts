@@ -12,25 +12,29 @@ import {
 import type { FullSlug, SimpleSlug } from "./path"
 
 const index = {
-  "Атомы/A": { title: "A", links: ["Атомы/B", "en/Atoms/A", "Атомы/A"] },
-  "Атомы/B": { title: "B", links: [] },
-  "Атомы/C": { title: "C", links: ["Атомы/A"] },
-  "Атомы/Isolated": { title: "Isolated", links: [] },
-  "en/Atoms/A": { title: "English", links: ["th/Atoms/A"] },
-  "th/Atoms/A": { title: "Thai", links: [] },
-  "zh/atoms/a": { title: "中文", links: ["zh/atoms/b", "Атомы/A"] },
+  "ru/atoms/a": { title: "A", links: ["ru/atoms/b", "en/atoms/a", "ru/atoms/a"] },
+  "ru/atoms/b": { title: "B", links: [] },
+  "ru/atoms/c": { title: "C", links: ["ru/atoms/a"] },
+  "ru/atoms/isolated": { title: "Isolated", links: [] },
+  "en/atoms/a": { title: "English", links: ["th/atoms/a"] },
+  "th/atoms/a": { title: "Thai", links: [] },
+  "zh/atoms/a": { title: "中文", links: ["zh/atoms/b", "ru/atoms/a"] },
   "zh/atoms/b": { title: "关联", links: [] },
 }
 test("neighbourhood includes both link directions without other languages", () => {
-  const result = graphData(index, "Атомы/A" as FullSlug, 1)
-  assert.deepEqual(result.nodes.map((node) => node.id).sort(), ["Атомы/A", "Атомы/B", "Атомы/C"])
+  const result = graphData(index, "ru/atoms/a" as FullSlug, 1)
+  assert.deepEqual(result.nodes.map((node) => node.id).sort(), [
+    "ru/atoms/a",
+    "ru/atoms/b",
+    "ru/atoms/c",
+  ])
   assert.equal(result.links.length, 2)
 })
 test("full graph stays in the current language", () => {
   for (const [current, count] of [
-    ["Атомы/A", 4],
-    ["en/Atoms/A", 1],
-    ["th/Atoms/A", 1],
+    ["ru/atoms/a", 4],
+    ["en/atoms/a", 1],
+    ["th/atoms/a", 1],
     ["zh/atoms/a", 2],
   ] as const)
     assert.equal(graphData(index, current as FullSlug, -1).nodes.length, count)
@@ -44,20 +48,56 @@ test("Chinese graph traversal never imports Russian nodes or cross-language edge
   assert.deepEqual(result.links, [{ source: "zh/atoms/a", target: "zh/atoms/b" }])
 })
 test("the whole map has the same node order regardless of the entry atom", () => {
-  const first = graphData(index, "Атомы/A" as FullSlug, -1)
-  const second = graphData(index, "Атомы/C" as FullSlug, -1)
-  const isolated = graphData(index, "Атомы/Isolated" as FullSlug, -1)
+  const first = graphData(index, "ru/atoms/a" as FullSlug, -1)
+  const second = graphData(index, "ru/atoms/c" as FullSlug, -1)
+  const isolated = graphData(index, "ru/atoms/isolated" as FullSlug, -1)
   assert.deepEqual(first, second)
   assert.deepEqual(first, isolated)
   assert.deepEqual(
     first.nodes.map((node) => node.id),
-    ["Атомы/A", "Атомы/B", "Атомы/C", "Атомы/Isolated"],
+    ["ru/atoms/a", "ru/atoms/b", "ru/atoms/c", "ru/atoms/isolated"],
   )
 })
 test("an isolated atom remains visible", () => {
-  const result = graphData(index, "Атомы/Isolated" as FullSlug, 1)
+  const result = graphData(index, "ru/atoms/isolated" as FullSlug, 1)
   assert.equal(result.nodes[0].text, "Isolated")
   assert.equal(result.links.length, 0)
+})
+
+test("sections and future pages never enter the graph or create paths between atoms", () => {
+  for (const language of ["ru", "en", "th", "zh"]) {
+    const a = `${language}/atoms/a` as FullSlug
+    const b = `${language}/atoms/b` as FullSlug
+    const c = `${language}/atoms/c` as FullSlug
+    const sections = ["index", "atoms/index", "neuronavigator", "manifesto", "future-section"]
+    const pages = Object.fromEntries([
+      [a, { title: "A", links: [b, `${language}/manifesto`] }],
+      [b, { title: "B", links: [] }],
+      [c, { title: "C", links: [] }],
+      ...sections.map((section) => [`${language}/${section}`, { title: section, links: [a, c] }]),
+    ])
+    const before = structuredClone(pages)
+    const full = graphData(pages, `${language}/index` as FullSlug, -1)
+    assert.deepEqual(
+      full.nodes.map((node) => node.id),
+      [a, b, c],
+    )
+    assert.deepEqual(full.links, [{ source: a, target: b }])
+    assert.deepEqual(
+      graphData(pages, a, 2).nodes.map((node) => node.id),
+      [a, b],
+    )
+    assert.deepEqual(
+      graphData(pages, c, 1).nodes.map((node) => node.id),
+      [c],
+    )
+    for (const section of sections)
+      assert.deepEqual(graphData(pages, `${language}/${section}` as FullSlug, 1), {
+        nodes: [],
+        links: [],
+      })
+    assert.deepEqual(pages, before, "graph filtering must not change page text or links")
+  }
 })
 
 test("node sizes reflect their connections", () => {

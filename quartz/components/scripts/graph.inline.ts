@@ -5,6 +5,7 @@ import { renderForceGraph } from "./graph-renderer"
 import { mountGraphSearch } from "./graph-search"
 import { addToVisited, getVisited } from "./graph-visits"
 import { languageForSlug } from "../../util/lang"
+import { isAtomPage } from "../../util/pageLayout"
 
 async function renderGraph(
   graph: HTMLElement,
@@ -119,6 +120,10 @@ document.addEventListener("nav", async (e: CustomEventMap["nav"]) => {
       else localCleanup = cleanup
     }
     async function renderMode(depth: number, showPageContext = true, selected?: SimpleSlug) {
+      if (!isAtomPage(origin)) {
+        depth = -1
+        showPageContext = false
+      }
       const attempt = ++generation
       const config = JSON.parse(graph.dataset.cfg!)
       const view = config.depth < 0 && depth < 0 ? globalCleanup?.getView() : undefined

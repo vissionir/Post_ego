@@ -1,5 +1,6 @@
 import { languageForSlug } from "./lang"
 import { FullSlug, SimpleSlug, simplifySlug } from "./path"
+import { isAtomPage } from "./pageLayout"
 
 export type GraphEntry = { title: string; links?: string[]; tags?: string[] }
 export type GraphNode = { id: SimpleSlug; text: string }
@@ -138,7 +139,8 @@ export function graphData(index: Record<string, GraphEntry>, current: FullSlug, 
   const language = languageForSlug(current)
   const entries = new Map(
     Object.entries(index)
-      .filter(([id]) => languageForSlug(id) === language)
+      // Navigation links remain in the content index, but never become semantic graph edges.
+      .filter(([id]) => isAtomPage(id) && languageForSlug(id) === language)
       .map(([id, entry]) => [simplifySlug(id as FullSlug), entry] as const),
   )
   const center = simplifySlug(current)
