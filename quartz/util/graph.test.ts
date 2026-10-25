@@ -157,12 +157,29 @@ test("full graph centers an asymmetric main cloud without clipping its core", ()
   }
 })
 
-test("dense graphs reveal captions in three zoom levels", () => {
+test("dense graphs reveal captions gradually without an unlimited-label zoom threshold", () => {
   const policy = (zoom: number) => graphLabelPolicy(800, zoom, true, true, 390 * 700)
   assert.equal(policy(1).level, "none")
   assert.equal(policy(1.8).level, "sparse")
   assert(policy(1.8).limit > 0 && policy(1.8).limit <= 32)
-  assert.equal(policy(3.3).level, "all")
+  let previous = 0
+  for (const zoom of [1.8, 2.4, 3.19, 3.2, 3.3, 4, 6, 10]) {
+    const detail = policy(zoom)
+    assert.equal(detail.level, "sparse")
+    assert(Number.isFinite(detail.limit))
+    assert(detail.limit >= previous && detail.limit <= 28)
+    previous = detail.limit
+  }
+  assert(policy(3.2).limit - policy(3.19).limit <= 1)
+})
+
+test("whole-map captions use visible density and screen area, including narrow viewports", () => {
+  const mobile = graphLabelPolicy(200, 4, true, true, 390 * 600)
+  const desktop = graphLabelPolicy(200, 4, true, true, 1200 * 700)
+  assert(mobile.limit > 0 && mobile.limit < desktop.limit)
+  assert.equal(graphLabelPolicy(4, 4, true, true, 390 * 600).level, "all")
+  assert.equal(graphLabelPolicy(4, 4, true, true, 0).limit, 0)
+  assert.equal(graphLabelPolicy(0, 4, true, true, 390 * 600).level, "none")
 })
 
 test("expanded neighbourhoods start labelled without overloading dense previews", () => {
@@ -206,7 +223,7 @@ test("selected global constellations follow the zoom policy; only hovering force
   const selected = "C" as SimpleSlug
   for (const zoom of [0.1, 1, 1.8, 4]) {
     const policy = graphLabelPolicy(800, zoom, true, true, 390 * 700)
-    assert.equal(policy.level === "none", zoom < 1.35)
+    assert.equal(policy.level === "none", zoom < 1.6)
     for (const id of [center, "B" as SimpleSlug, selected])
       assert(!graphLabelRequired(id, center, null, selected, true, true))
     assert(graphLabelRequired(selected, center, selected, selected, true, true))

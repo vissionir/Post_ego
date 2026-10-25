@@ -88,6 +88,34 @@ test("crowded graphs omit a caption rather than stacking it on occupied space", 
   )
 })
 
+test("whole-map labels reserve extra breathing room around text and even small nodes", () => {
+  const node = { x: 125, y: 160, radius: 4 }
+  const blocker = { x: 125, y: 183, radius: 1 }
+  const caption = graphLabelPlacement(
+    node,
+    size,
+    center,
+    bounds,
+    { nodes: [node, blocker], lines: [], boxes: [] },
+    undefined,
+    8,
+  )!
+  assert(caption)
+  assert.equal(caption.box.right - caption.box.left, size.width + 16)
+  assert(caption.box.bottom < node.y)
+  const adjacent = graphLabelPlacement(
+    { x: 125, y: 130, radius: 4 },
+    size,
+    center,
+    bounds,
+    { nodes: [node, blocker], lines: [], boxes: [caption.box] },
+    undefined,
+    8,
+  )!
+  assert(adjacent)
+  assert(adjacent.box.bottom <= caption.box.top || adjacent.box.top >= caption.box.bottom)
+})
+
 test("a caption cannot extend into a selected-node card or outside a narrow preview", () => {
   const node = { x: 125, y: 185, radius: 4 }
   const caption = graphLabelPlacement(

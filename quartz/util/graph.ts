@@ -65,8 +65,18 @@ export function graphLabelPolicy(
   area: number,
 ) {
   const maxLength = Math.floor((expanded && !full ? 48 : 24) * Math.max(0.5, relativeZoom))
-  if (relativeZoom < 0.65 || (full && relativeZoom < 1.35))
-    return { level: "none", limit: 0, maxLength } as const
+  if (full) {
+    // Reveal details gradually, never switch a dense map to unlimited captions.
+    const reveal = Math.max(0, Math.min(1, (relativeZoom - 1.6) / 0.8))
+    const spacePerLabel = Math.max(10000, (52000 * 1.6) / Math.max(1, relativeZoom))
+    const limit = Math.min(count, Math.floor((Math.max(0, area) / spacePerLabel) * reveal))
+    return {
+      level: limit === 0 ? "none" : limit >= count ? "all" : "sparse",
+      limit,
+      maxLength,
+    } as const
+  }
+  if (relativeZoom < 0.65) return { level: "none", limit: 0, maxLength } as const
   if (relativeZoom >= 3.2 || count <= (expanded && !full ? 36 : 8))
     return { level: "all", limit: Infinity, maxLength } as const
   if ((expanded && !full) || count <= 16 || relativeZoom >= 1.35)

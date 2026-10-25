@@ -437,12 +437,13 @@ export function renderForceGraph(
     const labelled = new Set<SimpleSlug>()
     const priorityId = previewed ?? hovered ?? selected ?? (pageContext ? slug : null)
     const priority = priorityId === null ? undefined : byId.get(priorityId)
+    const cardHeight = card.hidden ? 0 : card.offsetHeight + 16
     const policy = graphLabelPolicy(
-      nodes.length,
+      full ? labelNodes.length : nodes.length,
       transform.k / view.k,
       expanded,
       full,
-      width * height,
+      width * Math.max(0, height - cardHeight),
     )
     const order = constellation
       ? [
@@ -451,7 +452,6 @@ export function renderForceGraph(
         ]
       : ordered
     const candidates = priority ? [priority, ...order.filter((n) => n !== priority)] : order
-    const cardHeight = card.hidden ? 0 : card.offsetHeight + 16
     const focusLabelNodes = nodes
       .filter((n) => focus.nodes.has(n.id))
       .map((n) => positions.get(n.id)!)
@@ -492,18 +492,22 @@ export function renderForceGraph(
       }
       const bounds = { width, height: height - cardHeight }
       const obstacles = {
-        nodes: constellation
-          ? focusLabelNodes
-          : full
-            ? labelNodes.filter((other) => other === p || other.radius >= Math.max(p.radius, 5))
-            : labelNodes,
+        nodes: full ? labelNodes : constellation ? focusLabelNodes : labelNodes,
         lines: constellation ? focusLabelLines : labelLines,
         boxes,
       }
       // Lines are a soft obstacle: dense hubs need captions too.
       const caption =
-        graphLabelPlacement(p, size, origin, bounds, obstacles) ??
-        graphLabelPlacement(p, size, origin, bounds, { ...obstacles, lines: [] }) ??
+        graphLabelPlacement(p, size, origin, bounds, obstacles, undefined, full ? 8 : 3) ??
+        graphLabelPlacement(
+          p,
+          size,
+          origin,
+          bounds,
+          { ...obstacles, lines: [] },
+          undefined,
+          full ? 8 : 3,
+        ) ??
         (required ? graphFocusLabelPlacement(p, size, origin, bounds, obstacles) : undefined)
       if (!caption) continue
       boxes.push(caption.box)
@@ -534,6 +538,9 @@ export function renderForceGraph(
     }
     canvas.dataset.labelCount = String(labelled.size)
     canvas.dataset.labelLevel = policy.level
+    canvas.dataset.labelLimit = String(policy.limit)
+    canvas.dataset.visibleNodeCount = String(labelNodes.length)
+    canvas.dataset.labelFontSize = String(fontSize)
     canvas.dataset.labelMaxLength = String(policy.maxLength)
     canvas.dataset.focusNodeCount = String(focus.nodes.size)
     canvas.dataset.focusLinkCount = String(focus.links.size)

@@ -47,9 +47,9 @@ export function graphLabelPlacement(
   bounds: { width: number; height: number },
   obstacles: { nodes: GraphLabelPoint[]; lines: GraphLabelLine[]; boxes: GraphLabelBox[] },
   gaps: readonly number[] = [7, 19],
+  padding = 3,
 ) {
-  const padding = 3,
-    halfWidth = size.width / 2,
+  const halfWidth = size.width / 2,
     halfHeight = size.height / 2
   if (size.width + padding * 2 + 8 > bounds.width) return undefined
   const vertical = node.y > origin.y + 4 ? 1 : -1
