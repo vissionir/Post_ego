@@ -3,6 +3,7 @@ import assert from "node:assert/strict"
 import {
   graphData,
   graphFocus,
+  graphLabelFitsZoom,
   graphLabelPolicy,
   graphLabelRank,
   graphLabelRequired,
@@ -103,6 +104,13 @@ test("sections and future pages never enter the graph or create paths between at
 test("node sizes reflect their connections", () => {
   assert(graphNodeRadius(100) > graphNodeRadius(4))
   assert.equal(graphNodeRadius(0), 2)
+})
+
+test("larger circles reveal captions before smaller circles as the user zooms in", () => {
+  assert(graphLabelFitsZoom(graphNodeRadius(64) * 0.5, true))
+  assert(!graphLabelFitsZoom(graphNodeRadius(1) * 0.5, true))
+  assert(graphLabelFitsZoom(graphNodeRadius(1) * 1.5, true))
+  assert(graphLabelFitsZoom(1, false))
 })
 
 test("full graph fits the main cloud instead of distant isolated nodes", () => {
@@ -230,7 +238,7 @@ test("unfocused background captions follow the zoom policy; hovering forces a ca
   }
 })
 
-test("every atom in a focused neighbourhood or connecting route keeps its caption at any zoom", () => {
+test("selected neighbours and routes use the same progressive label rules as the whole map", () => {
   const links = [
     ["Selected", "Neighbour"],
     ["Neighbour", "Route"],
@@ -243,45 +251,27 @@ test("every atom in a focused neighbourhood or connecting route keeps its captio
       "Selected" as SimpleSlug,
       context ? ("Page" as SimpleSlug) : undefined,
     )
-    for (const zoom of [0.1, 1, 1.8, 4]) {
-      for (const id of focus.nodes) {
-        assert(
-          graphLabelRequired(
-            id,
-            "Page" as SimpleSlug,
-            null,
-            "Selected" as SimpleSlug,
-            true,
-            true,
-            context,
-            true,
-          ),
-          `${id} must remain labelled even when the background label budget is zero`,
-        )
-      }
+    for (const id of focus.nodes)
       assert(
         !graphLabelRequired(
-          "Background" as SimpleSlug,
+          id,
           "Page" as SimpleSlug,
           null,
           "Selected" as SimpleSlug,
           true,
           true,
           context,
-          false,
         ),
       )
-      if (zoom <= 1) assert.equal(graphLabelPolicy(800, zoom, true, true, 390 * 700).limit, 0)
-    }
+    for (const zoom of [0.1, 1])
+      assert.equal(graphLabelPolicy(800, zoom, true, true, 390 * 700).limit, 0)
   }
   assert(
     graphLabelRequired(
       "Neighbour" as SimpleSlug,
       "Page" as SimpleSlug,
-      null,
+      "Neighbour" as SimpleSlug,
       "Selected" as SimpleSlug,
-      true,
-      false,
       true,
       true,
     ),

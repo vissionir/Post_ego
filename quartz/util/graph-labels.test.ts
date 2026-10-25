@@ -1,11 +1,6 @@
 import { test } from "node:test"
 import assert from "node:assert/strict"
-import {
-  graphFocusLabelPlacement,
-  graphLabelPlacement,
-  graphLabelText,
-  type GraphLabelPoint,
-} from "./graph-labels"
+import { graphLabelPlacement, graphLabelText, type GraphLabelPoint } from "./graph-labels"
 
 const center = { x: 125, y: 125, radius: 6 }
 const bounds = { width: 250, height: 250 }
@@ -149,14 +144,62 @@ test("placement is stable across redraws and does not mutate the force layout", 
   assert.deepEqual(node, snapshot)
 })
 
-test("route captions search further instead of dropping a crowded node", () => {
-  const caption = graphFocusLabelPlacement(center, size, center, bounds, {
+test("crowded captions wait for zoom instead of moving far away from their nodes", () => {
+  const caption = graphLabelPlacement(center, size, center, bounds, {
     nodes: [center],
     lines: [],
     boxes: [{ left: 0, right: 250, top: 70, bottom: 180 }],
-  })!
-  assert(caption)
-  assert(caption.box.bottom < 70 || caption.box.top > 180)
+  })
+  assert.equal(caption, undefined)
+})
+
+test("mandatory captions never overlap another caption even when no free space remains", () => {
+  assert.equal(
+    graphLabelPlacement(center, size, center, bounds, {
+      nodes: [center],
+      lines: [],
+      boxes: [{ left: 0, right: 250, top: 0, bottom: 250 }],
+    }),
+    undefined,
+  )
+  assert.equal(
+    graphLabelPlacement(center, { width: 300, height: 14 }, center, bounds, {
+      nodes: [],
+      lines: [],
+      boxes: [],
+    }),
+    undefined,
+  )
+})
+
+test("dense mobile selections omit crowded captions instead of stacking or scattering them", () => {
+  const boxes: { left: number; right: number; top: number; bottom: number }[] = []
+  let rejected = 0
+  for (let i = 0; i < 80; i++) {
+    const caption = graphLabelPlacement(
+      { x: 180 + (i % 5), y: 210 + (i % 7), radius: 4 },
+      { width: 160 + (i % 3) * 10, height: 36 },
+      { x: 190, y: 200 },
+      { width: 374, height: 420 },
+      { nodes: [], lines: [], boxes },
+    )
+    if (!caption) {
+      rejected++
+      continue
+    }
+    for (const other of boxes)
+      assert(
+        !(
+          caption.box.left < other.right &&
+          caption.box.right > other.left &&
+          caption.box.top < other.bottom &&
+          caption.box.bottom > other.top
+        ),
+      )
+    boxes.push(caption.box)
+  }
+  assert(boxes.length > 0)
+  assert(rejected > 0, "crowded labels wait for manual zoom, not overwrite existing text")
 })
 
 test("long route captions wrap without truncating the name", () => {

@@ -15,6 +15,7 @@ import type { D3Config } from "../Graph"
 import { addToVisited, graphVisitEvent } from "./graph-visits"
 import {
   graphFocus,
+  graphLabelFitsZoom,
   graphLabelPolicy,
   graphLabelRequired,
   graphNodeRadius,
@@ -25,12 +26,7 @@ import {
 import { resolveRelative, simplifySlug, type FullSlug, type SimpleSlug } from "../../util/path"
 import { graphArticleHasBody, graphArticleTarget } from "../../util/graph-article"
 import { loadGraphArticle } from "./graph-article"
-import {
-  graphFocusLabelPlacement,
-  graphLabelPlacement,
-  graphLabelText,
-  type GraphLabelBox,
-} from "../../util/graph-labels"
+import { graphLabelPlacement, graphLabelText, type GraphLabelBox } from "../../util/graph-labels"
 
 type Node = GraphNode & SimulationNodeDatum & { radius: number }
 type Link = { source: Node; target: Node }
@@ -458,6 +454,7 @@ export function renderForceGraph(
     const focusLabelLines = labelLines.filter((_, index) => focus.links.has(index))
     let focusLabelCount = 0
     for (const n of candidates) {
+      const p = positions.get(n.id)!
       const required = graphLabelRequired(
         n.id,
         slug,
@@ -466,7 +463,6 @@ export function renderForceGraph(
         expanded,
         full,
         pageContext,
-        constellation && focus.nodes.has(n.id),
       )
       if (
         !required &&
@@ -474,14 +470,18 @@ export function renderForceGraph(
           (n.id === slug && !expanded) ||
           policy.level === "none" ||
           labelled.size >= policy.limit ||
+          !graphLabelFitsZoom(p.radius, full) ||
           [...n.text].length > policy.maxLength)
       )
         continue
-      const p = positions.get(n.id)!
-      if (p.x < 0 || p.x > width || p.y < 0 || p.y > height) continue
+      if (p.x < 0 || p.x > width || p.y < 0 || p.y > height - cardHeight) continue
       ctx!.font = font
       const lines = required
-        ? graphLabelText(n.text, Math.max(1, width - 24), (text) => ctx!.measureText(text).width)
+        ? graphLabelText(
+            n.text,
+            Math.max(1, Math.min(width - 24, 240, width * 0.48)),
+            (text) => ctx!.measureText(text).width,
+          )
         : [n.text]
       const size = {
         width: Math.max(...lines.map((text) => ctx!.measureText(text).width)),
@@ -493,14 +493,7 @@ export function renderForceGraph(
       }
       const bounds = { width, height: height - cardHeight }
       const obstacles = {
-        nodes:
-          constellation && required
-            ? focusLabelNodes
-            : full
-              ? labelNodes
-              : constellation
-                ? focusLabelNodes
-                : labelNodes,
+        nodes: constellation ? focusLabelNodes : labelNodes,
         lines: constellation ? focusLabelLines : labelLines,
         boxes,
       }
@@ -516,23 +509,11 @@ export function renderForceGraph(
           undefined,
           full ? 8 : 3,
         ) ??
-        (required ? graphFocusLabelPlacement(p, size, origin, bounds, obstacles) : undefined)
+        (required
+          ? graphLabelPlacement(p, size, origin, bounds, { nodes: [p], lines: [], boxes })
+          : undefined)
       if (!caption) continue
       boxes.push(caption.box)
-      const anchorX = Math.max(caption.box.left, Math.min(caption.box.right, p.x))
-      const anchorY = Math.max(caption.box.top, Math.min(caption.box.bottom, p.y))
-      if (constellation && required && Math.hypot(anchorX - p.x, anchorY - p.y) > p.radius + 24) {
-        ctx!.strokeStyle = colors.gray
-        ctx!.lineWidth = 0.6
-        ctx!.globalAlpha = 0.5
-        ctx!.setLineDash([2, 3])
-        ctx!.beginPath()
-        ctx!.moveTo(p.x, p.y)
-        ctx!.lineTo(anchorX, anchorY)
-        ctx!.stroke()
-        ctx!.setLineDash([])
-        ctx!.globalAlpha = 1
-      }
       ctx!.strokeStyle = colors.light
       ctx!.lineWidth = 3
       ctx!.fillStyle = colors.text
@@ -554,11 +535,28 @@ export function renderForceGraph(
     canvas.dataset.focusLinkCount = String(focus.links.size)
     canvas.dataset.focusMode = constellation ? "constellation" : active ? "node" : "none"
     canvas.dataset.focusLabelCount = String(focusLabelCount)
-    canvas.dataset.focusVisibleNodeCount = String(
-      nodes.filter((n) => {
-        const p = positions.get(n.id)!
-        return focus.nodes.has(n.id) && p.x >= 0 && p.x <= width && p.y >= 0 && p.y <= height
-      }).length,
+    const focusVisibleNodeCount = nodes.filter((n) => {
+      const p = positions.get(n.id)!
+      return (
+        focus.nodes.has(n.id) && p.x >= 0 && p.x <= width && p.y >= 0 && p.y <= height - cardHeight
+      )
+    }).length
+    canvas.dataset.focusVisibleNodeCount = String(focusVisibleNodeCount)
+    canvas.dataset.labelOverlapCount = String(
+      boxes.reduce(
+        (sum, box, index) =>
+          sum +
+          boxes
+            .slice(index + 1)
+            .filter(
+              (other) =>
+                box.left < other.right &&
+                box.right > other.left &&
+                box.top < other.bottom &&
+                box.bottom > other.top,
+            ).length,
+        0,
+      ),
     )
     canvas.dataset.scale = String(transform.k)
     canvas.dataset.previewed = previewed ?? ""
