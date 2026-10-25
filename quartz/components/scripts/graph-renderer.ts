@@ -466,6 +466,7 @@ export function renderForceGraph(
         expanded,
         full,
         pageContext,
+        constellation && focus.nodes.has(n.id),
       )
       if (
         !required &&
@@ -492,7 +493,14 @@ export function renderForceGraph(
       }
       const bounds = { width, height: height - cardHeight }
       const obstacles = {
-        nodes: full ? labelNodes : constellation ? focusLabelNodes : labelNodes,
+        nodes:
+          constellation && required
+            ? focusLabelNodes
+            : full
+              ? labelNodes
+              : constellation
+                ? focusLabelNodes
+                : labelNodes,
         lines: constellation ? focusLabelLines : labelLines,
         boxes,
       }

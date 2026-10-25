@@ -103,8 +103,10 @@ export function graphLabelRequired(
   expanded: boolean,
   full: boolean,
   showPageContext = true,
+  inFocusedGroup = false,
 ) {
   if (showPageContext && id === center && !expanded) return false
+  if (expanded && inFocusedGroup) return true
   return (
     id === hovered ||
     (showPageContext &&

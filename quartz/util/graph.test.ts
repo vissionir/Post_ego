@@ -218,7 +218,7 @@ test("zooming out tightens the caption length budget", () => {
   assert.equal(graphLabelPolicy(6, 0.1, false, false, 250 * 250).maxLength, 12)
 })
 
-test("selected global constellations follow the zoom policy; only hovering forces a caption", () => {
+test("unfocused background captions follow the zoom policy; hovering forces a caption", () => {
   const center = "A" as SimpleSlug
   const selected = "C" as SimpleSlug
   for (const zoom of [0.1, 1, 1.8, 4]) {
@@ -228,6 +228,64 @@ test("selected global constellations follow the zoom policy; only hovering force
       assert(!graphLabelRequired(id, center, null, selected, true, true))
     assert(graphLabelRequired(selected, center, selected, selected, true, true))
   }
+})
+
+test("every atom in a focused neighbourhood or connecting route keeps its caption at any zoom", () => {
+  const links = [
+    ["Selected", "Neighbour"],
+    ["Neighbour", "Route"],
+    ["Route", "Page"],
+    ["Page", "Background"],
+  ].map(([source, target]) => ({ source: source as SimpleSlug, target: target as SimpleSlug }))
+  for (const context of [true, false]) {
+    const focus = graphFocus(
+      links,
+      "Selected" as SimpleSlug,
+      context ? ("Page" as SimpleSlug) : undefined,
+    )
+    for (const zoom of [0.1, 1, 1.8, 4]) {
+      for (const id of focus.nodes) {
+        assert(
+          graphLabelRequired(
+            id,
+            "Page" as SimpleSlug,
+            null,
+            "Selected" as SimpleSlug,
+            true,
+            true,
+            context,
+            true,
+          ),
+          `${id} must remain labelled even when the background label budget is zero`,
+        )
+      }
+      assert(
+        !graphLabelRequired(
+          "Background" as SimpleSlug,
+          "Page" as SimpleSlug,
+          null,
+          "Selected" as SimpleSlug,
+          true,
+          true,
+          context,
+          false,
+        ),
+      )
+      if (zoom <= 1) assert.equal(graphLabelPolicy(800, zoom, true, true, 390 * 700).limit, 0)
+    }
+  }
+  assert(
+    graphLabelRequired(
+      "Neighbour" as SimpleSlug,
+      "Page" as SimpleSlug,
+      null,
+      "Selected" as SimpleSlug,
+      true,
+      false,
+      true,
+      true,
+    ),
+  )
 })
 
 test("the central caption is visible in expanded atom connections, and hidden in its preview", () => {
