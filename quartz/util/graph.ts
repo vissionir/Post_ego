@@ -58,7 +58,7 @@ export function graphNodeRadius(degree: number) {
 }
 
 export function graphLabelFitsZoom(screenRadius: number, full: boolean) {
-  return !full || screenRadius >= 3
+  return !full || screenRadius >= 1.5
 }
 
 export function graphLabelPolicy(
@@ -71,8 +71,8 @@ export function graphLabelPolicy(
   const maxLength = Math.floor((expanded && !full ? 48 : 24) * Math.max(0.5, relativeZoom))
   if (full) {
     // Reveal details gradually, never switch a dense map to unlimited captions.
-    const reveal = Math.max(0, Math.min(1, (relativeZoom - 0.8) / 0.6))
-    const spacePerLabel = Math.max(10000, (52000 * 1.6) / Math.max(1, relativeZoom))
+    const reveal = Math.max(0, Math.min(1, (relativeZoom - 0.6) / 0.4))
+    const spacePerLabel = Math.max(10000, (36000 * 1.6) / Math.max(1, relativeZoom))
     const limit = Math.min(count, Math.floor((Math.max(0, area) / spacePerLabel) * reveal))
     return {
       level: limit === 0 ? "none" : limit >= count ? "all" : "sparse",

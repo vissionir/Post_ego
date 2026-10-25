@@ -108,10 +108,10 @@ test("node sizes reflect their connections", () => {
 
 test("larger circles reveal captions before smaller circles as the user zooms in", () => {
   assert(graphLabelFitsZoom(graphNodeRadius(64) * 0.5, true))
-  assert(!graphLabelFitsZoom(graphNodeRadius(1) * 0.5, true))
+  assert(!graphLabelFitsZoom(graphNodeRadius(1) * 0.4, true))
   assert(graphLabelFitsZoom(graphNodeRadius(1) * 1.5, true))
-  assert(graphLabelFitsZoom(3, true))
-  assert(!graphLabelFitsZoom(2.9, true))
+  assert(graphLabelFitsZoom(1.5, true))
+  assert(!graphLabelFitsZoom(1.49, true))
   assert(graphLabelFitsZoom(1, false))
 })
 
@@ -169,7 +169,7 @@ test("full graph centers an asymmetric main cloud without clipping its core", ()
 
 test("dense graphs reveal captions gradually without an unlimited-label zoom threshold", () => {
   const policy = (zoom: number) => graphLabelPolicy(800, zoom, true, true, 390 * 700)
-  assert.equal(policy(0.7).level, "none")
+  assert.equal(policy(0.5).level, "none")
   assert.equal(policy(1).level, "sparse")
   assert.equal(policy(1.8).level, "sparse")
   assert(policy(1.8).limit > 0 && policy(1.8).limit <= 32)
@@ -188,9 +188,17 @@ test("large-node captions start at overview zoom without waiting for a close-up"
   for (const area of [390 * 400, 1200 * 650]) {
     const early = graphLabelPolicy(800, 1.3, true, true, area)
     assert.equal(early.level, "sparse")
-    assert(early.limit > 0 && early.limit <= 16)
+    assert(early.limit > 0 && early.limit <= 24)
     assert(early.limit < graphLabelPolicy(800, 3, true, true, area).limit)
   }
+})
+
+test("overview shows a useful set of captions immediately without overloading a narrow viewport", () => {
+  const desktop = graphLabelPolicy(800, 1, true, true, 1200 * 650)
+  const mobile = graphLabelPolicy(800, 1, true, true, 390 * 400)
+  assert(desktop.limit >= 10 && desktop.limit <= 18)
+  assert(mobile.limit > 0 && mobile.limit <= 4)
+  assert.equal(graphLabelFitsZoom(1.25, true), false)
 })
 
 test("whole-map captions use visible density and screen area, including narrow viewports", () => {
@@ -229,7 +237,7 @@ test("expanded local graphs allow longer captions without changing the label den
   const expanded = graphLabelPolicy(6, 1, true, false, 390 * 700)
   assert.equal(expanded.maxLength, 48)
   assert.equal(expanded.level, "all")
-  assert(graphLabelPolicy(800, 1, true, true, 390 * 700).limit <= 2)
+  assert(graphLabelPolicy(800, 1, true, true, 390 * 700).limit <= 5)
   assert.equal(graphLabelPolicy(800, 1.8, true, true, 390 * 700).maxLength, 43)
 })
 
@@ -243,7 +251,7 @@ test("unfocused background captions follow the zoom policy; hovering forces a ca
   const selected = "C" as SimpleSlug
   for (const zoom of [0.1, 1, 1.8, 4]) {
     const policy = graphLabelPolicy(800, zoom, true, true, 390 * 700)
-    assert.equal(policy.level === "none", zoom < 0.8)
+    assert.equal(policy.level === "none", zoom < 0.6)
     for (const id of [center, "B" as SimpleSlug, selected])
       assert(!graphLabelRequired(id, center, null, selected, true, true))
     assert(graphLabelRequired(selected, center, selected, selected, true, true))
@@ -275,7 +283,7 @@ test("selected neighbours and routes use the same progressive label rules as the
           context,
         ),
       )
-    for (const zoom of [0.1, 0.7])
+    for (const zoom of [0.1, 0.5])
       assert.equal(graphLabelPolicy(800, zoom, true, true, 390 * 700).limit, 0)
   }
   assert(
@@ -307,7 +315,7 @@ test("the full graph starts with only the page caption required, without selecti
   assert(!graphLabelRequired(neighbour, center, null, null, true, true))
   assert(graphLabelRequired(center, center, null, center, true, true))
   assert(!graphLabelRequired(neighbour, center, null, center, true, true))
-  assert(graphLabelPolicy(800, 1, true, true, 390 * 700).limit <= 2)
+  assert(graphLabelPolicy(800, 1, true, true, 390 * 700).limit <= 5)
 })
 
 test("the neutral whole map does not force a caption for the page atom", () => {
