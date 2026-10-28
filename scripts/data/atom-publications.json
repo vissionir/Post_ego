@@ -843,6 +843,149 @@
         "content/zh/Atoms/Cessation of Resistance.md"
       ],
       "published": "2026-10-07T17:49:15+07:00"
+    },
+    {
+      "title": "Известность происходящего",
+      "paths": [
+        "content/Атомы/Известность происходящего.md",
+        "content/en/Атомы/Familiarity of What Is Happening.md",
+        "content/th/Atoms/Familiarity of What Is Happening.md",
+        "content/zh/Atoms/Familiarity of What Is Happening.md"
+      ],
+      "published": "2026-10-28T19:55:35+07:00",
+      "publicationOrder": 0
+    },
+    {
+      "title": "Иллюзия предсказуемости",
+      "paths": [
+        "content/Атомы/Иллюзия предсказуемости.md",
+        "content/en/Атомы/Illusion of Predictability.md",
+        "content/th/Atoms/Illusion of Predictability.md",
+        "content/zh/Atoms/Illusion of Predictability.md"
+      ],
+      "published": "2026-10-28T19:55:35+07:00",
+      "publicationOrder": 2
+    },
+    {
+      "title": "Привязанность к текущему",
+      "paths": [
+        "content/Атомы/Привязанность к текущему.md",
+        "content/en/Атомы/Attachment to the Current Situation.md",
+        "content/th/Atoms/Attachment to the Current Situation.md",
+        "content/zh/Atoms/Attachment to the Current Situation.md"
+      ],
+      "published": "2026-10-28T19:55:35+07:00",
+      "publicationOrder": 4
+    },
+    {
+      "title": "Невовлечение",
+      "paths": [
+        "content/Атомы/Невовлечение.md",
+        "content/en/Атомы/Non-Involvement.md",
+        "content/th/Atoms/Non-Involvement.md",
+        "content/zh/Atoms/Non-Involvement.md"
+      ],
+      "published": "2026-10-28T19:55:35+07:00",
+      "publicationOrder": 5
+    },
+    {
+      "title": "Страх невозвратности",
+      "paths": [
+        "content/Атомы/Страх невозвратности.md",
+        "content/en/Атомы/Fear of No Return.md",
+        "content/th/Atoms/Fear of No Return.md",
+        "content/zh/Atoms/Fear of No Return.md"
+      ],
+      "published": "2026-10-28T19:55:35+07:00",
+      "publicationOrder": 6
+    },
+    {
+      "title": "Страх неопределённости",
+      "paths": [
+        "content/Атомы/Страх неопределённости.md",
+        "content/en/Атомы/Fear of Uncertainty.md",
+        "content/th/Atoms/Fear of Uncertainty.md",
+        "content/zh/Atoms/Fear of Uncertainty.md"
+      ],
+      "published": "2026-10-28T19:55:35+07:00",
+      "publicationOrder": 9
+    },
+    {
+      "title": "Нейтральность контроля",
+      "paths": [
+        "content/Атомы/Нейтральность контроля.md",
+        "content/en/Атомы/Neutrality of Control.md",
+        "content/th/Atoms/Neutrality of Control.md",
+        "content/zh/Atoms/Neutrality of Control.md"
+      ],
+      "published": "2026-10-28T19:55:35+07:00",
+      "publicationOrder": 10
+    },
+    {
+      "title": "Страх бесконтрольности",
+      "paths": [
+        "content/Атомы/Страх бесконтрольности.md",
+        "content/en/Атомы/Fear of Lack of Control.md",
+        "content/th/Atoms/Fear of Lack of Control.md",
+        "content/zh/Atoms/Fear of Lack of Control.md"
+      ],
+      "published": "2026-10-28T19:55:35+07:00",
+      "publicationOrder": 11
+    },
+    {
+      "title": "Предпочтение выбранного",
+      "paths": [
+        "content/Атомы/Предпочтение выбранного.md",
+        "content/en/Атомы/Preference for the Chosen Option.md",
+        "content/th/Atoms/Preference for the Chosen Option.md",
+        "content/zh/Atoms/Preference for the Chosen Option.md"
+      ],
+      "published": "2026-10-28T19:55:35+07:00",
+      "publicationOrder": 12
+    },
+    {
+      "title": "Иллюзия известности",
+      "paths": [
+        "content/Атомы/Иллюзия известности.md",
+        "content/en/Атомы/Illusion of Familiarity.md",
+        "content/th/Atoms/Illusion of Familiarity.md",
+        "content/zh/Atoms/Illusion of Familiarity.md"
+      ],
+      "published": "2026-10-28T19:55:35+07:00",
+      "publicationOrder": 14
+    },
+    {
+      "title": "Пустотность цепляния",
+      "paths": [
+        "content/Атомы/Пустотность цепляния.md",
+        "content/en/Атомы/Emptiness of Clinging.md",
+        "content/th/Atoms/Emptiness of Clinging.md",
+        "content/zh/Atoms/Emptiness of Clinging.md"
+      ],
+      "published": "2026-10-28T19:55:35+07:00",
+      "publicationOrder": 15
+    },
+    {
+      "title": "Автоматическое вовлечение",
+      "paths": [
+        "content/Атомы/Автоматическое вовлечение.md",
+        "content/en/Атомы/Automatic Involvement.md",
+        "content/th/Atoms/Automatic Involvement.md",
+        "content/zh/Atoms/Automatic Involvement.md"
+      ],
+      "published": "2026-10-28T19:55:35+07:00",
+      "publicationOrder": 16
+    },
+    {
+      "title": "Нить Ариадны",
+      "paths": [
+        "content/Атомы/Нить Ариадны.md",
+        "content/en/Атомы/Ariadne's Thread.md",
+        "content/th/Atoms/Ariadne's Thread.md",
+        "content/zh/Atoms/Ariadne's Thread.md"
+      ],
+      "published": "2026-10-28T19:55:35+07:00",
+      "publicationOrder": 19
     }
   ]
 }

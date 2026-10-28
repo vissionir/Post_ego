@@ -1259,12 +1259,12 @@
       "renames": []
     },
     {
-      "title": "Вовлечение",
+      "title": "Коммуникативное вовлечение",
       "paths": [
-        "content/Атомы/Вовлечение.md",
-        "content/en/Атомы/Involvement.md",
-        "content/th/Atoms/Involvement.md",
-        "content/zh/Atoms/Involvement.md"
+        "content/Атомы/Коммуникативное вовлечение.md",
+        "content/en/Атомы/Communicative Involvement.md",
+        "content/th/Atoms/Communicative Involvement.md",
+        "content/zh/Atoms/Communicative Involvement.md"
       ],
       "created": "2026-04-20T10:11:51+07:00",
       "originCommit": "7d15c5a2ad456906c85781ee3b2444823316893e",
@@ -9243,12 +9243,12 @@
       "renames": []
     },
     {
-      "title": "Страх неопределённости",
+      "title": "Страх непредсказуемости",
       "paths": [
-        "content/Атомы/Страх неопределённости.md",
-        "content/en/Атомы/Fear of Uncertainty.md",
-        "content/th/Atoms/Fear of Uncertainty.md",
-        "content/zh/Atoms/Fear of Uncertainty.md"
+        "content/Атомы/Страх непредсказуемости.md",
+        "content/en/Атомы/Fear of Unpredictability.md",
+        "content/th/Atoms/Fear of Unpredictability.md",
+        "content/zh/Atoms/Fear of Unpredictability.md"
       ],
       "created": "2026-08-29T17:07:13+07:00",
       "originCommit": "5d78f780bbf9583b0ec9b0fdd90cf41c44504cfb",
