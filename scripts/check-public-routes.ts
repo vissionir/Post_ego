@@ -4,10 +4,24 @@ import assert from "node:assert/strict"
 import { canonicalRoute, routeAliases, languages } from "../quartz/util/canonicalRoutes"
 import { FilePath, FullSlug, slugifyFilePath, simplifySlug } from "../quartz/util/path"
 import { isSiteLanguage, siteLanguages } from "../quartz/util/siteLanguages"
+import { isAtomPage } from "../quartz/util/pageLayout"
 
 const root = path.resolve("public")
 const index = JSON.parse(fs.readFileSync(path.join(root, "static/contentIndex.json"), "utf8"))
 const slugs = Object.keys(index)
+const previews = Object.fromEntries(
+  languages.map((language) => {
+    const bundle = JSON.parse(
+      fs.readFileSync(path.join(root, `static/searchPreview/${language}.json`), "utf8"),
+    )
+    assert.deepEqual(
+      Object.keys(bundle).sort(),
+      slugs.filter((slug) => slug.startsWith(`${language}/`)).sort(),
+      `Search preview coverage: ${language}`,
+    )
+    return [language, bundle as Record<string, string>]
+  }),
+)
 const errors = new Set<string>()
 const exists = (pathname: string) => {
   const p = path.join(root, decodeURIComponent(pathname))
@@ -46,6 +60,15 @@ for (const slug of slugs) {
       errors.add(`Unknown graph edge: ${slug} -> ${link}`)
   }
   const html = fs.readFileSync(path.join(root, `${slug}.html`), "utf8")
+  const preview = previews[language][slug]
+  assert(
+    html.includes(`static/searchPreview/${language}.json?v=`),
+    `Search preview language/version mismatch: ${slug}`,
+  )
+  if (isAtomPage(slug)) {
+    const article = html.match(/<article class="popover-hint[^"]*">[\s\S]*?<\/article>/)?.[0]
+    assert(article && preview.includes(article), `Search preview differs from atom markup: ${slug}`)
+  }
   const searchInputs = [...html.matchAll(/<input\b[^>]*class="search-bar"[^>]*>/g)]
   assert(searchInputs.length > 0, `Missing search input: ${slug}`)
   for (const [input] of searchInputs)
@@ -64,7 +87,7 @@ for (const slug of slugs) {
       `Missing head alternate ${lang}: ${slug}`,
     )
   }
-  for (const [, raw] of html.matchAll(/(?:href|src)="([^"]+)"/g)) {
+  for (const [, raw] of `${html}${preview}`.matchAll(/(?:href|src)="([^"]+)"/g)) {
     const target = new URL(raw.replace(/&amp;/g, "&"), url)
     if (target.origin === url.origin && !exists(target.pathname))
       errors.add(`Broken link: ${slug} -> ${target.pathname}`)
@@ -80,5 +103,5 @@ for (const slug of slugs) {
 }
 assert.equal(errors.size, 0, [...errors].slice(0, 30).join("\n"))
 console.log(
-  `Verified ${slugs.length} canonical pages, ${redirects} legacy redirects, all graph edges, links, translations and sitemap.`,
+  `Verified ${slugs.length} canonical pages and search previews, ${redirects} legacy redirects, all graph edges, links, translations and sitemap.`,
 )

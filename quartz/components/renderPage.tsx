@@ -13,6 +13,7 @@ import { styleText } from "util"
 import { languageForSlug, localeForSlug } from "../util/lang"
 import { siteLanguages } from "../util/siteLanguages"
 import { isAtomPage } from "../util/pageLayout"
+import { versionedAsset } from "../util/assets"
 
 interface RenderComponents {
   head: QuartzComponent
@@ -26,11 +27,6 @@ interface RenderComponents {
 }
 
 const headerRegex = new RegExp(/h[1-6]/)
-const assetVersion = process.env.GITHUB_SHA?.slice(0, 12) ?? Date.now().toString(36)
-
-function versionedAsset(path: string) {
-  return `${path}?v=${assetVersion}`
-}
 
 export function pageResources(
   baseDir: FullSlug | RelativeURL,
@@ -219,6 +215,26 @@ function renderTranscludes(
       }
     }
   })
+}
+
+export function renderSearchPreview(
+  componentData: QuartzComponentProps,
+  { beforeBody, pageBody: Content }: Pick<RenderComponents, "beforeBody" | "pageBody">,
+): string {
+  const slug = componentData.fileData.slug!
+  const tree = clone(componentData.tree) as Root
+  renderTranscludes(tree, slug, componentData, new Set([slug]))
+  const props = { ...componentData, tree }
+  return render(
+    <>
+      <div class="popover-hint">
+        {beforeBody.map((Component) => (
+          <Component {...props} />
+        ))}
+      </div>
+      <Content {...props} />
+    </>,
+  )
 }
 
 export function renderPage(

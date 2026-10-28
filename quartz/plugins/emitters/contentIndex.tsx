@@ -2,12 +2,23 @@ import { Root } from "hast"
 import { GlobalConfiguration } from "../../cfg"
 import { getDate } from "../../components/Date"
 import { escapeHTML } from "../../util/escape"
-import { FilePath, FullSlug, SimpleSlug, joinSegments, simplifySlug } from "../../util/path"
+import {
+  FilePath,
+  FullSlug,
+  SimpleSlug,
+  joinSegments,
+  simplifySlug,
+  pathToRoot,
+} from "../../util/path"
 import { QuartzEmitterPlugin } from "../types"
 import { toHtml } from "hast-util-to-html"
 import { write } from "./helpers"
 import { i18n } from "../../i18n"
 import { isSiteLanguage, languages, siteLanguages } from "../../util/siteLanguages"
+import { languageForSlug } from "../../util/lang"
+import { pageResources, renderSearchPreview } from "../../components/renderPage"
+import { defaultContentPageLayout } from "../../../quartz.layout"
+import Content from "../../components/pages/Content"
 
 export type ContentIndexMap = Map<FullSlug, ContentDetails>
 export type ContentDetails = {
@@ -108,9 +119,12 @@ export const ContentIndex: QuartzEmitterPlugin<Partial<Options>> = (opts) => {
   opts = { ...defaultOptions, ...opts }
   return {
     name: "ContentIndex",
-    async *emit(ctx, content) {
+    async *emit(ctx, content, resources) {
       const cfg = ctx.cfg.configuration
       const linkIndex: ContentIndexMap = new Map()
+      const allFiles = content.map(([, file]) => file.data)
+      const previewBundles = new Map(languages.map((lang) => [lang, {} as Record<string, string>]))
+      const previewComponents = { ...defaultContentPageLayout, pageBody: Content() }
       for (const [tree, file] of content) {
         const slug = file.data.slug!
         const date = getDate(ctx.cfg.configuration, file.data) ?? new Date()
@@ -129,7 +143,28 @@ export const ContentIndex: QuartzEmitterPlugin<Partial<Options>> = (opts) => {
             modified: file.data.dates?.modified,
             description: file.data.description ?? "",
           })
+          previewBundles.get(languageForSlug(slug))![slug] = renderSearchPreview(
+            {
+              ctx,
+              cfg,
+              fileData: file.data,
+              allFiles,
+              tree,
+              children: [],
+              externalResources: pageResources(pathToRoot(slug), resources),
+            },
+            previewComponents,
+          )
         }
+      }
+
+      for (const [language, previews] of previewBundles) {
+        yield write({
+          ctx,
+          content: JSON.stringify(previews),
+          slug: `static/searchPreview/${language}` as FullSlug,
+          ext: ".json",
+        })
       }
 
       if (opts?.enableSiteMap) {

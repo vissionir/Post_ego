@@ -5,6 +5,8 @@ import script from "./scripts/search.inline"
 import { classNames, languageForSlug, localeForSlug } from "../util/lang"
 import { i18n } from "../i18n"
 import { siteLanguages } from "../util/siteLanguages"
+import { joinSegments, pathToRoot } from "../util/path"
+import { versionedAsset } from "../util/assets"
 
 export interface SearchOptions {
   enablePreview: boolean
@@ -27,7 +29,12 @@ export default ((userOpts?: Partial<SearchOptions>) => {
       zh: "关闭搜索",
     }[language]
     return (
-      <div class={classNames(displayClass, "search")}>
+      <div
+        class={classNames(displayClass, "search")}
+        data-preview-url={versionedAsset(
+          joinSegments(pathToRoot(fileData.slug!), "static/searchPreview", `${language}.json`),
+        )}
+      >
         <button class="search-button" type="button" aria-label={translation.title}>
           <svg role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7">
             <title>{translation.title}</title>

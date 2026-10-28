@@ -4,110 +4,118 @@ import { createSearchPreview } from "./searchPreview"
 
 function deferred<T>() {
   let resolve!: (value: T) => void
-  let reject!: (error: Error) => void
-  const promise = new Promise<T>((yes, no) => {
+  const promise = new Promise<T>((yes) => {
     resolve = yes
-    reject = no
   })
-  return { promise, resolve, reject }
+  return { promise, resolve }
 }
 
-test("hover shows the matching index text before the page finishes loading", async () => {
-  const page = deferred<string>()
-  const preview = createSearchPreview(() => page.promise)
-  let visible = "old atom"
-  const request = preview.show(
-    "new",
-    () => (visible = "new index text"),
-    (text) => (visible = text),
+test("prepared previews switch synchronously with final markup and a single paint", async () => {
+  const preview = createSearchPreview(async () => ({
+    a: '<h1>A</h1><p><a href="/b">B</a></p>',
+    b: "B",
+  }))
+  await preview.prepare()
+  const paints: string[] = []
+  const first = preview.show(
+    "a",
+    (html) => paints.push(html),
+    () => assert.fail("no placeholder"),
   )
-  assert.equal(visible, "new index text")
-  page.resolve("new formatted text")
-  await request
-  assert.equal(visible, "new formatted text")
+  assert.deepEqual(paints, ['<h1>A</h1><p><a href="/b">B</a></p>'])
+  await first
+  await preview.show(
+    "b",
+    (html) => paints.push(html),
+    () => assert.fail("no placeholder"),
+  )
+  assert.equal(paints.length, 2)
 })
 
-test("a slow previous hover cannot overwrite the current atom", async () => {
-  const a = deferred<string>()
-  const b = deferred<string>()
-  const preview = createSearchPreview((key) => (key === "a" ? a.promise : b.promise))
-  let visible = ""
+test("a delayed bundle never paints temporary text before the full preview", async () => {
+  const bundle = deferred<Record<string, string>>()
+  const preview = createSearchPreview(() => bundle.promise)
+  const paints: string[] = []
+  const request = preview.show(
+    "a",
+    (html) => paints.push(html),
+    () => paints.push("unavailable"),
+  )
+  assert.deepEqual(paints, [])
+  bundle.resolve({ a: "formatted A" })
+  await request
+  assert.deepEqual(paints, ["formatted A"])
+})
+
+test("only the latest hover is shown after a delayed bundle", async () => {
+  const bundle = deferred<Record<string, string>>()
+  const preview = createSearchPreview(() => bundle.promise)
+  const paints: string[] = []
   const show = (key: string) =>
     preview.show(
       key,
-      () => (visible = key),
-      (text) => (visible = text),
+      (html) => paints.push(html),
+      () => assert.fail(),
     )
   const first = show("a")
   const second = show("b")
-  b.resolve("B")
-  await second
-  a.resolve("A")
-  await first
-  assert.equal(visible, "B")
+  bundle.resolve({ a: "A", b: "B" })
+  await Promise.all([first, second])
+  assert.deepEqual(paints, ["B"])
 })
 
-test("closing search or changing the query invalidates a pending preview", async () => {
-  const page = deferred<string>()
-  const preview = createSearchPreview(() => page.promise)
-  let renders = 0
+test("closing search or changing query invalidates the pending preview", async () => {
+  const bundle = deferred<Record<string, string>>()
+  const preview = createSearchPreview(() => bundle.promise)
   const request = preview.show(
     "a",
-    () => {},
-    () => renders++,
+    () => assert.fail(),
+    () => assert.fail(),
   )
   preview.invalidate()
-  page.resolve("A")
+  bundle.resolve({ a: "A" })
   await request
-  assert.equal(renders, 0)
 })
 
-test("repeated hovers share a request and cached previews render synchronously", async () => {
-  const page = deferred<string>()
+test("one bundle request serves all results and repeated searches", async () => {
+  const bundle = deferred<Record<string, string>>()
   let loads = 0
   const preview = createSearchPreview(() => {
     loads++
-    return page.promise
+    return bundle.promise
   })
-  const first = preview.show(
-    "a",
-    () => {},
-    () => {},
-  )
-  const second = preview.show(
-    "a",
-    () => {},
-    () => {},
-  )
+  const first = preview.prepare()
+  const second = preview.prepare()
   assert.equal(loads, 1)
-  page.resolve("A")
+  bundle.resolve({ a: "A", b: "B" })
   await Promise.all([first, second])
-  let visible = ""
-  const cached = preview.show(
+  await preview.prepare()
+  await preview.show(
     "a",
-    () => assert.fail("cached preview needs no fallback"),
-    (text) => (visible = text),
+    () => {},
+    () => assert.fail(),
   )
-  assert.equal(visible, "A")
-  await cached
+  await preview.show(
+    "b",
+    () => {},
+    () => assert.fail(),
+  )
   assert.equal(loads, 1)
 })
 
-test("a failed page keeps the matching index text and can be retried", async () => {
+test("failed preparation can retry and a missing atom has only one fallback paint", async () => {
   let loads = 0
   const preview = createSearchPreview(async () => {
     if (++loads === 1) throw new Error("offline")
-    return "formatted atom"
+    return { a: "A" }
   })
-  let visible = ""
-  const show = () =>
-    preview.show(
-      "a",
-      () => (visible = "index atom"),
-      (text) => (visible = text),
-    )
-  await show()
-  assert.equal(visible, "index atom")
-  await show()
-  assert.equal(visible, "formatted atom")
+  assert.equal(await preview.prepare(), false)
+  assert.equal(await preview.prepare(), true)
+  let paints = 0
+  await preview.show(
+    "missing",
+    () => assert.fail(),
+    () => paints++,
+  )
+  assert.equal(paints, 1)
 })

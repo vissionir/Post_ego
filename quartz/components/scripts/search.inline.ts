@@ -94,6 +94,7 @@ let index = new FlexSearch.Document<Item>({
 })
 
 const p = new DOMParser()
+const previewBundles = new Map<string, Promise<Record<string, string>>>()
 const contextWindowWords = 30
 const numSearchResults = 8
 const numTagResults = 5
@@ -222,7 +223,20 @@ async function setupSearch(searchElement: Element, currentSlug: FullSlug, data: 
 
   const enablePreview = searchLayout.dataset.preview === "true"
   let preview: HTMLDivElement | undefined = undefined
-  const previewRequests = createSearchPreview((slug) => fetchContent(slug as FullSlug))
+  const previewRequests = createSearchPreview(() => {
+    const url = new URL(searchElement.getAttribute("data-preview-url")!, location.href).toString()
+    let pending = previewBundles.get(url)
+    if (!pending) {
+      pending = fetch(url).then(async (res) => {
+        if (!res.ok) throw new Error(`Could not fetch ${url}`)
+        return (await res.json()) as Record<string, string>
+      })
+      previewBundles.set(url, pending)
+      void pending.catch(() => previewBundles.delete(url))
+    }
+    return pending
+  })
+  let searchRevision = 0
   const results = document.createElement("div")
   results.className = "results-container"
   appendLayout(results)
@@ -257,6 +271,7 @@ async function setupSearch(searchElement: Element, currentSlug: FullSlug, data: 
   function hideSearch() {
     if (!container.classList.contains("active")) return
     previewRequests.invalidate()
+    searchRevision++
     currentHover = null
     container.classList.remove("active")
     searchBar.value = "" // clear the input when we dismiss the search
@@ -283,6 +298,7 @@ async function setupSearch(searchElement: Element, currentSlug: FullSlug, data: 
     container.classList.add("active")
     syncViewport()
     searchBar.focus({ preventScroll: true })
+    if (preview && getComputedStyle(preview).display !== "none") void previewRequests.prepare()
   }
 
   let currentHover: HTMLInputElement | null = null
@@ -314,12 +330,10 @@ async function setupSearch(searchElement: Element, currentSlug: FullSlug, data: 
       if (results.contains(document.activeElement)) {
         const active = document.activeElement as HTMLInputElement
         if (active.classList.contains("no-match")) return
-        await displayPreview(active)
         active.click()
       } else {
         const anchor = document.getElementsByClassName("result-card")[0] as HTMLInputElement | null
         if (!anchor || anchor.classList.contains("no-match")) return
-        await displayPreview(anchor)
         anchor.click()
       }
     } else if (e.key === "ArrowUp" || (e.shiftKey && e.key === "Tab")) {
@@ -419,8 +433,13 @@ async function setupSearch(searchElement: Element, currentSlug: FullSlug, data: 
   }
 
   async function displayResults(finalResults: Item[]) {
+    const revision = searchRevision
     previewRequests.invalidate()
     currentHover = null
+    if (finalResults.length > 0 && preview && getComputedStyle(preview).display !== "none") {
+      await previewRequests.prepare()
+    }
+    if (revision !== searchRevision || !container.classList.contains("active")) return
     removeAllChildren(results)
     results.scrollTop = 0
     if (finalResults.length === 0) {
@@ -443,25 +462,6 @@ async function setupSearch(searchElement: Element, currentSlug: FullSlug, data: 
       currentHover = firstChild as HTMLInputElement
       await displayPreview(firstChild)
     }
-  }
-
-  async function fetchContent(slug: FullSlug): Promise<Element[]> {
-    const targetUrl = resolveUrl(slug).toString()
-    const contents = await fetch(targetUrl)
-      .then((res) => {
-        if (!res.ok) throw new Error(`Could not fetch ${targetUrl}`)
-        return res.text()
-      })
-      .then((contents) => {
-        if (contents === undefined) {
-          throw new Error(`Could not fetch ${targetUrl}`)
-        }
-        const html = p.parseFromString(contents ?? "", "text/html")
-        normalizeRelativeURLs(html, targetUrl)
-        return [...html.getElementsByClassName("popover-hint")]
-      })
-
-    return contents
   }
 
   async function displayPreview(el: HTMLElement | null) {
@@ -491,6 +491,11 @@ async function setupSearch(searchElement: Element, currentSlug: FullSlug, data: 
 
     await previewRequests.show(
       slug,
+      (html) => {
+        const doc = p.parseFromString(html, "text/html")
+        normalizeRelativeURLs(doc, resolveUrl(slug))
+        render([...doc.getElementsByClassName("popover-hint")])
+      },
       () => {
         const article = document.createElement("div")
         const title = document.createElement("h1")
@@ -500,12 +505,12 @@ async function setupSearch(searchElement: Element, currentSlug: FullSlug, data: 
         article.append(title, text)
         render([article])
       },
-      render,
     )
   }
 
   async function onType(e: HTMLElementEventMap["input"]) {
     if (!searchLayout || !index) return
+    const revision = ++searchRevision
     previewRequests.invalidate()
     currentSearchTerm = (e.target as HTMLInputElement).value
     searchLayout.classList.toggle("display-results", currentSearchTerm !== "")
@@ -547,6 +552,8 @@ async function setupSearch(searchElement: Element, currentSlug: FullSlug, data: 
         index: ["title", "content"],
       })
     }
+
+    if (revision !== searchRevision) return
 
     const getByField = (field: string): number[] => {
       const results = searchResults.filter((x) => x.field === field)
