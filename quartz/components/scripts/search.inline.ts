@@ -247,6 +247,21 @@ async function setupSearch(searchElement: Element, currentSlug: FullSlug, data: 
     appendLayout(preview)
   }
 
+  function onResultPointer(event: Event) {
+    const target = event.target
+    if (!(target instanceof Element)) return
+    const card = target.closest<HTMLElement>(".result-card")
+    if (!card || !results.contains(card) || card.classList.contains("no-match")) return
+    void displayPreview(card)
+  }
+
+  // Delegation survives result replacement and movement between highlighted title fragments.
+  const pointerEvents = ["pointerover", "pointermove", "mouseover", "mousemove", "focusin"] as const
+  for (const event of pointerEvents) results.addEventListener(event, onResultPointer)
+  window.addCleanup(() => {
+    for (const event of pointerEvents) results.removeEventListener(event, onResultPointer)
+  })
+
   // iOS keyboards resize the visual viewport, not the layout viewport used by vh.
   const viewport = window.visualViewport
   let previousOverflow = ""
@@ -418,14 +433,6 @@ async function setupSearch(searchElement: Element, currentSlug: FullSlug, data: 
       hideSearch()
     }
 
-    async function onMouseEnter(ev: MouseEvent) {
-      if (!ev.target) return
-      const target = ev.target as HTMLInputElement
-      await displayPreview(target)
-    }
-
-    itemTile.addEventListener("mouseenter", onMouseEnter)
-    window.addCleanup(() => itemTile.removeEventListener("mouseenter", onMouseEnter))
     itemTile.addEventListener("click", handler)
     window.addCleanup(() => itemTile.removeEventListener("click", handler))
 
@@ -456,8 +463,10 @@ async function setupSearch(searchElement: Element, currentSlug: FullSlug, data: 
       // no results, clear previous preview
       removeAllChildren(preview)
     } else {
-      // focus on first result, then also dispatch preview immediately
-      const firstChild = results.firstElementChild as HTMLElement
+      // A replaced list may already be under the pointer without a new enter event.
+      const firstChild =
+        results.querySelector<HTMLElement>(".result-card:hover") ??
+        (results.firstElementChild as HTMLElement)
       firstChild.classList.add("focus")
       currentHover = firstChild as HTMLInputElement
       await displayPreview(firstChild)
@@ -469,6 +478,8 @@ async function setupSearch(searchElement: Element, currentSlug: FullSlug, data: 
     if (getComputedStyle(preview).display === "none") return
     const slug = el.id as FullSlug
     const term = currentSearchTerm
+    if (preview.dataset.slug === slug && preview.dataset.term === term && currentHover === el)
+      return
     currentHover?.classList.remove("focus")
     el.classList.add("focus")
     currentHover = el as HTMLInputElement
@@ -481,6 +492,8 @@ async function setupSearch(searchElement: Element, currentSlug: FullSlug, data: 
       previewInner.classList.add("preview-inner")
       previewInner.append(...innerDiv)
       preview!.replaceChildren(previewInner)
+      preview!.dataset.slug = slug
+      preview!.dataset.term = term
       preview!.scrollTop = 0
 
       const highlights = [...preview!.getElementsByClassName("highlight")].sort(
