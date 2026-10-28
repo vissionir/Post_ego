@@ -986,6 +986,16 @@
       ],
       "published": "2026-10-28T19:55:35+07:00",
       "publicationOrder": 19
+    },
+    {
+      "title": "Отпускание текущего",
+      "paths": [
+        "content/Атомы/Отпускание текущего.md",
+        "content/en/Атомы/Letting Go of the Current Situation.md",
+        "content/th/Atoms/Letting Go of the Current Situation.md",
+        "content/zh/Atoms/Letting Go of the Current Situation.md"
+      ],
+      "published": "2026-10-28T21:45:06+07:00"
     }
   ]
 }
