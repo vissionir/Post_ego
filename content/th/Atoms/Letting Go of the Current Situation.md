@@ -4,4 +4,4 @@ created: 2026-10-28T21:45:06+07:00
 published: 2026-10-28T21:45:06+07:00
 ---
 
-การปล่อยวางสภาพปัจจุบันคือ[[Letting Go|การยุติ]][[Attachment to the Current Situation|การยึดมั่นในสภาพปัจจุบัน]]
+การปล่อยวางสภาพปัจจุบันคือ[[Letting Go|การยุติ]][[Attachment to the Current Situation|การยึดมั่นในสภาพปัจจุบัน]] ซึ่งนำไปสู่[[Life in the Unknown|การใช้ชีวิตในความไม่รู้]]
