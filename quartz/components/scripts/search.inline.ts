@@ -5,6 +5,7 @@ import { FullSlug, normalizeRelativeURLs, resolveRelative } from "../../util/pat
 import { languageForSlug } from "../../util/lang"
 import { siteLanguages } from "../../util/siteLanguages"
 import { matchingTitleIds } from "../../util/searchTitles"
+import { createSearchPreview } from "../../util/searchPreview"
 
 interface Item {
   id: number
@@ -93,7 +94,6 @@ let index = new FlexSearch.Document<Item>({
 })
 
 const p = new DOMParser()
-const fetchContentCache: Map<FullSlug, Element[]> = new Map()
 const contextWindowWords = 30
 const numSearchResults = 8
 const numTagResults = 5
@@ -222,7 +222,7 @@ async function setupSearch(searchElement: Element, currentSlug: FullSlug, data: 
 
   const enablePreview = searchLayout.dataset.preview === "true"
   let preview: HTMLDivElement | undefined = undefined
-  let previewInner: HTMLDivElement | undefined = undefined
+  const previewRequests = createSearchPreview((slug) => fetchContent(slug as FullSlug))
   const results = document.createElement("div")
   results.className = "results-container"
   appendLayout(results)
@@ -256,6 +256,8 @@ async function setupSearch(searchElement: Element, currentSlug: FullSlug, data: 
 
   function hideSearch() {
     if (!container.classList.contains("active")) return
+    previewRequests.invalidate()
+    currentHover = null
     container.classList.remove("active")
     searchBar.value = "" // clear the input when we dismiss the search
     searchBar.blur()
@@ -417,6 +419,8 @@ async function setupSearch(searchElement: Element, currentSlug: FullSlug, data: 
   }
 
   async function displayResults(finalResults: Item[]) {
+    previewRequests.invalidate()
+    currentHover = null
     removeAllChildren(results)
     results.scrollTop = 0
     if (finalResults.length === 0) {
@@ -442,13 +446,12 @@ async function setupSearch(searchElement: Element, currentSlug: FullSlug, data: 
   }
 
   async function fetchContent(slug: FullSlug): Promise<Element[]> {
-    if (fetchContentCache.has(slug)) {
-      return fetchContentCache.get(slug) as Element[]
-    }
-
     const targetUrl = resolveUrl(slug).toString()
     const contents = await fetch(targetUrl)
-      .then((res) => res.text())
+      .then((res) => {
+        if (!res.ok) throw new Error(`Could not fetch ${targetUrl}`)
+        return res.text()
+      })
       .then((contents) => {
         if (contents === undefined) {
           throw new Error(`Could not fetch ${targetUrl}`)
@@ -458,7 +461,6 @@ async function setupSearch(searchElement: Element, currentSlug: FullSlug, data: 
         return [...html.getElementsByClassName("popover-hint")]
       })
 
-    fetchContentCache.set(slug, contents)
     return contents
   }
 
@@ -466,23 +468,45 @@ async function setupSearch(searchElement: Element, currentSlug: FullSlug, data: 
     if (!searchLayout || !enablePreview || !el || !preview) return
     if (getComputedStyle(preview).display === "none") return
     const slug = el.id as FullSlug
-    const innerDiv = await fetchContent(slug).then((contents) =>
-      contents.flatMap((el) => [...highlightHTML(currentSearchTerm, el as HTMLElement).children]),
-    )
-    previewInner = document.createElement("div")
-    previewInner.classList.add("preview-inner")
-    previewInner.append(...innerDiv)
-    preview.replaceChildren(previewInner)
+    const term = currentSearchTerm
+    currentHover?.classList.remove("focus")
+    el.classList.add("focus")
+    currentHover = el as HTMLInputElement
 
-    // scroll to longest
-    const highlights = [...preview.getElementsByClassName("highlight")].sort(
-      (a, b) => b.innerHTML.length - a.innerHTML.length,
+    function render(contents: Element[]) {
+      const innerDiv = contents.flatMap((el) => [
+        ...highlightHTML(term, el as HTMLElement).children,
+      ])
+      const previewInner = document.createElement("div")
+      previewInner.classList.add("preview-inner")
+      previewInner.append(...innerDiv)
+      preview!.replaceChildren(previewInner)
+      preview!.scrollTop = 0
+
+      const highlights = [...preview!.getElementsByClassName("highlight")].sort(
+        (a, b) => b.innerHTML.length - a.innerHTML.length,
+      )
+      highlights[0]?.scrollIntoView({ block: "start" })
+    }
+
+    await previewRequests.show(
+      slug,
+      () => {
+        const article = document.createElement("div")
+        const title = document.createElement("h1")
+        title.textContent = data[slug]?.title ?? el.textContent ?? ""
+        const text = document.createElement("p")
+        text.textContent = data[slug]?.content ?? ""
+        article.append(title, text)
+        render([article])
+      },
+      render,
     )
-    highlights[0]?.scrollIntoView({ block: "start" })
   }
 
   async function onType(e: HTMLElementEventMap["input"]) {
     if (!searchLayout || !index) return
+    previewRequests.invalidate()
     currentSearchTerm = (e.target as HTMLInputElement).value
     searchLayout.classList.toggle("display-results", currentSearchTerm !== "")
     searchType = currentSearchTerm.startsWith("#") ? "tags" : "basic"
@@ -554,6 +578,7 @@ async function setupSearch(searchElement: Element, currentSlug: FullSlug, data: 
   searchButton.addEventListener("click", openSearch)
   closeButton?.addEventListener("click", hideSearch)
   window.addCleanup(() => {
+    previewRequests.invalidate()
     searchButton.removeEventListener("click", openSearch)
     closeButton?.removeEventListener("click", hideSearch)
     if (container.classList.contains("active")) {
