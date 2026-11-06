@@ -91,8 +91,6 @@ for (const [oldName, current] of [
   ["Possessiveness", "possession"],
   ["Нецепляние", "liberation"],
   ["Non-clinging", "liberation"],
-  ["Свобода", "inner-freedom"],
-  ["Freedom", "inner-freedom"],
   ["Прекращение-цепляний", "letting-go-of-the-mission"],
   ["Cessation-of-Clinging", "letting-go-of-the-mission"],
   ["Прекращение-удержания", "non-holding"],
@@ -120,7 +118,6 @@ for (const lang of languages) {
   register(`${lang}/atoms/possessiveness`, `${lang}/atoms/possession` as FullSlug)
   register(`${lang}/atoms/non-clinging`, `${lang}/atoms/liberation` as FullSlug)
   register(`${lang}/atoms/cessation-of-holding`, `${lang}/atoms/non-holding` as FullSlug)
-  register(`${lang}/atoms/freedom`, `${lang}/atoms/inner-freedom` as FullSlug)
   register(
     `${lang}/atoms/cessation-of-clinging`,
     `${lang}/atoms/letting-go-of-the-mission` as FullSlug,

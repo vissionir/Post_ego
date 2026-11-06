@@ -3,6 +3,28 @@
   "sourceCommit": "6a2936f68d132ba59989cc59939f5f898f4fcbbe",
   "atoms": [
     {
+      "title": "Свобода",
+      "paths": [
+        "content/Атомы/Свобода.md",
+        "content/en/Атомы/Freedom.md",
+        "content/th/Atoms/Freedom.md",
+        "content/zh/Atoms/Freedom.md"
+      ],
+      "published": "2026-11-06T14:04:00+07:00",
+      "publicationOrder": 0
+    },
+    {
+      "title": "Деиндоктринация",
+      "paths": [
+        "content/Атомы/Деиндоктринация.md",
+        "content/en/Атомы/Deindoctrination.md",
+        "content/th/Atoms/Deindoctrination.md",
+        "content/zh/Atoms/Deindoctrination.md"
+      ],
+      "published": "2026-11-06T14:04:00+07:00",
+      "publicationOrder": 1
+    },
+    {
       "title": "Безопасное убежище",
       "paths": [
         "content/Атомы/Безопасное убежище.md",

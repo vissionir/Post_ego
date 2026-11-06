@@ -25,9 +25,20 @@ test("Chinese English-named sources map to the same stable ASCII atom slugs", ()
   const source = slugifyFilePath("zh/Atoms/Unpredictability of the world.md" as FilePath)
   assert.equal(canonicalRoute(source), "zh/atoms/unpredictability-of-the-world")
   assert.equal(publicPath("/zh/Atoms/Reality"), "/zh/atoms/reality")
-  assert.equal(publicPath("/zh/Atoms/Freedom"), "/zh/atoms/inner-freedom")
+  assert.equal(publicPath("/zh/Atoms/Freedom"), "/zh/atoms/freedom")
   assert.equal(publicPath("/zh/atoms/reality/"), "/zh/atoms/reality")
   assert.equal(publicPath("/th/Atoms/Reality"), "/th/atoms/reality")
+})
+
+test("freedom is distinct from inner freedom in every language", () => {
+  for (const language of languages) {
+    const prefix = siteLanguages[language].atomPrefix
+    assert.equal(canonicalRoute(`${language}/atoms/freedom`), `${language}/atoms/freedom`)
+    assert.equal(canonicalRoute(`${prefix}Freedom`), `${language}/atoms/freedom`)
+    assert.equal(canonicalRoute(`${prefix}Свобода`), `${language}/atoms/freedom`)
+    assert.equal(canonicalRoute(`${language}/atoms/inner-freedom`), `${language}/atoms/inner-freedom`)
+    assert.equal(canonicalRoute(`${prefix}Inner-Freedom`), `${language}/atoms/inner-freedom`)
+  }
 })
 
 test("all seven Chinese source pages resolve without undefined aliases", () => {

@@ -1,7 +1,5 @@
 ---
 title: อิสรภาพภายใน
-aliases:
-  - th/Atoms/Freedom
 modified: 2026-05-12
 created: 2026-04-15T23:52:49+07:00
 ---

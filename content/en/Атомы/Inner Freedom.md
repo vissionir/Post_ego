@@ -1,7 +1,5 @@
 ---
 title: Inner Freedom
-aliases:
-  - en/Атомы/Freedom
 created: 2026-04-15T23:52:49+07:00
 ---
 
