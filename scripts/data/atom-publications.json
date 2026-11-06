@@ -3,6 +3,39 @@
   "sourceCommit": "6a2936f68d132ba59989cc59939f5f898f4fcbbe",
   "atoms": [
     {
+      "title": "Безопасное убежище",
+      "paths": [
+        "content/Атомы/Безопасное убежище.md",
+        "content/en/Атомы/Safe Haven.md",
+        "content/th/Atoms/Safe Haven.md",
+        "content/zh/Atoms/Safe Haven.md"
+      ],
+      "published": "2026-11-06T09:24:00+07:00",
+      "publicationOrder": 0
+    },
+    {
+      "title": "Безопасная база",
+      "paths": [
+        "content/Атомы/Безопасная база.md",
+        "content/en/Атомы/Secure Base.md",
+        "content/th/Atoms/Secure Base.md",
+        "content/zh/Atoms/Secure Base.md"
+      ],
+      "published": "2026-11-06T09:24:00+07:00",
+      "publicationOrder": 1
+    },
+    {
+      "title": "Наполненность",
+      "paths": [
+        "content/Атомы/Наполненность.md",
+        "content/en/Атомы/Fullness.md",
+        "content/th/Atoms/Fullness.md",
+        "content/zh/Atoms/Fullness.md"
+      ],
+      "published": "2026-11-06T09:24:00+07:00",
+      "publicationOrder": 2
+    },
+    {
       "title": "Неудовлетворительность",
       "paths": [
         "content/Атомы/Неудовлетворительность.md",
