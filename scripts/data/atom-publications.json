@@ -3,6 +3,28 @@
   "sourceCommit": "6a2936f68d132ba59989cc59939f5f898f4fcbbe",
   "atoms": [
     {
+      "title": "Доброжелательность к себе",
+      "paths": [
+        "content/Атомы/Доброжелательность к себе.md",
+        "content/en/Атомы/Kindness Toward Oneself.md",
+        "content/th/Atoms/Kindness Toward Oneself.md",
+        "content/zh/Atoms/Kindness Toward Oneself.md"
+      ],
+      "published": "2026-11-08T00:35:08+07:00",
+      "publicationOrder": 0
+    },
+    {
+      "title": "Ахимса",
+      "paths": [
+        "content/Атомы/Ахимса.md",
+        "content/en/Атомы/Ahimsa.md",
+        "content/th/Atoms/Ahimsa.md",
+        "content/zh/Atoms/Ahimsa.md"
+      ],
+      "published": "2026-11-08T00:35:08+07:00",
+      "publicationOrder": 1
+    },
+    {
       "title": "Соприсутствие",
       "paths": [
         "content/Атомы/Соприсутствие.md",
