@@ -6,4 +6,4 @@ publicationOrder: 0
 lang: zh-CN
 ---
 
-共在是一种[[zh/Atoms/Presupposition|预设]]：主体相互呈现于彼此的[[zh/Atoms/Field of Experience|经验场]]中，而他人的[[zh/Atoms/Consciousness|主观经验]]仍然[[zh/Atoms/Existential Isolation|无法被直接体验]]。
+共在是主体之间的一种互动形式，无需对彼此进行[[zh/Atoms/Mentalization|心智建模]]。
