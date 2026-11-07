@@ -6,4 +6,4 @@ publicationOrder: 0
 lang: zh-CN
 ---
 
-共在是主体之间的一种互动形式，无需对彼此进行[[zh/Atoms/Mentalization|心智建模]]。
+共在是主体与他人互动的一种方式，无需对他人进行[[zh/Atoms/Mentalization|心智建模]]。
