@@ -6,4 +6,4 @@ publicationOrder: 0
 lang: zh-CN
 ---
 
-善意对待自己是一项对待自己的原则，以[[zh/Atoms/Metta|慈]]、[[zh/Atoms/Compassion|悲]]、[[zh/Atoms/Sympathetic Joy|喜]]、[[zh/Atoms/Upekkha|舍]]和[[zh/Atoms/Ahimsa|不害]]为基础，并意味着不诉诸[[zh/Atoms/Self-Coercion|自我强迫]]和[[zh/Atoms/Self-Punishment|自我惩罚]]。
+善意对待自己是一项对待自己的原则，融合[[zh/Atoms/Metta|慈]]、[[zh/Atoms/Compassion|悲]]、[[zh/Atoms/Sympathetic Joy|喜]]、[[zh/Atoms/Upekkha|舍]]和[[zh/Atoms/Ahimsa|不害]]，并主张不诉诸[[zh/Atoms/Self-Coercion|自我强迫]]和[[zh/Atoms/Self-Punishment|自我惩罚]]。
