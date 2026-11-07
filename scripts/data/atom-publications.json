@@ -3,6 +3,61 @@
   "sourceCommit": "6a2936f68d132ba59989cc59939f5f898f4fcbbe",
   "atoms": [
     {
+      "title": "Соприсутствие",
+      "paths": [
+        "content/Атомы/Соприсутствие.md",
+        "content/en/Атомы/Co-Presence.md",
+        "content/th/Atoms/Co-Presence.md",
+        "content/zh/Atoms/Co-Presence.md"
+      ],
+      "published": "2026-11-07T16:40:00+07:00",
+      "publicationOrder": 0
+    },
+    {
+      "title": "Модель другого",
+      "paths": [
+        "content/Атомы/Модель другого.md",
+        "content/en/Атомы/Model of the Other.md",
+        "content/th/Atoms/Model of the Other.md",
+        "content/zh/Atoms/Model of the Other.md"
+      ],
+      "published": "2026-11-07T16:40:00+07:00",
+      "publicationOrder": 1
+    },
+    {
+      "title": "Неисключительность самомодели",
+      "paths": [
+        "content/Атомы/Неисключительность самомодели.md",
+        "content/en/Атомы/Non-Exclusivity of the Self-Model.md",
+        "content/th/Atoms/Non-Exclusivity of the Self-Model.md",
+        "content/zh/Atoms/Non-Exclusivity of the Self-Model.md"
+      ],
+      "published": "2026-11-07T16:40:00+07:00",
+      "publicationOrder": 2
+    },
+    {
+      "title": "Предел ментализации",
+      "paths": [
+        "content/Атомы/Предел ментализации.md",
+        "content/en/Атомы/Limit of Mentalization.md",
+        "content/th/Atoms/Limit of Mentalization.md",
+        "content/zh/Atoms/Limit of Mentalization.md"
+      ],
+      "published": "2026-11-07T16:40:00+07:00",
+      "publicationOrder": 3
+    },
+    {
+      "title": "Произвольность ментализации",
+      "paths": [
+        "content/Атомы/Произвольность ментализации.md",
+        "content/en/Атомы/Voluntariness of Mentalization.md",
+        "content/th/Atoms/Voluntariness of Mentalization.md",
+        "content/zh/Atoms/Voluntariness of Mentalization.md"
+      ],
+      "published": "2026-11-07T16:40:00+07:00",
+      "publicationOrder": 4
+    },
+    {
       "title": "Интерсубъективность",
       "paths": [
         "content/Атомы/Интерсубъективность.md",
@@ -14,9 +69,9 @@
       "publicationOrder": 0
     },
     {
-      "title": "Бытие-для-другого",
+      "title": "Бытие для другого",
       "paths": [
-        "content/Атомы/Бытие-для-другого.md",
+        "content/Атомы/Бытие для другого.md",
         "content/en/Атомы/Being-for-Others.md",
         "content/th/Atoms/Being-for-Others.md",
         "content/zh/Atoms/Being-for-Others.md"
