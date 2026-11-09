@@ -1238,6 +1238,17 @@
       ],
       "published": "2026-11-09T16:28:13+07:00",
       "publicationOrder": 8
+    },
+    {
+      "title": "Базовое счастье",
+      "paths": [
+        "content/Атомы/Базовое счастье.md",
+        "content/en/Атомы/Basic Happiness.md",
+        "content/th/Atoms/Basic Happiness.md",
+        "content/zh/Atoms/Basic Happiness.md"
+      ],
+      "published": "2026-11-09T22:55:19+07:00",
+      "publicationOrder": 1
     }
   ]
 }
