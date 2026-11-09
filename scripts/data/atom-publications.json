@@ -1150,6 +1150,94 @@
         "content/zh/Atoms/Letting Go of the Current Situation.md"
       ],
       "published": "2026-10-28T21:45:06+07:00"
+    },
+    {
+      "title": "Самопрепятствование",
+      "paths": [
+        "content/Атомы/Самопрепятствование.md",
+        "content/en/Атомы/Self-Handicapping.md",
+        "content/th/Atoms/Self-Handicapping.md",
+        "content/zh/Atoms/Self-Handicapping.md"
+      ],
+      "published": "2026-11-09T16:28:13+07:00",
+      "publicationOrder": 1
+    },
+    {
+      "title": "Экспозиция переживания",
+      "paths": [
+        "content/Атомы/Экспозиция переживания.md",
+        "content/en/Атомы/Experiential Exposure.md",
+        "content/th/Atoms/Experiential Exposure.md",
+        "content/zh/Atoms/Experiential Exposure.md"
+      ],
+      "published": "2026-11-09T16:28:13+07:00",
+      "publicationOrder": 2
+    },
+    {
+      "title": "Поляризация",
+      "paths": [
+        "content/Атомы/Поляризация.md",
+        "content/en/Атомы/Polarization.md",
+        "content/th/Atoms/Polarization.md",
+        "content/zh/Atoms/Polarization.md"
+      ],
+      "published": "2026-11-09T16:28:13+07:00",
+      "publicationOrder": 3
+    },
+    {
+      "title": "Дереификация дихотомии",
+      "paths": [
+        "content/Атомы/Дереификация дихотомии.md",
+        "content/en/Атомы/Dereification of Dichotomy.md",
+        "content/th/Atoms/Dereification of Dichotomy.md",
+        "content/zh/Atoms/Dereification of Dichotomy.md"
+      ],
+      "published": "2026-11-09T16:28:13+07:00",
+      "publicationOrder": 4
+    },
+    {
+      "title": "Иллюзия продвижения",
+      "paths": [
+        "content/Атомы/Иллюзия продвижения.md",
+        "content/en/Атомы/Illusion of Progress.md",
+        "content/th/Atoms/Illusion of Progress.md",
+        "content/zh/Atoms/Illusion of Progress.md"
+      ],
+      "published": "2026-11-09T16:28:13+07:00",
+      "publicationOrder": 5
+    },
+    {
+      "title": "Телос состояния",
+      "paths": [
+        "content/Атомы/Телос состояния.md",
+        "content/en/Атомы/Telos of a State.md",
+        "content/th/Atoms/Telos of a State.md",
+        "content/zh/Atoms/Telos of a State.md"
+      ],
+      "published": "2026-11-09T16:28:13+07:00",
+      "publicationOrder": 6
+    },
+    {
+      "title": "Непривязанность к результату",
+      "paths": [
+        "content/Атомы/Непривязанность к результату.md",
+        "content/en/Атомы/Non-Attachment to Results.md",
+        "content/th/Atoms/Non-Attachment to Results.md",
+        "content/zh/Atoms/Non-Attachment to Results.md"
+      ],
+      "published": "2026-11-09T16:28:13+07:00",
+      "publicationOrder": 7
+    },
+    {
+      "title": "Опасность переживания",
+      "paths": [
+        "content/Атомы/Опасность переживания.md",
+        "content/en/Атомы/Danger of Experience.md",
+        "content/th/Atoms/Danger of Experience.md",
+        "content/zh/Atoms/Danger of Experience.md"
+      ],
+      "published": "2026-11-09T16:28:13+07:00",
+      "publicationOrder": 8
     }
   ]
 }
