@@ -20,7 +20,8 @@ permissions:
 
 concurrency:
   group: "pages"
-  cancel-in-progress: true
+  # Let an active Pages sync finish before starting the next release.
+  cancel-in-progress: false
 
 jobs:
   build:
@@ -70,6 +71,9 @@ jobs:
           test ! -e public/ai
           cp -a "$RUNNER_TEMP/postego-ai-extract/ai" public/ai
 
+      - name: Record deployed revision
+        run: printf '%s\n' "$GITHUB_SHA" > public/deployment-version.txt
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
@@ -78,10 +82,35 @@ jobs:
   deploy:
     environment:
       name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+      url: ${{ steps.deployment_retry.outputs.page_url || steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     needs: build
+    timeout-minutes: 25
     steps:
       - name: Deploy
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5.0.1
+        continue-on-error: true
+
+      - name: Retry Pages deploy with the same artifact
+        id: deployment_retry
+        if: ${{ steps.deployment.outcome == 'failure' }}
+        uses: actions/deploy-pages@v5.0.1
+
+  verify:
+    runs-on: ubuntu-latest
+    needs: deploy
+    timeout-minutes: 4
+    steps:
+      - name: Verify the revision on post-ego.com
+        run: |
+          for attempt in {1..12}; do
+            url="https://post-ego.com/deployment-version.txt?run=${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}-${attempt}"
+            if revision="$(curl --fail --silent --show-error --max-time 8 "$url")" && [[ "$revision" == "$GITHUB_SHA" ]]; then
+              echo "Verified $GITHUB_SHA on post-ego.com."
+              exit 0
+            fi
+            if [[ "$attempt" != 12 ]]; then sleep 5; fi
+          done
+          echo "::error::post-ego.com did not serve the expected revision $GITHUB_SHA"
+          exit 1
