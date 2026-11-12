@@ -103,6 +103,8 @@ for (const [oldName, current] of [
   ["Suchness", "direct-seeing"],
   ["Джхана", "four-jhanas"],
   ["Jhana", "four-jhanas"],
+  ["Экспозиция-переживания", "experiential-exposure"],
+  ["экспозиция-переживания", "experiential-exposure"],
 ]) {
   for (const lang of languages) {
     const prefix = siteLanguages[lang].atomPrefix
