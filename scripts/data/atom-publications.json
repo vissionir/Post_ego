@@ -1163,9 +1163,9 @@
       "publicationOrder": 1
     },
     {
-      "title": "Экспозиция переживания",
+      "title": "Касание дна",
       "paths": [
-        "content/Атомы/Экспозиция переживания.md",
+        "content/Атомы/Касание дна.md",
         "content/en/Атомы/Experiential Exposure.md",
         "content/th/Atoms/Experiential Exposure.md",
         "content/zh/Atoms/Experiential Exposure.md"
@@ -1249,6 +1249,28 @@
       ],
       "published": "2026-11-09T22:55:19+07:00",
       "publicationOrder": 1
+    },
+    {
+      "title": "Смена идентичности",
+      "paths": [
+        "content/Атомы/Смена идентичности.md",
+        "content/en/Атомы/Identity Change.md",
+        "content/th/Atoms/Identity Change.md",
+        "content/zh/Atoms/Identity Change.md"
+      ],
+      "published": "2026-11-12T22:28:34+07:00",
+      "publicationOrder": 1
+    },
+    {
+      "title": "Обусловленность идентичности",
+      "paths": [
+        "content/Атомы/Обусловленность идентичности.md",
+        "content/en/Атомы/Conditioning of Identity.md",
+        "content/th/Atoms/Conditioning of Identity.md",
+        "content/zh/Atoms/Conditioning of Identity.md"
+      ],
+      "published": "2026-11-12T22:28:34+07:00",
+      "publicationOrder": 2
     }
   ]
 }
