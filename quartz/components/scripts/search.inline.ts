@@ -6,6 +6,7 @@ import { languageForSlug } from "../../util/lang"
 import { siteLanguages } from "../../util/siteLanguages"
 import { matchingTitleIds } from "../../util/searchTitles"
 import { createSearchPreview } from "../../util/searchPreview"
+import { createSearchLifecycle, createSearchNavigation } from "../../util/searchLifecycle"
 
 interface Item {
   id: number
@@ -197,7 +198,10 @@ function highlightHTML(searchTerm: string, el: HTMLElement) {
   return html.body
 }
 
-async function setupSearch(searchElement: Element, currentSlug: FullSlug, data: ContentIndex) {
+const beginSearch = createSearchLifecycle<Element>()
+const searchNavigation = createSearchNavigation()
+
+function setupSearch(searchElement: Element, currentSlug: FullSlug, data: ContentIndex) {
   const container = searchElement.querySelector(".search-container") as HTMLElement
   if (!container) return
 
@@ -212,6 +216,15 @@ async function setupSearch(searchElement: Element, currentSlug: FullSlug, data: 
 
   const searchLayout = searchElement.querySelector(".search-layout") as HTMLElement
   if (!searchLayout) return
+
+  const { addCleanup, dispose, isActive } = beginSearch(searchElement)
+  window.addCleanup(dispose)
+  // SPA transitions or repeated nav events must never accumulate search columns.
+  searchLayout.replaceChildren()
+  searchLayout.classList.remove("display-results")
+  container.classList.remove("active")
+  searchBar.value = ""
+  addCleanup(() => searchLayout.replaceChildren())
 
   const idDataMap = Object.keys(data) as FullSlug[]
   const slugLanguage = languageForSlug
@@ -258,7 +271,7 @@ async function setupSearch(searchElement: Element, currentSlug: FullSlug, data: 
   // Delegation survives result replacement and movement between highlighted title fragments.
   const pointerEvents = ["pointerover", "pointermove", "mouseover", "mousemove", "focusin"] as const
   for (const event of pointerEvents) results.addEventListener(event, onResultPointer)
-  window.addCleanup(() => {
+  addCleanup(() => {
     for (const event of pointerEvents) results.removeEventListener(event, onResultPointer)
   })
 
@@ -277,7 +290,7 @@ async function setupSearch(searchElement: Element, currentSlug: FullSlug, data: 
   viewport?.addEventListener("resize", syncViewport)
   viewport?.addEventListener("scroll", syncViewport)
   window.addEventListener("resize", syncViewport)
-  window.addCleanup(() => {
+  addCleanup(() => {
     viewport?.removeEventListener("resize", syncViewport)
     viewport?.removeEventListener("scroll", syncViewport)
     window.removeEventListener("resize", syncViewport)
@@ -434,7 +447,7 @@ async function setupSearch(searchElement: Element, currentSlug: FullSlug, data: 
     }
 
     itemTile.addEventListener("click", handler)
-    window.addCleanup(() => itemTile.removeEventListener("click", handler))
+    addCleanup(() => itemTile.removeEventListener("click", handler))
 
     return itemTile
   }
@@ -446,7 +459,8 @@ async function setupSearch(searchElement: Element, currentSlug: FullSlug, data: 
     if (finalResults.length > 0 && preview && getComputedStyle(preview).display !== "none") {
       await previewRequests.prepare()
     }
-    if (revision !== searchRevision || !container.classList.contains("active")) return
+    if (!isActive() || revision !== searchRevision || !container.classList.contains("active"))
+      return
     removeAllChildren(results)
     results.scrollTop = 0
     if (finalResults.length === 0) {
@@ -474,7 +488,7 @@ async function setupSearch(searchElement: Element, currentSlug: FullSlug, data: 
   }
 
   async function displayPreview(el: HTMLElement | null) {
-    if (!searchLayout || !enablePreview || !el || !preview) return
+    if (!isActive() || !searchLayout || !enablePreview || !el || !preview) return
     if (getComputedStyle(preview).display === "none") return
     const slug = el.id as FullSlug
     const term = currentSearchTerm
@@ -522,7 +536,7 @@ async function setupSearch(searchElement: Element, currentSlug: FullSlug, data: 
   }
 
   async function onType(e: HTMLElementEventMap["input"]) {
-    if (!searchLayout || !index) return
+    if (!isActive() || !searchLayout || !index) return
     const revision = ++searchRevision
     previewRequests.invalidate()
     currentSearchTerm = (e.target as HTMLInputElement).value
@@ -593,12 +607,13 @@ async function setupSearch(searchElement: Element, currentSlug: FullSlug, data: 
   }
 
   document.addEventListener("keydown", shortcutHandler)
-  window.addCleanup(() => document.removeEventListener("keydown", shortcutHandler))
+  addCleanup(() => document.removeEventListener("keydown", shortcutHandler))
   const openSearch = () => showSearch("basic")
   searchButton.addEventListener("click", openSearch)
   closeButton?.addEventListener("click", hideSearch)
-  window.addCleanup(() => {
+  addCleanup(() => {
     previewRequests.invalidate()
+    searchRevision++
     searchButton.removeEventListener("click", openSearch)
     closeButton?.removeEventListener("click", hideSearch)
     if (container.classList.contains("active")) {
@@ -607,10 +622,9 @@ async function setupSearch(searchElement: Element, currentSlug: FullSlug, data: 
     }
   })
   searchBar.addEventListener("input", onType)
-  window.addCleanup(() => searchBar.removeEventListener("input", onType))
+  addCleanup(() => searchBar.removeEventListener("input", onType))
 
-  registerEscapeHandler(container, hideSearch)
-  await fillDocument(data)
+  registerEscapeHandler(container, hideSearch, addCleanup)
 }
 
 /**
@@ -618,9 +632,9 @@ async function setupSearch(searchElement: Element, currentSlug: FullSlug, data: 
  * @param index index to fill
  * @param data data to fill index with
  */
-let indexPopulated = false
-async function fillDocument(data: ContentIndex) {
-  if (indexPopulated) return
+let indexPopulation: Promise<void> | undefined
+function fillDocument(data: ContentIndex): Promise<void> {
+  if (indexPopulation) return indexPopulation
   let id = 0
   const promises: Array<Promise<unknown>> = []
   for (const [slug, fileData] of Object.entries<ContentDetails>(data)) {
@@ -635,15 +649,16 @@ async function fillDocument(data: ContentIndex) {
     )
   }
 
-  await Promise.all(promises)
-  indexPopulated = true
+  indexPopulation = Promise.all(promises).then(() => {})
+  return indexPopulation
 }
 
-document.addEventListener("nav", async (e: CustomEventMap["nav"]) => {
+document.addEventListener("prenav", () => searchNavigation.invalidate())
+document.addEventListener("nav", (e: CustomEventMap["nav"]) => {
   const currentSlug = e.detail.url
-  const data = await fetchData
-  const searchElement = document.getElementsByClassName("search")
-  for (const element of searchElement) {
-    await setupSearch(element, currentSlug, data)
-  }
+  void searchNavigation.run(fetchData, (data) => {
+    const searchElements = [...document.getElementsByClassName("search")]
+    for (const element of searchElements) setupSearch(element, currentSlug, data)
+    return fillDocument(data)
+  })
 })

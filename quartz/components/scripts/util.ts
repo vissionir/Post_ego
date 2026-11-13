@@ -1,4 +1,8 @@
-export function registerEscapeHandler(outsideContainer: HTMLElement | null, cb: () => void) {
+export function registerEscapeHandler(
+  outsideContainer: HTMLElement | null,
+  cb: () => void,
+  addCleanup: (cleanup: () => void) => void = window.addCleanup,
+) {
   if (!outsideContainer) return
   function click(this: HTMLElement, e: HTMLElementEventMap["click"]) {
     if (e.target !== this) return
@@ -14,9 +18,9 @@ export function registerEscapeHandler(outsideContainer: HTMLElement | null, cb: 
   }
 
   outsideContainer?.addEventListener("click", click)
-  window.addCleanup(() => outsideContainer?.removeEventListener("click", click))
+  addCleanup(() => outsideContainer?.removeEventListener("click", click))
   document.addEventListener("keydown", esc)
-  window.addCleanup(() => document.removeEventListener("keydown", esc))
+  addCleanup(() => document.removeEventListener("keydown", esc))
 }
 
 export function removeAllChildren(node: HTMLElement) {
