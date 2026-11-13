@@ -6,4 +6,4 @@ publicationOrder: 2
 lang: zh-CN
 ---
 
-触底是有意[[zh/Atoms/Contact with Experience|经历]]一种[[zh/Atoms/Aversiveness|令人排斥的]][[zh/Atoms/Submodal state|状态]]，以对其进行[[zh/Atoms/Integration|整合]]。
+触底是有意[[zh/Atoms/Contact with Experience|经历]]最[[zh/Atoms/Aversiveness|令人排斥的]][[zh/Atoms/Submodal state|状态]]，以对其进行[[zh/Atoms/Integration|整合]]。

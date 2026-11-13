@@ -6,4 +6,4 @@ publicationOrder: 1
 lang: zh-CN
 ---
 
-身份认同转换是通过[[zh/Atoms/Assemblage Point Shift|组装点位移]]，向所选择的[[zh/Atoms/Identity|身份认同]]的[[zh/Atoms/Transition|转变]]。
+身份认同转换是通过[[zh/Atoms/Assemblage Point Shift|组装点位移]]，向所选择的[[zh/Atoms/Identity|身份认同]]的[[zh/Atoms/Transition|转变]]，这一转变因[[zh/Atoms/Letting Go|放下]]当前身份认同而成为可能。
