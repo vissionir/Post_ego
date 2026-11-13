@@ -1271,6 +1271,28 @@
       ],
       "published": "2026-11-12T22:28:34+07:00",
       "publicationOrder": 2
+    },
+    {
+      "title": "Самоспасение",
+      "paths": [
+        "content/Атомы/Самоспасение.md",
+        "content/en/Атомы/Self-Salvation.md",
+        "content/th/Atoms/Self-Salvation.md",
+        "content/zh/Atoms/Self-Salvation.md"
+      ],
+      "published": "2026-11-13T17:37:03+07:00",
+      "publicationOrder": 1
+    },
+    {
+      "title": "Коллективное самоспасение",
+      "paths": [
+        "content/Атомы/Коллективное самоспасение.md",
+        "content/en/Атомы/Collective Self-Salvation.md",
+        "content/th/Atoms/Collective Self-Salvation.md",
+        "content/zh/Atoms/Collective Self-Salvation.md"
+      ],
+      "published": "2026-11-13T17:37:03+07:00",
+      "publicationOrder": 2
     }
   ]
 }
