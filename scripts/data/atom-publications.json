@@ -3,6 +3,28 @@
   "sourceCommit": "6a2936f68d132ba59989cc59939f5f898f4fcbbe",
   "atoms": [
     {
+      "title": "Деидентификация самомодели",
+      "paths": [
+        "content/Атомы/Деидентификация самомодели.md",
+        "content/en/Атомы/Deidentification of the Self-Model.md",
+        "content/th/Atoms/Deidentification of the Self-Model.md",
+        "content/zh/Atoms/Deidentification of the Self-Model.md"
+      ],
+      "published": "2026-11-14T16:13:00+07:00",
+      "publicationOrder": 0
+    },
+    {
+      "title": "Деидентификация личной истории",
+      "paths": [
+        "content/Атомы/Деидентификация личной истории.md",
+        "content/en/Атомы/Deidentification of Personal History.md",
+        "content/th/Atoms/Deidentification of Personal History.md",
+        "content/zh/Atoms/Deidentification of Personal History.md"
+      ],
+      "published": "2026-11-14T16:13:00+07:00",
+      "publicationOrder": 1
+    },
+    {
       "title": "Доброжелательность к себе",
       "paths": [
         "content/Атомы/Доброжелательность к себе.md",
