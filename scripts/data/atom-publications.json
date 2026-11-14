@@ -3,6 +3,50 @@
   "sourceCommit": "6a2936f68d132ba59989cc59939f5f898f4fcbbe",
   "atoms": [
     {
+      "title": "Токсичная продуктивность",
+      "paths": [
+        "content/Атомы/Токсичная продуктивность.md",
+        "content/en/Атомы/Toxic Productivity.md",
+        "content/th/Atoms/Toxic Productivity.md",
+        "content/zh/Atoms/Toxic Productivity.md"
+      ],
+      "published": "2026-11-14T21:18:00+07:00",
+      "publicationOrder": 0
+    },
+    {
+      "title": "Непереносимость отдыха",
+      "paths": [
+        "content/Атомы/Непереносимость отдыха.md",
+        "content/en/Атомы/Rest Intolerance.md",
+        "content/th/Atoms/Rest Intolerance.md",
+        "content/zh/Atoms/Rest Intolerance.md"
+      ],
+      "published": "2026-11-14T21:18:00+07:00",
+      "publicationOrder": 1
+    },
+    {
+      "title": "Непринуждённость",
+      "paths": [
+        "content/Атомы/Непринуждённость.md",
+        "content/en/Атомы/Unforcedness.md",
+        "content/th/Atoms/Unforcedness.md",
+        "content/zh/Atoms/Unforcedness.md"
+      ],
+      "published": "2026-11-14T21:18:00+07:00",
+      "publicationOrder": 2
+    },
+    {
+      "title": "Сабай-сабай",
+      "paths": [
+        "content/Атомы/Сабай-сабай.md",
+        "content/en/Атомы/Sabai-Sabai.md",
+        "content/th/Atoms/Sabai-Sabai.md",
+        "content/zh/Atoms/Sabai-Sabai.md"
+      ],
+      "published": "2026-11-14T21:18:00+07:00",
+      "publicationOrder": 3
+    },
+    {
       "title": "Деидентификация самомодели",
       "paths": [
         "content/Атомы/Деидентификация самомодели.md",
