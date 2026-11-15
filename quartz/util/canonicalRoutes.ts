@@ -105,6 +105,8 @@ for (const [oldName, current] of [
   ["Jhana", "four-jhanas"],
   ["Экспозиция-переживания", "experiential-exposure"],
   ["экспозиция-переживания", "experiential-exposure"],
+  ["Самоспасение", "self-salvation"],
+  ["Коллективное-самоспасение", "collective-self-salvation"],
 ]) {
   for (const lang of languages) {
     const prefix = siteLanguages[lang].atomPrefix

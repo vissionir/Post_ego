@@ -1339,9 +1339,9 @@
       "publicationOrder": 2
     },
     {
-      "title": "Самоспасение",
+      "title": "Самоосвобождение",
       "paths": [
-        "content/Атомы/Самоспасение.md",
+        "content/Атомы/Самоосвобождение.md",
         "content/en/Атомы/Self-Salvation.md",
         "content/th/Atoms/Self-Salvation.md",
         "content/zh/Atoms/Self-Salvation.md"
@@ -1350,9 +1350,9 @@
       "publicationOrder": 1
     },
     {
-      "title": "Коллективное самоспасение",
+      "title": "Коллективное самоосвобождение",
       "paths": [
-        "content/Атомы/Коллективное самоспасение.md",
+        "content/Атомы/Коллективное самоосвобождение.md",
         "content/en/Атомы/Collective Self-Salvation.md",
         "content/th/Atoms/Collective Self-Salvation.md",
         "content/zh/Atoms/Collective Self-Salvation.md"

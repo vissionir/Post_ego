@@ -30,6 +30,18 @@ test("Chinese English-named sources map to the same stable ASCII atom slugs", ()
   assert.equal(publicPath("/th/Atoms/Reality"), "/th/atoms/reality")
 })
 
+test("self-liberation renaming preserves published and legacy source routes", () => {
+  for (const language of languages) {
+    const prefix = siteLanguages[language].atomPrefix
+    for (const name of ["Самоспасение", "Самоосвобождение", "Self-Salvation"]) {
+      assert.equal(canonicalRoute(`${prefix}${name}`), `${language}/atoms/self-salvation`)
+    }
+    for (const name of ["Коллективное-самоспасение", "Коллективное-самоосвобождение", "Collective-Self-Salvation"]) {
+      assert.equal(canonicalRoute(`${prefix}${name}`), `${language}/atoms/collective-self-salvation`)
+    }
+  }
+})
+
 test("freedom is distinct from inner freedom in every language", () => {
   for (const language of languages) {
     const prefix = siteLanguages[language].atomPrefix
