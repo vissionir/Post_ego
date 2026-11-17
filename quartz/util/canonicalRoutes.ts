@@ -48,6 +48,7 @@ const pages: { [Language in SiteLanguage]: string }[] = [
     zh: "Scope-of-the-research",
   },
   { ru: "Миссия-проекта", en: "Project-Mission", th: "Project-Mission", zh: "Project-Mission" },
+  { ru: "Манифест", en: "Manifesto", th: "Manifesto", zh: "Manifesto" },
 ]
 const pageRoutes = [
   "index",
@@ -57,6 +58,7 @@ const pageRoutes = [
   "how-the-research-is-structured",
   "scope-of-the-research",
   "project-mission",
+  "manifesto",
 ]
 pages.forEach((page, i) =>
   languages.forEach((lang) => {
