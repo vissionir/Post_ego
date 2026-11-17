@@ -1359,6 +1359,116 @@
       ],
       "published": "2026-11-13T17:37:03+07:00",
       "publicationOrder": 2
+    },
+    {
+      "title": "Децентрация самомодели",
+      "paths": [
+        "content/Атомы/Децентрация самомодели.md",
+        "content/en/Атомы/Self-Model Decentration.md",
+        "content/th/Atoms/Self-Model Decentration.md",
+        "content/zh/Atoms/Self-Model Decentration.md"
+      ],
+      "published": "2026-11-17T13:02:27+07:00",
+      "publicationOrder": 0
+    },
+    {
+      "title": "Прозрачность самомодели",
+      "paths": [
+        "content/Атомы/Прозрачность самомодели.md",
+        "content/en/Атомы/Self-Model Transparency.md",
+        "content/th/Atoms/Self-Model Transparency.md",
+        "content/zh/Atoms/Self-Model Transparency.md"
+      ],
+      "published": "2026-11-17T13:02:27+07:00",
+      "publicationOrder": 1
+    },
+    {
+      "title": "Непрозрачность самомодели",
+      "paths": [
+        "content/Атомы/Непрозрачность самомодели.md",
+        "content/en/Атомы/Self-Model Opacity.md",
+        "content/th/Atoms/Self-Model Opacity.md",
+        "content/zh/Atoms/Self-Model Opacity.md"
+      ],
+      "published": "2026-11-17T13:02:27+07:00",
+      "publicationOrder": 2
+    },
+    {
+      "title": "Утрата прозрачности",
+      "paths": [
+        "content/Атомы/Утрата прозрачности.md",
+        "content/en/Атомы/Loss of Transparency.md",
+        "content/th/Atoms/Loss of Transparency.md",
+        "content/zh/Atoms/Loss of Transparency.md"
+      ],
+      "published": "2026-11-17T13:02:27+07:00",
+      "publicationOrder": 3
+    },
+    {
+      "title": "Туннель сознания",
+      "paths": [
+        "content/Атомы/Туннель сознания.md",
+        "content/en/Атомы/Consciousness Tunnel.md",
+        "content/th/Atoms/Consciousness Tunnel.md",
+        "content/zh/Atoms/Consciousness Tunnel.md"
+      ],
+      "published": "2026-11-17T13:02:27+07:00",
+      "publicationOrder": 4
+    },
+    {
+      "title": "Эго-туннель",
+      "paths": [
+        "content/Атомы/Эго-туннель.md",
+        "content/en/Атомы/Ego Tunnel.md",
+        "content/th/Atoms/Ego Tunnel.md",
+        "content/zh/Atoms/Ego Tunnel.md"
+      ],
+      "published": "2026-11-17T13:02:27+07:00",
+      "publicationOrder": 5
+    },
+    {
+      "title": "Выход из эго-туннеля",
+      "paths": [
+        "content/Атомы/Выход из эго-туннеля.md",
+        "content/en/Атомы/Exit from the Ego Tunnel.md",
+        "content/th/Atoms/Exit from the Ego Tunnel.md",
+        "content/zh/Atoms/Exit from the Ego Tunnel.md"
+      ],
+      "published": "2026-11-17T13:02:27+07:00",
+      "publicationOrder": 6
+    },
+    {
+      "title": "Недвойственность",
+      "paths": [
+        "content/Атомы/Недвойственность.md",
+        "content/en/Атомы/Nondual Experience.md",
+        "content/th/Atoms/Nondual Experience.md",
+        "content/zh/Atoms/Nondual Experience.md"
+      ],
+      "published": "2026-11-17T13:02:27+07:00",
+      "publicationOrder": 7
+    },
+    {
+      "title": "Иллюзия двойственности",
+      "paths": [
+        "content/Атомы/Иллюзия двойственности.md",
+        "content/en/Атомы/Illusion of Subject-Object Duality.md",
+        "content/th/Atoms/Illusion of Subject-Object Duality.md",
+        "content/zh/Atoms/Illusion of Subject-Object Duality.md"
+      ],
+      "published": "2026-11-17T13:02:27+07:00",
+      "publicationOrder": 8
+    },
+    {
+      "title": "Виджняптиматра",
+      "paths": [
+        "content/Атомы/Виджняптиматра.md",
+        "content/en/Атомы/Vijnaptimatra.md",
+        "content/th/Atoms/Vijnaptimatra.md",
+        "content/zh/Atoms/Vijnaptimatra.md"
+      ],
+      "published": "2026-11-17T13:02:27+07:00",
+      "publicationOrder": 9
     }
   ]
 }

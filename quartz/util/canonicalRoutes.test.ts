@@ -5,6 +5,26 @@ import { FilePath, FullSlug, slugifyFilePath, transformLink } from "./path"
 import atoms from "./atom-routes.json"
 import { siteLanguages } from "./siteLanguages"
 
+test("nondualism and nonduality retain distinct identities after the name split", () => {
+  for (const language of languages) {
+    const prefix = siteLanguages[language].atomPrefix
+    assert.equal(canonicalRoute(`${prefix}Нондуализм`), `${language}/atoms/nonduality`)
+    assert.equal(canonicalRoute(`${prefix}Nonduality`), `${language}/atoms/nonduality`)
+    assert.equal(canonicalRoute(`${prefix}Недвойственность`), `${language}/atoms/nondual-experience`)
+    assert.equal(canonicalRoute(`${prefix}Nondual-Experience`), `${language}/atoms/nondual-experience`)
+  }
+})
+
+test("the old separateness illusion and the new subject-object illusion never share a route", () => {
+  for (const language of languages) {
+    const prefix = siteLanguages[language].atomPrefix
+    assert.equal(canonicalRoute(`${prefix}Иллюзия-разделённости`), `${language}/atoms/illusion-of-duality`)
+    assert.equal(canonicalRoute(`${prefix}Illusion-of-Duality`), `${language}/atoms/illusion-of-duality`)
+    assert.equal(canonicalRoute(`${prefix}Иллюзия-двойственности`), `${language}/atoms/illusion-of-subject-object-duality`)
+    assert.equal(canonicalRoute(`${prefix}Illusion-of-Subject-Object-Duality`), `${language}/atoms/illusion-of-subject-object-duality`)
+  }
+})
+
 test("all languages use the same ASCII atom path", () => {
   assert.equal(
     canonicalRoute("Атомы/Непредсказуемость-мира"),

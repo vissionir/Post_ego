@@ -1,0 +1,8 @@
+---
+title: "Self-Model Decentration"
+created: 2026-11-17T13:02:27+07:00
+published: 2026-11-17T13:02:27+07:00
+publicationOrder: 0
+---
+
+Self-model decentration is an [[Irreversible shift|irreversible shift]] in which the [[Self-Model|self-model]] ceases to be experienced as a separate perceiving 'I' and the center of what is happening.
