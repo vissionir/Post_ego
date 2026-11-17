@@ -416,13 +416,13 @@ article :where(p, ul, ol, blockquote) + :where(h2, h3) {
   }
 }
 
-// Long-form mission: continuous prose with quiet pauses between the main ideas.
+// Continuous mission prose. Atom links inherit the shared site styling.
 article.project-mission {
   font-size: 1.05rem;
   line-height: 1.8;
 
   > p {
-    margin-block: 1.35em;
+    margin-block: 1em;
   }
 
   > p:first-of-type {
@@ -430,11 +430,6 @@ article.project-mission {
     font-size: clamp(1.25rem, 2.2vw, 1.6rem);
     font-weight: 600;
     line-height: 1.45;
-  }
-
-  .mission-pause {
-    height: 0;
-    margin-block: 3.25rem;
   }
 
   .mission-actions {
