@@ -7,6 +7,7 @@ import { siteLanguages } from "../../util/siteLanguages"
 import { matchingTitleIds } from "../../util/searchTitles"
 import { createSearchPreview } from "../../util/searchPreview"
 import { createSearchLifecycle, createSearchNavigation } from "../../util/searchLifecycle"
+import { searchResultIds } from "../../util/searchResults"
 
 interface Item {
   id: number
@@ -97,7 +98,6 @@ let index = new FlexSearch.Document<Item>({
 const p = new DOMParser()
 const previewBundles = new Map<string, Promise<Record<string, string>>>()
 const contextWindowWords = 30
-const numSearchResults = 8
 const numTagResults = 5
 
 const tokenizeTerm = (term: string) => {
@@ -553,14 +553,10 @@ function setupSearch(searchElement: Element, currentSlug: FullSlug, data: Conten
         const query = currentSearchTerm.substring(separatorIndex + 1).trim()
         searchResults = await index.searchAsync({
           query: query,
-          // return at least 10000 documents, so it is enough to filter them by tag (implemented in flexsearch)
-          limit: Math.max(numSearchResults, 10000),
+          limit: idDataMap.length,
           index: ["title", "content"],
           tag: { tags: tag },
         })
-        for (let searchResult of searchResults) {
-          searchResult.result = searchResult.result.slice(0, numSearchResults)
-        }
         // set search type to basic and remove tag from term for proper highlightning and scroll
         searchType = "basic"
         currentSearchTerm = query
@@ -568,14 +564,14 @@ function setupSearch(searchElement: Element, currentSlug: FullSlug, data: Conten
         // default search by tags index
         searchResults = await index.searchAsync({
           query: currentSearchTerm,
-          limit: numSearchResults,
+          limit: idDataMap.length,
           index: ["tags"],
         })
       }
     } else if (searchType === "basic") {
       searchResults = await index.searchAsync({
         query: currentSearchTerm,
-        limit: numSearchResults * 10,
+        limit: idDataMap.length,
         index: ["title", "content"],
       })
     }
@@ -588,21 +584,18 @@ function setupSearch(searchElement: Element, currentSlug: FullSlug, data: Conten
     }
 
     // order titles ahead of content
-    const allIds: Set<number> = new Set([
-      ...(currentLanguage === "zh" && searchType === "basic"
+    const allIds = searchResultIds(
+      idDataMap,
+      currentLanguage,
+      { title: getByField("title"), content: getByField("content"), tags: getByField("tags") },
+      currentLanguage === "zh" && searchType === "basic"
         ? matchingTitleIds(
             idDataMap.map((slug) => (slugLanguage(slug) === "zh" ? data[slug].title : "")),
             currentSearchTerm,
           )
-        : []),
-      ...getByField("title"),
-      ...getByField("content"),
-      ...getByField("tags"),
-    ])
-    const finalResults = [...allIds]
-      .map((id) => formatForDisplay(currentSearchTerm, id))
-      .filter((result) => slugLanguage(result.slug) === currentLanguage)
-      .slice(0, numSearchResults)
+        : [],
+    )
+    const finalResults = allIds.map((id) => formatForDisplay(currentSearchTerm, id))
     await displayResults(finalResults)
   }
 

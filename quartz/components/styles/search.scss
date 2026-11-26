@@ -248,7 +248,23 @@
         }
 
         & > .results-container {
+          min-width: 0;
+          min-height: 0;
+          overflow-x: hidden;
           overflow-y: auto;
+          overscroll-behavior-y: contain;
+          scrollbar-gutter: stable;
+          scrollbar-width: thin;
+          scrollbar-color: var(--gray) transparent;
+
+          &::-webkit-scrollbar {
+            width: 6px;
+          }
+
+          &::-webkit-scrollbar-thumb {
+            background: var(--gray);
+            border-radius: 3px;
+          }
 
           & .result-card {
             overflow: hidden;
